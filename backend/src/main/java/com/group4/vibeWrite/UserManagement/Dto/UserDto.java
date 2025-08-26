@@ -1,10 +1,6 @@
 package com.group4.vibeWrite.UserManagement.Dto;
 
-
-
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.group4.vibeWrite.UserManagement.Entity.User.UserRole;
-import com.group4.vibeWrite.UserManagement.Entity.User.UserStatus;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
@@ -44,18 +40,25 @@ public class UserDto {
         private String password;
     }
 
+    // Updated DTO for multipart form data handling
     @Data
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
     public static class UpdateUserRequest {
         private String username;
-
-        @JsonProperty("profile_picture")
-        private String profilePictureBase64;
-
         private UserRole role;
+        private UserStatus status;
+    }
 
+    // Separate DTO for JSON-only updates (without file upload)
+    @Data
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class UpdateUserInfoRequest {
+        private String username;
+        private UserRole role;
         private UserStatus status;
     }
 
@@ -113,5 +116,14 @@ public class UserDto {
         @NotBlank(message = "New password is required")
         @Size(min = 6, message = "New password should be at least 6 characters")
         private String newPassword;
+    }
+
+    // Enums moved to DTO level for easier access
+    public enum UserRole {
+        CREATOR, ADMIN, VIEWER
+    }
+
+    public enum UserStatus {
+        ACTIVE, SUSPENDED, DELETED
     }
 }
