@@ -58,3 +58,9 @@ jobs:
         run: |
           docker tag vibewrite-app:latest ${{ secrets.DOCKER_USERNAME }}/vibewrite-app:latest
           docker push ${{ secrets.DOCKER_USERNAME }}/vibewrite-app:latest
+
+      - name: Trigger Render Deploy
+        run: |
+          curl -X POST https://api.render.com/v1/services/srv-d2mq8195pdvs73969mug/deploys \
+          -H "Authorization: Bearer ${{ secrets.RENDER_API_KEY }}" \
+          -H "Content-Type: application/json"
