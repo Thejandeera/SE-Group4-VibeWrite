@@ -1,7 +1,5 @@
 package com.group4.vibeWrite.UserManagement.Controller;
 
-
-
 import com.group4.vibeWrite.UserManagement.Dto.UserDto;
 import com.group4.vibeWrite.UserManagement.Service.UserService;
 import jakarta.validation.Valid;
@@ -12,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -58,16 +57,48 @@ public class UserController {
         }
     }
 
-    @PutMapping("/profile")
+    @PutMapping(value = "/profile", consumes = "multipart/form-data")
     public ResponseEntity<UserDto.UserResponse> updateUser(
             Authentication authentication,
-            @Valid @RequestBody UserDto.UpdateUserRequest request) {
+            @RequestParam(value = "username", required = false) String username,
+            @RequestParam(value = "role", required = false) String role,
+            @RequestParam(value = "status", required = false) String status,
+            @RequestParam(value = "profilePicture", required = false) MultipartFile profilePicture) {
         try {
             String email = getUserEmail(authentication);
-            UserDto.UserResponse response = userService.updateUser(email, request);
+
+            UserDto.UpdateUserRequest request = UserDto.UpdateUserRequest.builder()
+                    .username(username)
+                    .role(role != null ? UserDto.UserRole.valueOf(role.toUpperCase()) : null)
+                    .status(status != null ? UserDto.UserStatus.valueOf(status.toUpperCase()) : null)
+                    .build();
+
+            UserDto.UserResponse response = userService.updateUser(email, request, profilePicture);
             return ResponseEntity.ok(response);
         } catch (RuntimeException e) {
             log.error("Failed to update user", e);
+            return ResponseEntity.badRequest().build();
+        }
+    }
+
+    // Alternative endpoint for JSON-only updates (without file upload)
+    @PutMapping(value = "/profile/info", consumes = "application/json")
+    public ResponseEntity<UserDto.UserResponse> updateUserInfo(
+            Authentication authentication,
+            @Valid @RequestBody UserDto.UpdateUserInfoRequest request) {
+        try {
+            String email = getUserEmail(authentication);
+
+            UserDto.UpdateUserRequest updateRequest = UserDto.UpdateUserRequest.builder()
+                    .username(request.getUsername())
+                    .role(request.getRole())
+                    .status(request.getStatus())
+                    .build();
+
+            UserDto.UserResponse response = userService.updateUser(email, updateRequest, null);
+            return ResponseEntity.ok(response);
+        } catch (RuntimeException e) {
+            log.error("Failed to update user info", e);
             return ResponseEntity.badRequest().build();
         }
     }

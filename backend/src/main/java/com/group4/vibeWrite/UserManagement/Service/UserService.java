@@ -1,6 +1,5 @@
 package com.group4.vibeWrite.UserManagement.Service;
 
-
 import com.group4.vibeWrite.UserManagement.Dto.UserDto;
 import com.group4.vibeWrite.UserManagement.Entity.User;
 import com.group4.vibeWrite.UserManagement.Repository.UserRepository;
@@ -14,11 +13,10 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -100,12 +98,14 @@ public class UserService implements UserDetailsService {
         return mapToUserResponse(user);
     }
 
-    public UserDto.UserResponse updateUser(String email, UserDto.UpdateUserRequest request) {
+    // Updated method to handle MultipartFile
+    public UserDto.UserResponse updateUser(String email, UserDto.UpdateUserRequest request, MultipartFile profilePicture) {
         User user = userRepository.findByEmailAndStatus(email, User.UserStatus.ACTIVE)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
         boolean updated = false;
 
+        // Update username
         if (request.getUsername() != null && !request.getUsername().trim().isEmpty()) {
             if (userRepository.existsByUsername(request.getUsername()) &&
                     !request.getUsername().equals(user.getUsername())) {
@@ -115,28 +115,44 @@ public class UserService implements UserDetailsService {
             updated = true;
         }
 
-        if (request.getProfilePictureBase64() != null && !request.getProfilePictureBase64().trim().isEmpty()) {
-            // Delete old profile picture if exists
-            if (user.getProfilePictureUrl() != null) {
-                cloudinaryService.deleteImage(user.getProfilePictureUrl());
+        // Handle profile picture upload
+        if (profilePicture != null && !profilePicture.isEmpty()) {
+            // Validate file type
+            String contentType = profilePicture.getContentType();
+            if (contentType == null || !contentType.startsWith("image/")) {
+                throw new RuntimeException("File must be an image");
             }
 
-            // Upload new profile picture
-            String imageUrl = cloudinaryService.uploadBase64Image(
-                    request.getProfilePictureBase64(),
-                    "profile_pictures"
-            );
-            user.setProfilePictureUrl(imageUrl);
-            updated = true;
+            // Validate file size (e.g., max 5MB)
+            if (profilePicture.getSize() > 5 * 1024 * 1024) {
+                throw new RuntimeException("File size must be less than 5MB");
+            }
+
+            try {
+                // Delete old profile picture if exists
+                if (user.getProfilePictureUrl() != null) {
+                    cloudinaryService.deleteImage(user.getProfilePictureUrl());
+                }
+
+                // Upload new profile picture
+                String imageUrl = cloudinaryService.uploadMultipartFile(profilePicture, "profile_pictures");
+                user.setProfilePictureUrl(imageUrl);
+                updated = true;
+            } catch (Exception e) {
+                log.error("Failed to upload profile picture", e);
+                throw new RuntimeException("Failed to upload profile picture: " + e.getMessage());
+            }
         }
 
+        // Update role
         if (request.getRole() != null) {
-            user.setRole(request.getRole());
+            user.setRole(User.UserRole.valueOf(request.getRole().name()));
             updated = true;
         }
 
+        // Update status
         if (request.getStatus() != null) {
-            user.setStatus(request.getStatus());
+            user.setStatus(User.UserStatus.valueOf(request.getStatus().name()));
             updated = true;
         }
 
@@ -200,8 +216,8 @@ public class UserService implements UserDetailsService {
                 .profilePictureUrl(user.getProfilePictureUrl())
                 .username(user.getUsername())
                 .email(user.getEmail())
-                .role(user.getRole())
-                .status(user.getStatus())
+                .role(UserDto.UserRole.valueOf(user.getRole().name()))
+                .status(UserDto.UserStatus.valueOf(user.getStatus().name()))
                 .createdAt(user.getCreatedAt())
                 .updatedAt(user.getUpdatedAt())
                 .lastLogin(user.getLastLogin())
