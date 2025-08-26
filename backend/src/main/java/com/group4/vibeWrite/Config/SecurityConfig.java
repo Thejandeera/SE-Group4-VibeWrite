@@ -40,7 +40,11 @@ public class SecurityConfig {
                         // allow preflight requests
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                         // public endpoints
-                        .requestMatchers("/api/users/register", "/api/users/login", "/api/gpa","/api/hello").permitAll()
+                        .requestMatchers("/api/users/register",
+                                "/api/users/login",
+                                "/api/gpa",
+                                "/api/hello",
+                        "/api/hello").permitAll()
                         // secured endpoints
                         .requestMatchers("/api/users/**").authenticated()
                         // allow everything else
