@@ -423,15 +423,25 @@
 
 // export default App;
 
-import React from 'react'
-import LandingPage from '../Pages/LandingPage'
+import React from 'react';
+import { Routes, Route } from 'react-router-dom';
+import LandingPage from '../Pages/LandingPage';
+
+const Dummy = ({ text }) => (
+  <div style={{ padding: '4rem', textAlign: 'center', fontSize: '2rem' }}>{text}</div>
+);
 
 const App = () => {
   return (
-    <div>
-      <LandingPage />
-    </div>
-  )
-}
+    <Routes>
+      <Route path="/" element={<LandingPage />} />
+      <Route path="/features" element={<Dummy text="Features Page" />} />
+      <Route path="/pricing" element={<Dummy text="Pricing Page" />} />
+      <Route path="/reviews" element={<Dummy text="Reviews Page" />} />
+      <Route path="/signin" element={<Dummy text="Sign In Page" />} />
+      <Route path="/get-started" element={<Dummy text="Get Started Page" />} />
+    </Routes>
+  );
+};
 
-export default App
+export default App;
