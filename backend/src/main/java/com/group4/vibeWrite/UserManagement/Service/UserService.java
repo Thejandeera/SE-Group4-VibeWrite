@@ -2,6 +2,7 @@ package com.group4.vibeWrite.UserManagement.Service;
 
 import com.group4.vibeWrite.UserManagement.Dto.UserDto;
 import com.group4.vibeWrite.UserManagement.Entity.User;
+import com.group4.vibeWrite.UserManagement.Entity.CustomUserDetails;
 import com.group4.vibeWrite.UserManagement.Repository.UserRepository;
 import com.group4.vibeWrite.UserManagement.Util.CloudinaryService;
 import com.group4.vibeWrite.UserManagement.Util.JwtService;
@@ -33,11 +34,7 @@ public class UserService implements UserDetailsService {
         User user = userRepository.findByEmailAndStatus(email, User.UserStatus.ACTIVE)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found with email: " + email));
 
-        return org.springframework.security.core.userdetails.User.builder()
-                .username(user.getEmail())
-                .password(user.getPasswordHash())
-                .authorities("ROLE_" + user.getRole().name())
-                .build();
+        return CustomUserDetails.fromUser(user);
     }
 
     public UserDto.AuthResponse register(UserDto.RegisterRequest request) {
