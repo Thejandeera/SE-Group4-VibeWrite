@@ -425,7 +425,8 @@
 
 import React from 'react';
 import { Routes, Route } from 'react-router-dom';
-import LandingPage from '../Pages/LandingPage';
+import LandingPage from './Pages/LandingPage';
+import LoginPage from './Pages/LoginPage';
 
 const Dummy = ({ text }) => (
   <div style={{ padding: '4rem', textAlign: 'center', fontSize: '2rem' }}>{text}</div>
@@ -435,10 +436,11 @@ const App = () => {
   return (
     <Routes>
       <Route path="/" element={<LandingPage />} />
+      <Route path="/dashboard" element={<Dummy text="Dashboard" />} />
       <Route path="/features" element={<Dummy text="Features Page" />} />
       <Route path="/pricing" element={<Dummy text="Pricing Page" />} />
       <Route path="/reviews" element={<Dummy text="Reviews Page" />} />
-      <Route path="/signin" element={<Dummy text="Sign In Page" />} />
+      <Route path="/signin" element={<LoginPage />} />
       <Route path="/get-started" element={<Dummy text="Get Started Page" />} />
     </Routes>
   );
