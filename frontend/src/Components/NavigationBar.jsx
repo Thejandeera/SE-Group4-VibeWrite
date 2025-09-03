@@ -21,27 +21,61 @@ const NavigationBar = () => {
   const [activeItem, setActiveItem] = useState('Dashboard');
   const [currentPath, setCurrentPath] = useState(window.location.pathname);
 
+ 
+  const backendUrl = import.meta.env.VITE_BACKEND_URL ;
+
   const fetchUserProfile = async () => {
     try {
-      const mockUserData = {
-        username: 'Login For User',
-        email: 'pleaselogin@example.com'
-      };
+      const token = sessionStorage.getItem('token');
       
-      setTimeout(() => {
-        setUserData(mockUserData);
+      if (!token) {
         setIsLoading(false);
-      }, 1000);
+        return;
+      }
+
+      
+      const savedUserData = sessionStorage.getItem('userData');
+      if (savedUserData) {
+        setUserData(JSON.parse(savedUserData));
+        setIsLoading(false);
+        return;
+      }
+
+      const response = await fetch(`${backendUrl}/api/users/profile`, {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        }
+      });
+      console.log('Profile response status:', response.status);
+      
+      if (response.ok) {
+        const userData = await response.json();
+     
+        sessionStorage.setItem('userData', JSON.stringify(userData));
+        setUserData(userData);
+      } else {
+        console.error('Failed to fetch user profile');
+      }
     } catch (error) {
       console.error('Error fetching user profile:', error);
+    } finally {
       setIsLoading(false);
     }
   };
 
   useEffect(() => {
-    fetchUserProfile();
+ 
+    const savedUserData = sessionStorage.getItem('userData');
+    if (savedUserData) {
+      setUserData(JSON.parse(savedUserData));
+      setIsLoading(false);
+    } else {
+      fetchUserProfile();
+    }
     
-   
+
     const allItems = [...navigationItems, ...quickActions, ...bottomItems];
     const currentItem = allItems.find(item => item.path === currentPath);
     if (currentItem) {
@@ -68,11 +102,26 @@ const NavigationBar = () => {
   ];
 
   const handleNavClick = (item) => {
+    if (item.name === 'Logout') {
+      handleLogout();
+      return;
+    }
+    
     setActiveItem(item.name);
     setCurrentPath(item.path);
     setIsMobileMenuOpen(false);
-    
+  
     window.location.href = item.path;
+  };
+
+  const handleLogout = () => {
+    
+    sessionStorage.removeItem('token');
+    sessionStorage.removeItem('userData');
+    sessionStorage.removeItem('token_type');
+
+    
+    window.location.href = '/';
   };
 
   const getInitials = (name, email) => {
@@ -253,7 +302,7 @@ const NavigationBar = () => {
         </div>
 
         <div className="border-t border-gray-800 p-4 space-y-1">
-          {bottomItems.map((item) => (
+          {bottomItems.filter(item => item.name !== 'Logout').map((item) => (
             <button
               key={item.name}
               onClick={() => handleNavClick(item)}
@@ -273,24 +322,23 @@ const NavigationBar = () => {
             </button>
           ))}
 
-          <div className="lg:hidden mt-4 pt-4 border-t border-gray-800">
-            <button
-              onClick={() => handleNavClick(bottomItems[2])}
-              className={`
-                w-full flex items-center gap-3 px-3 py-2 rounded-lg transition-all duration-200 relative
-                ${activeItem === 'Logout' 
-                  ? 'bg-red-600 text-white shadow-lg shadow-red-600/25 transform scale-[1.02]' 
-                  : 'text-red-300 hover:bg-red-800 hover:text-white hover:transform hover:scale-[1.01]'
-                }
-              `}
-            >
-              <LogOut size={16} className={activeItem === 'Logout' ? 'text-red-100' : ''} />
-              <span className="font-medium text-sm">Logout</span>
-              {activeItem === 'Logout' && (
-                <div className="absolute left-0 top-0 bottom-0 w-1 bg-red-200 rounded-r-full shadow-lg" />
-              )}
-            </button>
-          </div>
+         
+          <button
+            onClick={handleLogout}
+            className={`
+              w-full flex items-center gap-3 px-3 py-2 rounded-lg transition-all duration-200 relative
+              ${activeItem === 'Logout' 
+                ? 'bg-red-600 text-white shadow-lg shadow-red-600/25 transform scale-[1.02]' 
+                : 'text-red-300 hover:bg-red-800 hover:text-white hover:transform hover:scale-[1.01]'
+              }
+            `}
+          >
+            <LogOut size={16} className={activeItem === 'Logout' ? 'text-red-100' : ''} />
+            <span className="font-medium text-sm">Logout</span>
+            {activeItem === 'Logout' && (
+              <div className="absolute left-0 top-0 bottom-0 w-1 bg-red-200 rounded-r-full shadow-lg" />
+            )}
+          </button>
 
           <div className="hidden lg:flex items-center gap-3 px-3 py-3 mt-4 border-t border-gray-800">
             <div className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center text-white font-medium text-xs">
@@ -303,6 +351,10 @@ const NavigationBar = () => {
               <div className="text-gray-400 text-xs truncate">
                 {userData?.email}
               </div>
+            </div>
+            <div className="flex items-center gap-1 bg-yellow-500 text-black px-2 py-0.5 rounded text-xs font-medium">
+              <Crown size={10} />
+              Pro
             </div>
           </div>
         </div>
