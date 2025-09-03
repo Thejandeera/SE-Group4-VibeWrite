@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { ArrowLeft, Mail, Lock, Github, Eye, EyeOff, CheckCircle, XCircle, User, Sparkles } from 'lucide-react';
-import { useNavigate } from 'react-router-dom'; // Assuming React Router is used
+import { useNavigate } from 'react-router-dom'; 
 const backendUrl = import.meta.env.VITE_BACKEND_URL;
 
 const SignupPage = () => {
@@ -13,7 +13,7 @@ const SignupPage = () => {
   const [toast, setToast] = useState({ show: false, message: '', type: '' });
   const navigate = useNavigate();
 
-  // Toast notification function
+  
   const showToast = (message, type) => {
     setToast({ show: true, message, type });
     setTimeout(() => {
@@ -24,7 +24,7 @@ const SignupPage = () => {
   const handleCreateAccount = async (e) => {
     e.preventDefault();
     
-    // Validate inputs
+    
     if (!email || !password || !confirmPassword) {
       showToast('Please fill in all fields', 'error');
       return;
@@ -62,18 +62,18 @@ const SignupPage = () => {
       const data = await response.json();
 
       if (response.ok) {
-        // Success - save token to sessionStorage
+        
         sessionStorage.setItem('token', data.access_token);
         
         showToast('Account created successfully! Welcome to WriteAI.', 'success');
         
-        // Navigate to dashboard after a short delay
+        
         setTimeout(() => {
           navigate('/dashboard');
         }, 1000);
         
       } else {
-        // Handle error responses
+        
         const errorMessage = data.message || data.error || 'Registration failed. Please try again.';
         showToast(errorMessage, 'error');
       }
@@ -99,13 +99,13 @@ const SignupPage = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 to-black text-white flex flex-col relative overflow-hidden">
-      {/* Animated background elements */}
+      
       <div className="absolute inset-0 z-0">
         <div className="absolute top-1/4 left-1/4 w-72 h-72 bg-purple-600 rounded-full mix-blend-soft-light filter blur-3xl opacity-30 animate-pulse-slow"></div>
         <div className="absolute bottom-1/4 right-1/4 w-72 h-72 bg-blue-600 rounded-full mix-blend-soft-light filter blur-3xl opacity-30 animate-pulse-slow animation-delay-2000"></div>
       </div>
       
-      {/* Toast Notification */}
+      
       {toast.show && (
         <div className={`fixed top-4 right-4 z-50 flex items-center gap-2 px-4 py-3 rounded-lg shadow-lg transform transition-all duration-300 ${
           toast.type === 'success' ? 'bg-green-600/90 backdrop-blur-sm text-white' :
@@ -125,7 +125,7 @@ const SignupPage = () => {
         </div>
       )}
 
-      {/* Header */}
+      
       <div className="p-4 sm:p-6 md:p-8 relative z-10">
         <button 
           onClick={() => navigate('/')}
@@ -136,11 +136,11 @@ const SignupPage = () => {
         </button>
       </div>
 
-      {/* Main Content */}
+      
       <div className="flex-1 flex items-center justify-center px-4 sm:px-6 md:px-8 pb-8 relative z-10">
         <div className="w-full max-w-md">
           <div className="bg-gray-900/70 backdrop-blur-xl rounded-2xl border border-gray-800/50 p-8 shadow-2xl animate-fadeIn">
-            {/* Logo and Title */}
+            
             <div className="text-center mb-8">
               <div className="flex items-center justify-center gap-3 mb-6">
                 <div className="relative">
@@ -160,7 +160,7 @@ const SignupPage = () => {
               </p>
             </div>
 
-            {/* Social Sign Up Buttons */}
+           
             <div className="space-y-3 mb-6">
               <button
                 onClick={handleGoogleSignUp}
@@ -186,7 +186,7 @@ const SignupPage = () => {
               </button>
             </div>
 
-            {/* Divider */}
+         
             <div className="relative my-6">
               <div className="absolute inset-0 flex items-center">
                 <div className="w-full border-t border-gray-700/50"></div>
@@ -196,9 +196,9 @@ const SignupPage = () => {
               </div>
             </div>
 
-            {/* Registration Form */}
+           
             <form onSubmit={handleCreateAccount} className="space-y-5">
-              {/* Email Field */}
+              
               <div className="space-y-2">
                 <label htmlFor="email" className="block text-sm font-medium text-gray-300">
                   Email
@@ -216,7 +216,7 @@ const SignupPage = () => {
                 </div>
               </div>
 
-              {/* Password Field */}
+              
               <div className="space-y-2">
                 <label htmlFor="password" className="block text-sm font-medium text-gray-300">
                   Password
@@ -241,7 +241,7 @@ const SignupPage = () => {
                 </div>
               </div>
 
-              {/* Confirm Password Field */}
+              
               <div className="space-y-2">
                 <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-300">
                   Confirm Password
@@ -266,7 +266,7 @@ const SignupPage = () => {
                 </div>
               </div>
 
-              {/* Create Account Button */}
+              
               <button
                 type="submit"
                 disabled={isLoading}
@@ -283,7 +283,7 @@ const SignupPage = () => {
               </button>
             </form>
 
-            {/* Sign In Link */}
+            
             <p className="text-center text-gray-400 text-sm mt-6">
               Already have an account?{' '}
               <button 
