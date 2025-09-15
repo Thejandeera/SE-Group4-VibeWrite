@@ -21,19 +21,17 @@ const NavigationBar = () => {
   const [activeItem, setActiveItem] = useState('Dashboard');
   const [currentPath, setCurrentPath] = useState(window.location.pathname);
 
- 
-  const backendUrl = import.meta.env.VITE_BACKEND_URL ;
+  const backendUrl = import.meta.env.VITE_BACKEND_URL;
 
   const fetchUserProfile = async () => {
     try {
       const token = sessionStorage.getItem('token');
-      
+
       if (!token) {
         setIsLoading(false);
         return;
       }
 
-      
       const savedUserData = sessionStorage.getItem('userData');
       if (savedUserData) {
         setUserData(JSON.parse(savedUserData));
@@ -49,10 +47,9 @@ const NavigationBar = () => {
         }
       });
       console.log('Profile response status:', response.status);
-      
+
       if (response.ok) {
         const userData = await response.json();
-     
         sessionStorage.setItem('userData', JSON.stringify(userData));
         setUserData(userData);
       } else {
@@ -66,7 +63,6 @@ const NavigationBar = () => {
   };
 
   useEffect(() => {
- 
     const savedUserData = sessionStorage.getItem('userData');
     if (savedUserData) {
       setUserData(JSON.parse(savedUserData));
@@ -74,7 +70,6 @@ const NavigationBar = () => {
     } else {
       fetchUserProfile();
     }
-    
 
     const allItems = [...navigationItems, ...quickActions, ...bottomItems];
     const currentItem = allItems.find(item => item.path === currentPath);
@@ -106,21 +101,17 @@ const NavigationBar = () => {
       handleLogout();
       return;
     }
-    
+
     setActiveItem(item.name);
     setCurrentPath(item.path);
     setIsMobileMenuOpen(false);
-  
     window.location.href = item.path;
   };
 
   const handleLogout = () => {
-    
     sessionStorage.removeItem('token');
     sessionStorage.removeItem('userData');
     sessionStorage.removeItem('token_type');
-
-    
     window.location.href = '/';
   };
 
@@ -139,6 +130,27 @@ const NavigationBar = () => {
     return userData.username || userData.email?.split('@')[0] || 'User';
   };
 
+  const ProfileAvatar = ({ size = "w-8 h-8", textSize = "text-xs" }) => {
+    const [imageError, setImageError] = useState(false);
+    
+    if (userData?.profile_picture_url && !imageError) {
+      return (
+        <img
+          src={userData.profile_picture_url}
+          alt="Profile"
+          className={`${size} rounded-full object-cover`}
+          onError={() => setImageError(true)}
+        />
+      );
+    }
+    
+    return (
+      <div className={`${size} bg-blue-600 rounded-full flex items-center justify-center text-white font-medium ${textSize}`}>
+        {getInitials(userData?.username, userData?.email)}
+      </div>
+    );
+  };
+
   if (isLoading) {
     return (
       <>
@@ -148,7 +160,7 @@ const NavigationBar = () => {
             <div className="h-4 bg-gray-700 rounded w-20"></div>
           </div>
         </div>
-        
+
         <div className="hidden lg:block fixed left-0 top-0 h-full w-64 bg-[#171717] border-r border-gray-800 p-4 z-[50]">
           <div className="animate-pulse">
             <div className="flex items-center gap-3 mb-8">
@@ -182,11 +194,9 @@ const NavigationBar = () => {
               <span className="text-white font-semibold text-sm">WriteAI</span>
             </div>
           </div>
-          
+
           <div className="flex items-center gap-3">
-            <div className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center text-white font-medium text-xs">
-              {getInitials(userData?.username, userData?.email)}
-            </div>
+            <ProfileAvatar />
             <div className="hidden sm:block">
               <div className="text-white font-medium text-xs">
                 {getDisplayName()}
@@ -227,9 +237,7 @@ const NavigationBar = () => {
 
         <div className="lg:hidden p-4 border-b border-gray-800">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-blue-600 rounded-full flex items-center justify-center text-white font-medium text-sm">
-              {getInitials(userData?.username, userData?.email)}
-            </div>
+            <ProfileAvatar size="w-10 h-10" textSize="text-sm" />
             <div className="flex-1 min-w-0">
               <div className="text-white font-medium text-xs">
                 {getDisplayName()}
@@ -322,7 +330,6 @@ const NavigationBar = () => {
             </button>
           ))}
 
-         
           <button
             onClick={handleLogout}
             className={`
@@ -341,9 +348,7 @@ const NavigationBar = () => {
           </button>
 
           <div className="hidden lg:flex items-center gap-3 px-3 py-3 mt-4 border-t border-gray-800">
-            <div className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center text-white font-medium text-xs">
-              {getInitials(userData?.username, userData?.email)}
-            </div>
+            <ProfileAvatar />
             <div className="flex-1 min-w-0">
               <div className="text-white font-medium text-xs truncate">
                 {getDisplayName()}
