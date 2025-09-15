@@ -26,7 +26,7 @@ public class User {
     @Field("profile_picture_url")
     private String profilePictureUrl;
 
-    @Indexed(unique = true)
+
     private String username;
 
     @Indexed(unique = true)
