@@ -49,6 +49,8 @@ const ContentEditor = () => {
           ref={editorRef}
           className="min-h-80 border rounded p-4 focus:outline-none bg-white"
           contentEditable
+          spellCheck={true}
+          lang="en"
           onInput={onInput}
           suppressContentEditableWarning
           role="textbox"
@@ -56,6 +58,8 @@ const ContentEditor = () => {
         >
           Start writing here...
         </div>
+
+        <div className="mt-2 text-xs text-gray-500">Spelling mistakes are underlined by your browser.</div>
 
         <div className="mt-4 text-sm text-gray-600">
           <span className="font-medium">Character count:</span> {plainText.length}
