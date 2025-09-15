@@ -3,17 +3,16 @@ import { ArrowLeft, Mail, Lock, Github, Eye, EyeOff, CheckCircle, XCircle, User,
 import { useNavigate } from 'react-router-dom'; 
 const backendUrl = import.meta.env.VITE_BACKEND_URL;
 
-const SignupPage = () => {
+const LoginPage = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [rememberMe, setRememberMe] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [toast, setToast] = useState({ show: false, message: '', type: '' });
   const navigate = useNavigate();
 
-  
+
   const showToast = (message, type) => {
     setToast({ show: true, message, type });
     setTimeout(() => {
@@ -21,11 +20,11 @@ const SignupPage = () => {
     }, 4000);
   };
 
-  const handleCreateAccount = async (e) => {
+  const handleSignIn = async (e) => {
     e.preventDefault();
     
-    
-    if (!email || !password || !confirmPassword) {
+ 
+    if (!email || !password) {
       showToast('Please fill in all fields', 'error');
       return;
     }
@@ -35,20 +34,10 @@ const SignupPage = () => {
       return;
     }
 
-    if (password.length < 6) {
-      showToast('Password must be at least 6 characters long', 'error');
-      return;
-    }
-
-    if (password !== confirmPassword) {
-      showToast('Passwords do not match', 'error');
-      return;
-    }
-
     setIsLoading(true);
 
     try {
-      const response = await fetch(`${backendUrl}/api/users/register`, {
+      const response = await fetch(`${backendUrl}/api/users/login`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -64,8 +53,15 @@ const SignupPage = () => {
       if (response.ok) {
         
         sessionStorage.setItem('token', data.access_token);
+        sessionStorage.setItem('token_type', data.token_type);
         
-        showToast('Account created successfully! Welcome to WriteAI.', 'success');
+        if (rememberMe) {
+       
+          localStorage.setItem('token', data.access_token);
+          localStorage.setItem('token_type', data.token_type);
+        }
+
+        showToast('Login successful! Welcome back.', 'success');
         
         
         setTimeout(() => {
@@ -74,26 +70,26 @@ const SignupPage = () => {
         
       } else {
         
-        const errorMessage = data.message || data.error || 'Registration failed. Please try again.';
+        const errorMessage = data.message || data.error || 'Login failed. Please check your credentials.';
         showToast(errorMessage, 'error');
       }
     } catch (error) {
-      console.error('Registration error:', error);
+      console.error('Login error:', error);
       showToast('Network error. Please check your connection and try again.', 'error');
     } finally {
       setIsLoading(false);
     }
   };
 
-  const handleGoogleSignUp = async () => {
+  const handleGoogleSignIn = async () => {
     setIsLoading(true);
-    showToast('Google sign-up coming soon!', 'info');
+    showToast('Google sign-in coming soon!', 'info');
     setTimeout(() => setIsLoading(false), 1000);
   };
 
-  const handleGithubSignUp = async () => {
+  const handleGithubSignIn = async () => {
     setIsLoading(true);
-    showToast('GitHub sign-up coming soon!', 'info');
+    showToast('GitHub sign-in coming soon!', 'info');
     setTimeout(() => setIsLoading(false), 1000);
   };
 
@@ -124,8 +120,8 @@ const SignupPage = () => {
           </button>
         </div>
       )}
-
       
+    
       <div className="p-4 sm:p-6 md:p-8 relative z-10">
         <button 
           onClick={() => navigate('/')}
@@ -136,7 +132,6 @@ const SignupPage = () => {
         </button>
       </div>
 
-      
       <div className="flex-1 flex items-center justify-center px-4 sm:px-6 md:px-8 pb-8 relative z-10">
         <div className="w-full max-w-md">
           <div className="bg-gray-900/70 backdrop-blur-xl rounded-2xl border border-gray-800/50 p-8 shadow-2xl animate-fadeIn">
@@ -153,17 +148,17 @@ const SignupPage = () => {
               </div>
               
               <h2 className="text-2xl font-bold text-white mb-2">
-                Create Account
+                Welcome Back
               </h2>
               <p className="text-gray-400 text-sm">
-                Sign up to start writing with AI assistance
+                Sign in to your account to continue
               </p>
             </div>
 
-           
+            
             <div className="space-y-3 mb-6">
               <button
-                onClick={handleGoogleSignUp}
+                onClick={handleGoogleSignIn}
                 disabled={isLoading}
                 className="w-full bg-gray-800/60 hover:bg-gray-700/60 border border-gray-700/50 hover:border-gray-600/50 text-white font-medium py-3 px-4 rounded-xl flex items-center justify-center gap-3 transition-all duration-300 group disabled:opacity-50 disabled:cursor-not-allowed transform hover:scale-[1.02] active:scale-[0.98] backdrop-blur-sm"
               >
@@ -177,7 +172,7 @@ const SignupPage = () => {
               </button>
 
               <button
-                onClick={handleGithubSignUp}
+                onClick={handleGithubSignIn}
                 disabled={isLoading}
                 className="w-full bg-gray-800/60 hover:bg-gray-700/60 border border-gray-700/50 hover:border-gray-600/50 text-white font-medium py-3 px-4 rounded-xl flex items-center justify-center gap-3 transition-all duration-300 group disabled:opacity-50 disabled:cursor-not-allowed transform hover:scale-[1.02] active:scale-[0.98] backdrop-blur-sm"
               >
@@ -186,7 +181,6 @@ const SignupPage = () => {
               </button>
             </div>
 
-         
             <div className="relative my-6">
               <div className="absolute inset-0 flex items-center">
                 <div className="w-full border-t border-gray-700/50"></div>
@@ -196,9 +190,9 @@ const SignupPage = () => {
               </div>
             </div>
 
+         
+            <form onSubmit={handleSignIn} className="space-y-5">
            
-            <form onSubmit={handleCreateAccount} className="space-y-5">
-              
               <div className="space-y-2">
                 <label htmlFor="email" className="block text-sm font-medium text-gray-300">
                   Email
@@ -216,7 +210,6 @@ const SignupPage = () => {
                 </div>
               </div>
 
-              
               <div className="space-y-2">
                 <label htmlFor="password" className="block text-sm font-medium text-gray-300">
                   Password
@@ -242,28 +235,30 @@ const SignupPage = () => {
               </div>
 
               
-              <div className="space-y-2">
-                <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-300">
-                  Confirm Password
-                </label>
-                <div className="relative group">
-                  <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5 group-focus-within:text-blue-400 transition-colors duration-300" />
+              <div className="flex items-center justify-between text-sm">
+                <label className="flex items-center space-x-2 cursor-pointer group">
                   <input
-                    type={showConfirmPassword ? "text" : "password"}
-                    id="confirmPassword"
-                    value={confirmPassword}
-                    onChange={(e) => setConfirmPassword(e.target.value)}
-                    placeholder="Confirm your password"
-                    className="w-full bg-gray-800/40 border border-gray-700/50 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/30 text-white placeholder-gray-400 rounded-xl py-3 pl-11 pr-12 transition-all duration-300 focus:outline-none backdrop-blur-sm"
+                    type="checkbox"
+                    checked={rememberMe}
+                    onChange={(e) => setRememberMe(e.target.checked)}
+                    className="sr-only"
                   />
-                  <button
-                    type="button"
-                    onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-white transition-colors duration-300 focus:outline-none"
-                  >
-                    {showConfirmPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
-                  </button>
-                </div>
+                  <div className={`w-4 h-4 border-2 rounded ${rememberMe ? 'bg-blue-500 border-blue-500' : 'border-gray-600'} flex items-center justify-center transition-all duration-300 group-hover:border-blue-400`}>
+                    {rememberMe && (
+                      <svg className="w-2.5 h-2.5 text-white animate-checkmark" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M5 13l4 4L19 7"></path>
+                      </svg>
+                    )}
+                  </div>
+                  <span className="text-gray-300 group-hover:text-white transition-colors duration-300">Remember me</span>
+                </label>
+                
+                <button
+                  type="button"
+                  className="text-gray-300 hover:text-white transition-colors duration-300 hover:underline focus:outline-none"
+                >
+                  Forgot password?
+                </button>
               </div>
 
               
@@ -275,22 +270,22 @@ const SignupPage = () => {
                 {isLoading ? (
                   <div className="flex items-center justify-center gap-2">
                     <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                    Creating Account...
+                    Signing In...
                   </div>
                 ) : (
-                  'Create Account'
+                  'Sign In'
                 )}
               </button>
             </form>
 
-            
+          
             <p className="text-center text-gray-400 text-sm mt-6">
-              Already have an account?{' '}
+              Don't have an account?{' '}
               <button 
-                onClick={() => navigate('/login')}
+                onClick={() => navigate('/get-started')}
                 className="text-blue-400 hover:text-blue-300 font-medium transition-colors duration-300 hover:underline focus:outline-none"
               >
-                Sign in
+                Sign up
               </button>
             </p>
           </div>
@@ -381,4 +376,4 @@ const SignupPage = () => {
   );
 };
 
-export default SignupPage;
+export default LoginPage;

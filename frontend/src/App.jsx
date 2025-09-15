@@ -1,11 +1,12 @@
 import React from 'react';
 import { Routes, Route, useLocation } from 'react-router-dom';
-import LandingPage from './Pages/LandingPage';
-import LoginPage from './Pages/LoginPage';
-import SignupPage from './Pages/SignupPage';
+import LandingPage from './Pages/Landing/LandingPage';
+import LoginPage from './Pages/Landing/LoginPage';
+import SignupPage from './Pages/Landing/SignupPage';
 import NavigationBar from './Components/NavigationBar';
 import Dashboard from './Pages/Dashboard';
 import ContentEditor from './Pages/ContentEditor';
+import Settings from './Pages/Settings';
 
 const Dummy = ({ text }) => (
   <div style={{ padding: '4rem', textAlign: 'center', fontSize: '2rem' }}>{text}</div>
@@ -34,6 +35,7 @@ const App = () => {
           <Route path="/reviews" element={<Dummy text="Reviews Page" />} />
           <Route path="/signin" element={<LoginPage />} />
           <Route path="/get-started" element={<SignupPage />} />
+          <Route path="/profile" element={<Settings />} />
         </Routes>
       </div>
     </div>
