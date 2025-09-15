@@ -287,7 +287,7 @@ const SignupPage = () => {
             <p className="text-center text-gray-400 text-sm mt-6">
               Already have an account?{' '}
               <button 
-                onClick={() => navigate('/login')}
+                onClick={() => navigate('/signin')}
                 className="text-blue-400 hover:text-blue-300 font-medium transition-colors duration-300 hover:underline focus:outline-none"
               >
                 Sign in
