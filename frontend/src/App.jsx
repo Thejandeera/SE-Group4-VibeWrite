@@ -5,6 +5,7 @@ import LoginPage from './Pages/LoginPage';
 import SignupPage from './Pages/SignupPage';
 import NavigationBar from './Components/NavigationBar';
 import Dashboard from './Pages/Dashboard';
+import ContentEditor from './Pages/ContentEditor';
 
 const Dummy = ({ text }) => (
   <div style={{ padding: '4rem', textAlign: 'center', fontSize: '2rem' }}>{text}</div>
@@ -27,6 +28,7 @@ const App = () => {
         <Routes>
           <Route path="/" element={<LandingPage />} />
           <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/content-editor" element={<ContentEditor />} />
           <Route path="/features" element={<Dummy text="Features Page" />} />
           <Route path="/pricing" element={<Dummy text="Pricing Page" />} />
           <Route path="/reviews" element={<Dummy text="Reviews Page" />} />
