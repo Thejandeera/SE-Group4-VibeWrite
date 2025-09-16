@@ -48,7 +48,7 @@ public class SecurityConfig {
                                 "/api/gpa",
                                 "/api/hello",
                                 "/drafts",
-                                "/api/readability").permitAll()
+                                "/api/readability/**").permitAll()
                         // secured endpoints
                       .anyRequest().authenticated()
                         // allow everything else
