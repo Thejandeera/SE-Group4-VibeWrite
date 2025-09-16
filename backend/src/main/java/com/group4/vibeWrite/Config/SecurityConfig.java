@@ -46,7 +46,13 @@ public class SecurityConfig {
                                 "/api/gpa",
                                 "/api/hello",
                                 "/drafts",
+
                                 "/api/readability/**").permitAll()
+
+                                "/api/readability/**",
+                                "/api/analyze/**").permitAll()
+                        // secured endpoints
+
                       .anyRequest().authenticated()
                 )
                 .authenticationProvider(authenticationProvider(userDetailsService))
