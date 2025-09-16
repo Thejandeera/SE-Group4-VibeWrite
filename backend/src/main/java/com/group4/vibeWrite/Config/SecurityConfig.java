@@ -40,20 +40,20 @@ public class SecurityConfig {
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(authz -> authz
-                        // allow preflight requests
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
-                        // public endpoints
                         .requestMatchers("/api/users/register",
                                 "/api/users/login",
                                 "/api/gpa",
                                 "/api/hello",
                                 "/drafts",
+
+                                "/api/readability/**").permitAll()
+
                                 "/api/readability/**",
                                 "/api/analyze/**").permitAll()
                         // secured endpoints
+
                       .anyRequest().authenticated()
-                        // allow everything else
-//                        .anyRequest().permitAll()
                 )
                 .authenticationProvider(authenticationProvider(userDetailsService))
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
@@ -73,10 +73,10 @@ public class SecurityConfig {
         CorsConfiguration config = new CorsConfiguration();
         config.setAllowCredentials(true);
 
-        // Allow both production and local dev frontend
+
         List<String> allowedOrigins = List.of(
-                frontendUrl,               // from Render env (Netlify URL)
-                "http://localhost:5173"    // local React dev
+                frontendUrl,
+                "http://localhost:5173"
         );
         config.setAllowedOriginPatterns(allowedOrigins);
         config.setAllowedHeaders(List.of("*"));
