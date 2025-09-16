@@ -1,4 +1,4 @@
-package com.aiwritingapp.draft_schema_backend.Exception;
+package com.group4.vibeWrite.DraftSchema.Exception;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -10,7 +10,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @RestControllerAdvice
-public class GlobalExceptionHandler {
+public class GlobalExceptionHandler2 {
 
     @ExceptionHandler(InvalidDraftException.class)
     public ResponseEntity<?> handleInvalidDraft(InvalidDraftException ex) {

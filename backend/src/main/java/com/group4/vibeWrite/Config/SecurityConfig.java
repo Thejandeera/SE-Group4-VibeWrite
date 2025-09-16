@@ -46,7 +46,8 @@ public class SecurityConfig {
                         .requestMatchers("/api/users/register",
                                 "/api/users/login",
                                 "/api/gpa",
-                                "/api/hello").permitAll()
+                                "/api/hello",
+                                "/drafts").permitAll()
                         // secured endpoints
                       .anyRequest().authenticated()
                         // allow everything else

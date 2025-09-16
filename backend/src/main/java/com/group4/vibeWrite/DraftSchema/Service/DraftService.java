@@ -1,8 +1,8 @@
-package com.aiwritingapp.draft_schema_backend.Service;
+package com.group4.vibeWrite.DraftSchema.Service;
 
-import com.aiwritingapp.draft_schema_backend.Entity.Draft;
-import com.aiwritingapp.draft_schema_backend.Repository.DraftRepository;
-import com.aiwritingapp.draft_schema_backend.Exception.InvalidDraftException;
+import com.group4.vibeWrite.DraftSchema.Entity.Draft;
+import com.group4.vibeWrite.DraftSchema.Exception.InvalidDraftException;
+import com.group4.vibeWrite.DraftSchema.Repository.DraftRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
