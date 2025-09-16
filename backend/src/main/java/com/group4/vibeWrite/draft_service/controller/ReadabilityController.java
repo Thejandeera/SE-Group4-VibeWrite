@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/readability")
-@CrossOrigin(origins = "http://localhost:3000")
 public class ReadabilityController {
 
     @Autowired
