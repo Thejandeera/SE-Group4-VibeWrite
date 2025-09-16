@@ -5,6 +5,7 @@ import LoginPage from './Pages/Landing/LoginPage';
 import SignupPage from './Pages/Landing/SignupPage';
 import NavigationBar from './Components/NavigationBar';
 import Dashboard from './Pages/Dashboard';
+import ContentEditor from './Pages/ContentEditor';
 import Settings from './Pages/Settings';
 
 const Dummy = ({ text }) => (
@@ -28,6 +29,7 @@ const App = () => {
         <Routes>
           <Route path="/" element={<LandingPage />} />
           <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/content-editor" element={<ContentEditor />} />
           <Route path="/features" element={<Dummy text="Features Page" />} />
           <Route path="/pricing" element={<Dummy text="Pricing Page" />} />
           <Route path="/reviews" element={<Dummy text="Reviews Page" />} />
