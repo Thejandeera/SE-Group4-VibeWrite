@@ -43,10 +43,9 @@ public class SecurityConfig {
                 .authorizeHttpRequests(authz -> authz
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                         .requestMatchers(
-                                "/api/users/register",
-                                "/api/users/login",
+                                "/api/users/**",
                                 "/api/gpa",
-                                "/api/hello",
+                                "/api/hello/**",
                                 "/drafts",
                                 "/api/readability/**",
                                 "/api/analyze/**"
