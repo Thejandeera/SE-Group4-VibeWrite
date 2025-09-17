@@ -6,8 +6,8 @@ import SignupPage from './Pages/Landing/SignupPage';
 import NavigationBar from './Components/NavigationBar';
 import Dashboard from './Pages/Dashboard';
 import ContentEditor from './Pages/ContentEditor';
-import Settings from './Pages/Settings';
 import ReadabilityScoreEditor from './Pages/ReadabilityScoreEditor';
+import SettingsPage from './Pages/SettingsPage';
 
 const Dummy = ({ text }) => (
   <div style={{ padding: '4rem', textAlign: 'center', fontSize: '2rem' }}>{text}</div>
@@ -37,7 +37,7 @@ const App = () => {
           <Route path="/reviews" element={<Dummy text="Reviews Page" />} />
           <Route path="/signin" element={<LoginPage />} />
           <Route path="/get-started" element={<SignupPage />} />
-          <Route path="/profile" element={<Settings />} />
+          <Route path="/profile" element={<SettingsPage />} />
         </Routes>
       </div>
     </div>
