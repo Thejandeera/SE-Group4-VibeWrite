@@ -14,16 +14,16 @@ const Dummy = ({ text }) => (
 const App = () => {
   const location = useLocation();
 
-  // Paths where the NavigationBar should NOT be shown
+ 
   const hiddenNavPaths = ["/", "/signin", "/get-started"];
   const showNavigation = !hiddenNavPaths.includes(location.pathname);
 
   return (
     <div className="flex">
-      {/* Show navigation bar only when not in hidden paths */}
+     
       {showNavigation && <NavigationBar />}
 
-      {/* Main content area */}
+      
       <div className={`flex-1 ${showNavigation ? "lg:ml-64 pt-16 lg:pt-0" : ""}`}>
         <Routes>
           <Route path="/" element={<LandingPage />} />
