@@ -5,12 +5,14 @@ import {
   Settings, Moon, Languages, Save, Bell, CreditCard, Shield,
   Lock, Smartphone, Monitor, Download, AlertTriangle, CheckCircle, Globe
 } from 'lucide-react';
+const backendUrl = import.meta.env.VITE_BACKEND_URL;
 
 export default function SettingsPage() {
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState({ type: '', text: '' });
   const [userData, setUserData] = useState(null);
   const [profilePicture, setProfilePicture] = useState(null);
+  const [previewImage, setPreviewImage] = useState(null);
   
   const [formData, setFormData] = useState({
     username: '',
@@ -35,7 +37,7 @@ export default function SettingsPage() {
     confirmPassword: ''
   });
 
-  const API_BASE_URL = 'http://localhost:8080/api/users';
+ 
   
   const getAuthToken = () => {
     const token = sessionStorage.getItem('token');
@@ -59,7 +61,7 @@ export default function SettingsPage() {
 
   const fetchUserProfile = async () => {
     try {
-      const response = await axios.get(`${API_BASE_URL}/profile`, {
+      const response = await axios.get(`${backendUrl}/api/users/profile`, {
         headers: getAuthHeaders(),
         timeout: 10000
       });
@@ -144,12 +146,17 @@ export default function SettingsPage() {
         return;
       }
       setProfilePicture(file);
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setPreviewImage(reader.result);
+      };
+      reader.readAsDataURL(file);
     }
   };
 
   const checkBackendConnection = async () => {
     try {
-      await axios.get('http://localhost:8080/api/hello/hello', { timeout: 3000 });
+      await axios.get(`${backendUrl}/api/hello/hello`, { timeout: 3000 });
       return true;
     } catch (error) {
       return false;
@@ -168,50 +175,41 @@ export default function SettingsPage() {
       return;
     }
 
-    const isBackendConnected = await checkBackendConnection();
-    if (!isBackendConnected) {
-      showMessage('error', 'Unable to connect to server. Please make sure the backend is running on port 8080.');
-      return;
-    }
+    
 
     setLoading(true);
     try {
       const formDataObj = new FormData();
-      
       if (formData.username && formData.username.trim() !== '' && formData.username !== userData?.username) {
         formDataObj.append('username', formData.username.trim());
       }
-      
       if (profilePicture) {
         formDataObj.append('profilePicture', profilePicture);
       }
-
       const response = await axios.put(
-        `${API_BASE_URL}/profile`,
+        `${backendUrl}/api/users/profile`,
         formDataObj,
         {
           headers: getMultipartHeaders(),
           timeout: 10000
         }
       );
-
       const updatedUser = response.data;
       setUserData(updatedUser);
       sessionStorage.setItem('userData', JSON.stringify(updatedUser));
-      
       setFormData({
         username: updatedUser.username || '',
         email: updatedUser.email || ''
       });
-      
       showMessage('success', 'Profile updated successfully!');
       setProfilePicture(null);
-      
+      setPreviewImage(null);
+      setTimeout(() => {
+        window.location.reload();
+      }, 1200);
     } catch (error) {
       console.error('Profile update error:', error);
-      
       let errorMessage = 'Failed to update profile';
-      
       if (error.code === 'ERR_NETWORK') {
         errorMessage = 'Network error. Please check if the backend server is running.';
       } else if (error.response) {
@@ -219,7 +217,6 @@ export default function SettingsPage() {
       } else if (error.request) {
         errorMessage = 'No response from server. Please try again.';
       }
-      
       showMessage('error', errorMessage);
     } finally {
       setLoading(false);
@@ -236,16 +233,12 @@ export default function SettingsPage() {
       return;
     }
 
-    const isBackendConnected = await checkBackendConnection();
-    if (!isBackendConnected) {
-      showMessage('error', 'Unable to connect to server. Please make sure the backend is running on port 8080.');
-      return;
-    }
+    
 
     setLoading(true);
     try {
       await axios.put(
-        `${API_BASE_URL}/change-password`,
+        `${backendUrl}/api/users/change-password`,
         {
           current_password: security.currentPassword,
           new_password: security.newPassword
@@ -255,31 +248,24 @@ export default function SettingsPage() {
           timeout: 10000
         }
       );
-
-      showMessage('success', 'Password changed successfully! Refreshing page...');
+      showMessage('success', 'Password changed successfully! Refreshing website...');
       setSecurity({
         ...security,
         currentPassword: '',
         newPassword: '',
         confirmPassword: ''
       });
-      
-      // Full page refresh after successful password change
       setTimeout(() => {
         window.location.reload();
-      }, 2000);
-      
+      }, 1200);
     } catch (error) {
       console.error('Password change error:', error);
-      
       let errorMessage = 'Failed to change password';
-      
       if (error.code === 'ERR_NETWORK') {
         errorMessage = 'Network error. Please check if the backend server is running.';
       } else if (error.response) {
         errorMessage = error.response.data?.message || `Server error: ${error.response.status}`;
       }
-      
       showMessage('error', errorMessage);
     } finally {
       setLoading(false);
@@ -292,11 +278,7 @@ export default function SettingsPage() {
       return;
     }
 
-    const isBackendConnected = await checkBackendConnection();
-    if (!isBackendConnected) {
-      showMessage('error', 'Unable to connect to server. Please make sure the backend is running on port 8080.');
-      return;
-    }
+    
 
     setLoading(true);
     try {
@@ -304,33 +286,29 @@ export default function SettingsPage() {
       if (userData.username) {
         formDataObj.append('username', userData.username);
       }
-
       const response = await axios.put(
-        `${API_BASE_URL}/profile`,
+        `${backendUrl}/api/users/profile`,
         formDataObj,
         {
           headers: getMultipartHeaders(),
           timeout: 10000
         }
       );
-
       const updatedUser = { ...response.data, profile_picture_url: null };
       setUserData(updatedUser);
       sessionStorage.setItem('userData', JSON.stringify(updatedUser));
-      
       showMessage('success', 'Profile picture removed successfully!');
-      
+      setTimeout(() => {
+        window.location.reload();
+      }, 1200);
     } catch (error) {
       console.error('Remove profile picture error:', error);
-      
       let errorMessage = 'Failed to remove profile picture';
-      
       if (error.code === 'ERR_NETWORK') {
         errorMessage = 'Network error. Please check if the backend server is running.';
       } else if (error.response) {
         errorMessage = error.response.data?.message || `Server error: ${error.response.status}`;
       }
-      
       showMessage('error', errorMessage);
     } finally {
       setLoading(false);
@@ -430,7 +408,7 @@ export default function SettingsPage() {
       <MessageAlert message={message} />
       
       <div className="container mx-auto px-6 py-8 max-w-7xl">
-        {/* Header Section */}
+       
         <div className="flex items-center justify-between mb-8">
           <div className="animate-fade-in">
             <h1 className="text-4xl font-bold bg-gradient-to-r from-white via-gray-100 to-gray-300 bg-clip-text text-transparent">
@@ -448,7 +426,7 @@ export default function SettingsPage() {
           </div>
         </div>
 
-        {/* Stats Grid */}
+       
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
           {stats.map((stat, index) => (
             <div key={index} style={{ animationDelay: `${index * 0.1}s` }} className="animate-fade-in-up">
@@ -457,48 +435,54 @@ export default function SettingsPage() {
           ))}
         </div>
 
-        {/* Main Content Grid */}
+        
         <div className="grid grid-cols-1 xl:grid-cols-2 gap-8">
           
-          {/* Left Column */}
+         
           <div className="space-y-8">
             
-            {/* Profile Section */}
-            <div className="bg-gray-800/30 backdrop-blur-sm rounded-2xl border border-gray-700/50 p-8 animate-fade-in h-fit">
+            
+            <div className="bg-gray-800/30 backdrop-blur-sm rounded-2xl border border-gray-700/50 p-8 animate-fade-in flex flex-col h-auto min-h-[600px]">
               <div className="flex items-center gap-2 mb-8">
                 <User className="w-5 h-5 text-gray-400" />
                 <h2 className="text-xl font-semibold">Personal Information</h2>
               </div>
               
-              {/* Profile Picture Section */}
-              <div className="flex items-center gap-6 mb-8 p-6 bg-gray-800/50 rounded-2xl border border-gray-700/30">
-                <div className="relative group">
-                  <div className="w-20 h-20 bg-gradient-to-br from-gray-700 to-gray-800 rounded-full flex items-center justify-center text-2xl font-bold border-2 border-gray-600 group-hover:border-blue-500 transition-all duration-300 overflow-hidden">
-                    {userData?.profile_picture_url ? (
-                      <img 
-                        src={userData.profile_picture_url} 
-                        alt="Profile" 
-                        className="w-full h-full object-cover rounded-full"
-                        onError={(e) => {
-                          e.target.style.display = 'none';
-                          e.target.nextSibling.style.display = 'flex';
-                        }}
-                      />
-                    ) : (
-                      <span className="text-white">
-                        {formData.username ? formData.username.charAt(0).toUpperCase() : 'U'}
-                      </span>
-                    )}
+              
+              <div className="flex flex-col sm:flex-row sm:items-center gap-6 mb-8 p-4 sm:p-6 bg-gray-800/50 rounded-2xl border border-gray-700/30 w-full">
+                  <div className="relative group flex-shrink-0 mx-auto sm:mx-0">
+                    <div className="w-24 h-24 sm:w-20 sm:h-20 bg-gradient-to-br from-gray-700 to-gray-800 rounded-full flex items-center justify-center text-2xl font-bold border-2 border-gray-600 group-hover:border-blue-500 transition-all duration-300 overflow-hidden">
+                      {previewImage ? (
+                        <img 
+                          src={previewImage}
+                          alt="Preview"
+                          className="w-full h-full object-cover rounded-full"
+                        />
+                      ) : userData?.profile_picture_url ? (
+                        <img 
+                          src={userData.profile_picture_url} 
+                          alt="Profile" 
+                          className="w-full h-full object-cover rounded-full"
+                          onError={(e) => {
+                            e.target.style.display = 'none';
+                            e.target.nextSibling && (e.target.nextSibling.style.display = 'flex');
+                          }}
+                        />
+                      ) : (
+                        <span className="text-white text-3xl sm:text-2xl">
+                          {formData.username ? formData.username.charAt(0).toUpperCase() : 'U'}
+                        </span>
+                      )}
+                    </div>
+                    <div className="absolute inset-0 bg-blue-500/20 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
+                      <Camera className="w-6 h-6 text-blue-400" />
+                    </div>
                   </div>
-                  <div className="absolute inset-0 bg-blue-500/20 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
-                    <Camera className="w-6 h-6 text-blue-400" />
-                  </div>
-                </div>
-                <div className="flex-1">
+                <div className="flex-1 w-full">
                   <h3 className="font-semibold mb-2">Profile Photo</h3>
                   <p className="text-gray-400 text-sm mb-4">Upload a new profile photo or remove the current one</p>
-                  <div className="flex gap-3">
-                    <label className="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-xl transition-all duration-300 hover:scale-105 text-sm font-medium cursor-pointer">
+                  <div className="flex flex-col sm:flex-row gap-3 w-full">
+                    <label className="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-xl transition-all duration-300 hover:scale-105 text-sm font-medium cursor-pointer w-full sm:w-auto justify-center">
                       <Upload className="w-4 h-4" />
                       Upload New
                       <input
@@ -512,7 +496,7 @@ export default function SettingsPage() {
                       <button 
                         onClick={removeProfilePicture}
                         disabled={loading}
-                        className="flex items-center gap-2 px-4 py-2 bg-gray-700 hover:bg-gray-600 rounded-xl transition-all duration-300 hover:scale-105 text-sm font-medium disabled:opacity-50"
+                        className="flex items-center gap-2 px-4 py-2 bg-gray-700 hover:bg-gray-600 rounded-xl transition-all duration-300 hover:scale-105 text-sm font-medium disabled:opacity-50 w-full sm:w-auto justify-center"
                       >
                         <X className="w-4 h-4" />
                         Remove
@@ -520,13 +504,13 @@ export default function SettingsPage() {
                     )}
                   </div>
                   {profilePicture && (
-                    <p className="text-green-400 text-sm mt-2">Selected: {profilePicture.name}</p>
+                    <p className="text-green-400 text-sm mt-2 break-all">Selected: {profilePicture.name}</p>
                   )}
                 </div>
               </div>
 
-              {/* Form Fields */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8 flex-grow">
                 <div className="space-y-2">
                   <label className="text-sm font-medium text-gray-300">Username</label>
                   <div className="relative">
@@ -556,8 +540,8 @@ export default function SettingsPage() {
                 </div>
               </div>
 
-              {/* Profile Actions */}
-              <div className="flex items-center gap-4">
+              
+              <div className="flex items-center gap-4 mt-auto">
                 <button 
                   onClick={updateProfile}
                   disabled={loading || !hasProfileChanges}
@@ -580,14 +564,14 @@ export default function SettingsPage() {
               </div>
             </div>
 
-            {/* Security Section */}
-            <div className="bg-gray-800/30 backdrop-blur-sm rounded-2xl border border-gray-700/50 p-8 animate-fade-in h-fit">
+            
+            <div className="bg-gray-800/30 backdrop-blur-sm rounded-2xl border border-gray-700/50 p-8 animate-fade-in flex flex-col h-auto min-h-[600px]">
               <div className="flex items-center gap-2 mb-8">
                 <Shield className="w-5 h-5 text-gray-400" />
                 <h2 className="text-xl font-semibold">Security Settings</h2>
               </div>
               
-              {/* Two-Factor Auth */}
+              
               <div className="flex items-center justify-between p-6 bg-gray-800/50 rounded-2xl border border-gray-700/30 hover:border-gray-600/50 transition-all duration-300 mb-6">
                 <div className="flex items-center gap-4">
                   <Lock className="w-6 h-6 text-gray-400" />
@@ -602,8 +586,8 @@ export default function SettingsPage() {
                 />
               </div>
 
-              {/* Password Change */}
-              <div className="bg-gray-800/50 rounded-2xl border border-gray-700/30 p-6">
+              
+              <div className="bg-gray-800/50 rounded-2xl border border-gray-700/30 p-6 flex-grow">
                 <h3 className="font-semibold mb-6">Change Password</h3>
                 <div className="space-y-4">
                   <div>
@@ -653,17 +637,56 @@ export default function SettingsPage() {
             </div>
           </div>
 
-          {/* Right Column */}
+            
+            <div className="bg-gray-800/30 backdrop-blur-sm rounded-2xl border border-gray-700/50 p-8 animate-fade-in flex flex-col h-auto min-h-[600px]">
+              <div className="flex items-center gap-2 mb-8">
+                <Monitor className="w-5 h-5 text-gray-400" />
+                <h2 className="text-xl font-semibold">Active Sessions</h2>
+              </div>
+              <div className="space-y-4 flex-grow">
+                {activeSessions.map((session, index) => (
+                  <div key={index} className="p-6 bg-gray-800/50 rounded-xl border border-gray-700/30 hover:border-gray-600/50 transition-all duration-300">
+                    <div className="flex items-start justify-between mb-4">
+                      <div className="flex items-center gap-4">
+                        <div className="relative">
+                          <div className="w-12 h-12 bg-gray-700 rounded-full flex items-center justify-center">
+                            {getDeviceIcon(session.device)}
+                          </div>
+                          {session.current && <div className="absolute -top-1 -right-1 w-3 h-3 bg-green-500 rounded-full"></div>}
+                        </div>
+                        <div>
+                          <div className="font-medium flex items-center gap-2 mb-2">
+                            {session.device}
+                            {session.current && <span className="text-xs bg-blue-600/20 text-blue-400 px-2 py-1 rounded border border-blue-500/30">Current</span>}
+                          </div>
+                        </div>
+                      </div>
+                      {!session.current && (
+                        <button className="flex items-center gap-2 px-3 py-2 bg-red-600/20 text-red-400 border border-red-500/30 hover:bg-red-600/30 rounded-lg font-medium transition-all duration-300 text-sm">
+                          <AlertTriangle className="w-4 h-4" />
+                          Revoke
+                        </button>
+                      )}
+                    </div>
+                    <div className="text-gray-400 text-sm">{session.location}</div>
+                    <div className="text-gray-500 text-xs mt-1">{session.status}</div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+
+         
           <div className="space-y-8">
             
-            {/* Preferences Section */}
-            <div className="bg-gray-800/30 backdrop-blur-sm rounded-2xl border border-gray-700/50 p-8 animate-fade-in h-fit">
+            
+            <div className="bg-gray-800/30 backdrop-blur-sm rounded-2xl border border-gray-700/50 p-8 animate-fade-in flex flex-col h-auto min-h-[600px]">
               <div className="flex items-center gap-2 mb-8">
                 <Settings className="w-5 h-5 text-gray-400" />
                 <h2 className="text-xl font-semibold">App Preferences</h2>
               </div>
               
-              <div className="space-y-6 mb-8">
+              <div className="space-y-6 mb-8 flex-grow">
                 <div className="flex items-center justify-between p-6 bg-gray-800/50 rounded-2xl border border-gray-700/30 hover:border-gray-600/50 transition-all duration-300">
                   <div className="flex items-center gap-4">
                     <Moon className="w-6 h-6 text-gray-400" />
@@ -711,7 +734,7 @@ export default function SettingsPage() {
                 </div>
               </div>
 
-              {/* Notifications */}
+              
               <div className="mb-8">
                 <div className="flex items-center gap-2 mb-6">
                   <Bell className="w-5 h-5 text-gray-400" />
@@ -735,14 +758,14 @@ export default function SettingsPage() {
               </div>
             </div>
 
-            {/* Billing Section */}
-            <div className="bg-gray-800/30 backdrop-blur-sm rounded-2xl border border-gray-700/50 p-8 animate-fade-in h-fit">
+            
+            <div className="bg-gray-800/30 backdrop-blur-sm rounded-2xl border border-gray-700/50 p-8 animate-fade-in flex flex-col h-auto min-h-[600px]">
               <div className="flex items-center gap-2 mb-8">
                 <CreditCard className="w-5 h-5 text-gray-400" />
                 <h2 className="text-xl font-semibold">Subscription Plan</h2>
               </div>
               
-              {/* Current Plan */}
+             
               <div className="bg-gradient-to-r from-yellow-600/20 to-orange-600/20 rounded-2xl p-6 border border-yellow-500/30 mb-8">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-4">
@@ -762,8 +785,8 @@ export default function SettingsPage() {
                 </div>
               </div>
 
-              {/* Usage Stats */}
-              <div className="mb-8">
+             
+              <div className="mb-8 flex-grow">
                 <div className="flex items-center justify-between mb-4">
                   <h3 className="font-semibold">Current billing period usage</h3>
                   <span className="text-blue-400 font-medium">68% used</span>
@@ -772,7 +795,7 @@ export default function SettingsPage() {
                   <div className="bg-gradient-to-r from-blue-500 to-purple-500 h-2 rounded-full" style={{ width: '68%' }}></div>
                 </div>
                 
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+                <div className="grid grid-cols-1 gap-4 mb-6">
                   <div className="text-center">
                     <div className="text-2xl font-bold text-blue-400">850 / 1000</div>
                     <div className="text-gray-400 text-sm">AI Suggestions</div>
@@ -787,7 +810,7 @@ export default function SettingsPage() {
                   </div>
                 </div>
                 
-                <div className="flex gap-4">
+                <div className="flex gap-4 mb-6">
                   <button className="flex-1 py-3 bg-gray-700 hover:bg-gray-600 rounded-xl font-medium transition-all duration-300 hover:scale-105">
                     Change Plan
                   </button>
@@ -795,72 +818,36 @@ export default function SettingsPage() {
                     Cancel Subscription
                   </button>
                 </div>
-              </div>
 
-              {/* Billing History */}
-              <div>
-                <h3 className="font-semibold mb-6">Billing History</h3>
-                <div className="space-y-4">
-                  {billingHistory.map((item, index) => (
-                    <div key={index} className="flex items-center justify-between p-4 bg-gray-800/50 rounded-xl border border-gray-700/30 hover:border-gray-600/50 transition-all duration-300">
-                      <div>
-                        <div className="font-medium">{item.date}</div>
-                        <div className="text-gray-400 text-sm">{item.description}</div>
+                
+                <div>
+                  <h3 className="font-semibold mb-6">Billing History</h3>
+                  <div className="space-y-4">
+                    {billingHistory.map((item, index) => (
+                      <div key={index} className="flex items-center justify-between p-4 bg-gray-800/50 rounded-xl border border-gray-700/30 hover:border-gray-600/50 transition-all duration-300">
+                        <div>
+                          <div className="font-medium">{item.date}</div>
+                          <div className="text-gray-400 text-sm">{item.description}</div>
+                        </div>
+                        <div className="flex items-center gap-4">
+                          <span className="font-bold">{item.amount}</span>
+                          <span className="bg-green-600/20 text-green-400 px-2 py-1 rounded text-xs font-medium border border-green-500/30">
+                            {item.status}
+                          </span>
+                          <button className="p-2 hover:bg-gray-700 rounded-lg transition-colors duration-200">
+                            <Download className="w-4 h-4 text-gray-400" />
+                          </button>
+                        </div>
                       </div>
-                      <div className="flex items-center gap-4">
-                        <span className="font-bold">{item.amount}</span>
-                        <span className="bg-green-600/20 text-green-400 px-2 py-1 rounded text-xs font-medium border border-green-500/30">
-                          {item.status}
-                        </span>
-                        <button className="p-2 hover:bg-gray-700 rounded-lg transition-colors duration-200">
-                          <Download className="w-4 h-4 text-gray-400" />
-                        </button>
-                      </div>
-                    </div>
-                  ))}
+                    ))}
+                  </div>
                 </div>
               </div>
             </div>
           </div>
-        </div>
-
-        {/* Active Sessions Section - Full Width */}
-        <div className="bg-gray-800/30 backdrop-blur-sm rounded-2xl border border-gray-700/50 p-8 animate-fade-in mt-8">
-          <div className="flex items-center gap-2 mb-8">
-            <Monitor className="w-5 h-5 text-gray-400" />
-            <h2 className="text-xl font-semibold">Active Sessions</h2>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {activeSessions.map((session, index) => (
-              <div key={index} className="flex items-center justify-between p-4 bg-gray-800/50 rounded-xl border border-gray-700/30 hover:border-gray-600/50 transition-all duration-300">
-                <div className="flex items-center gap-4">
-                  <div className="relative">
-                    <div className="w-10 h-10 bg-gray-700 rounded-full flex items-center justify-center">
-                      {getDeviceIcon(session.device)}
-                    </div>
-                    {session.current && <div className="absolute -top-1 -right-1 w-3 h-3 bg-green-500 rounded-full"></div>}
-                  </div>
-                  <div>
-                    <div className="font-medium flex items-center gap-2">
-                      {session.device}
-                      {session.current && <span className="text-xs bg-blue-600/20 text-blue-400 px-2 py-1 rounded border border-blue-500/30">Current</span>}
-                    </div>
-                    <div className="text-gray-400 text-sm">{session.location} • {session.status}</div>
-                  </div>
-                </div>
-                {!session.current && (
-                  <button className="flex items-center gap-2 px-3 py-2 bg-red-600/20 text-red-400 border border-red-500/30 hover:bg-red-600/30 rounded-lg font-medium transition-all duration-300 text-sm">
-                    <AlertTriangle className="w-4 h-4" />
-                    Revoke
-                  </button>
-                )}
-              </div>
-            ))}
-          </div>
-        </div>
       </div>
 
-      {/* CSS Animations */}
+      
       <style jsx>{`
         @keyframes fade-in {
           from { opacity: 0; transform: translateY(20px); }
