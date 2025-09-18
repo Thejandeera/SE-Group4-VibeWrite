@@ -57,10 +57,10 @@ export default function TestimonialsAndFooter() {
 
   return (
     <div className="bg-black text-white">
-      {/* Testimonials Section */}
+
       <div className="py-16 sm:py-20 lg:py-24 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto">
-          {/* Header */}
+      
           <div className="text-center mb-12 sm:mb-16 lg:mb-20">
             <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-4 sm:mb-6">
               Loved by Writers Everywhere
@@ -70,24 +70,24 @@ export default function TestimonialsAndFooter() {
             </p>
           </div>
 
-          {/* Testimonials Grid */}
+       
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
             {testimonials.map((testimonial, index) => (
               <div
                 key={index}
                 className="bg-gray-900/50 backdrop-blur-sm border border-gray-800/50 rounded-xl p-6 sm:p-8 hover:bg-gray-800/50 hover:border-gray-700/50 transition-all duration-300"
               >
-                {/* Stars */}
+            
                 <div className="flex items-center mb-4">
                   {renderStars(testimonial.rating)}
                 </div>
 
-                {/* Quote */}
+           
                 <blockquote className="text-gray-300 mb-6 leading-relaxed">
                   "{testimonial.text}"
                 </blockquote>
 
-                {/* Author */}
+         
                 <div className="flex items-center">
                   <div className="w-10 h-10 bg-gradient-to-br from-purple-600 to-blue-600 rounded-full flex items-center justify-center text-white font-semibold text-sm mr-3">
                     {testimonial.initials}
@@ -107,11 +107,11 @@ export default function TestimonialsAndFooter() {
         </div>
       </div>
 
-      {/* Footer */}
+  
       <footer className="border-t border-gray-800/50 py-12 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto">
           <div className="grid grid-cols-1 lg:grid-cols-4 gap-8 lg:gap-12">
-            {/* Brand Section */}
+
             <div className="lg:col-span-1">
               <div className="flex items-center space-x-2 mb-4">
                 <div className="w-8 h-8 bg-gradient-to-br from-purple-500 to-blue-500 rounded-lg flex items-center justify-center">
@@ -126,7 +126,6 @@ export default function TestimonialsAndFooter() {
               </p>
             </div>
 
-            {/* Footer Links */}
             {Object.entries(footerLinks).map(([category, links]) => (
               <div key={category}>
                 <h3 className="font-semibold text-white mb-4">{category}</h3>
@@ -146,7 +145,7 @@ export default function TestimonialsAndFooter() {
             ))}
           </div>
 
-          {/* Copyright */}
+         
           <div className="mt-12 pt-8 border-t border-gray-800/50 text-center">
             <p className="text-gray-400">
               © 2025 WriteAI. All rights reserved.
