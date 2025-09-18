@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { ArrowLeft, Mail, Lock, Github, Eye, EyeOff, CheckCircle, XCircle, User, Sparkles } from 'lucide-react';
 import { useNavigate } from 'react-router-dom'; 
 const backendUrl = import.meta.env.VITE_BACKEND_URL;
+import Navbar from '../../Components/LandingPage/Navbar';
 
 const LoginPage = () => {
   const [email, setEmail] = useState('');

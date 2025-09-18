@@ -3,7 +3,7 @@ import { Sparkles, ArrowRight } from 'lucide-react';
 
 export default function HeroSection() {
   return (
-    <div className="bg-black text-white min-h-screen flex flex-col items-center justify-center px-4 sm:px-6 lg:px-8 py-12 relative overflow-hidden">
+    <div className="bg-black text-white min-h-screen flex flex-col items-center justify-center px-4 sm:px-6 lg:px-8  pt-35 py-12 relative overflow-hidden">
       {/* Background Pattern/Gradient */}
       <div className="absolute inset-0 bg-gradient-to-br from-black via-gray-900 to-black opacity-50"></div>
       

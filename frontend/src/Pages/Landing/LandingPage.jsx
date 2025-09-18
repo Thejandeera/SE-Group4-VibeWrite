@@ -7,7 +7,7 @@ import TestimonialsAndFooter from '../../Components/LandingPage/TestimonialsAndF
 
 const LandingPage = () => {
   return (
-    <div>
+    <div  >
       <Navbar />
       <HeroSection />
       <FeaturesSection />
