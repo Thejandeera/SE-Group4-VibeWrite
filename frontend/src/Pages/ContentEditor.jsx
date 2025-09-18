@@ -31,18 +31,42 @@ const ContentEditor = () => {
       <div className="max-w-5xl mx-auto">
         <h1 className="text-2xl font-semibold mb-4">Content Editor</h1>
 
-        <div className="flex gap-2 flex-wrap mb-3">
-          <button className={toolbarButtonClass} onClick={() => exec('bold')}><strong>B</strong></button>
-          <button className={toolbarButtonClass} onClick={() => exec('italic')}><em>I</em></button>
-          <button className={toolbarButtonClass} onClick={() => exec('underline')}><u>U</u></button>
-          <button className={toolbarButtonClass} onClick={() => exec('strikeThrough')}><span className="line-through">S</span></button>
-          <span className="mx-2" />
-          <button className={toolbarButtonClass} onClick={() => exec('insertUnorderedList')}>• List</button>
-          <button className={toolbarButtonClass} onClick={() => exec('insertOrderedList')}>1. List</button>
-          <span className="mx-2" />
-          <button className={toolbarButtonClass} onClick={() => exec('formatBlock', 'H1')}>H1</button>
-          <button className={toolbarButtonClass} onClick={() => exec('formatBlock', 'H2')}>H2</button>
-          <button className={toolbarButtonClass} onClick={() => exec('formatBlock', 'P')}>P</button>
+        <div className="mb-3 flex flex-wrap items-center gap-1">
+          <div className="inline-flex items-center gap-1 rounded-full border border-gray-200 bg-white/70 px-2 py-1 shadow-sm backdrop-blur supports-[backdrop-filter]:bg-white/50">
+            <button title="Bold" className="rounded-full px-3 py-1 text-sm font-medium text-gray-700 hover:bg-gray-100 active:scale-[0.98] transition" onClick={() => exec('bold')}>
+              <strong>B</strong>
+            </button>
+            <button title="Italic" className="rounded-full px-3 py-1 text-sm text-gray-700 hover:bg-gray-100 active:scale-[0.98] transition" onClick={() => exec('italic')}>
+              <em>I</em>
+            </button>
+            <button title="Underline" className="rounded-full px-3 py-1 text-sm text-gray-700 hover:bg-gray-100 active:scale-[0.98] transition" onClick={() => exec('underline')}>
+              <u>U</u>
+            </button>
+            <button title="Strikethrough" className="rounded-full px-3 py-1 text-sm text-gray-700 hover:bg-gray-100 active:scale-[0.98] transition" onClick={() => exec('strikeThrough')}>
+              <span className="line-through">S</span>
+            </button>
+
+            <span className="mx-1 h-5 w-px bg-gray-200" />
+
+            <button title="Bulleted List" className="rounded-full px-3 py-1 text-sm text-gray-700 hover:bg-gray-100 active:scale-[0.98] transition" onClick={() => exec('insertUnorderedList')}>
+              • List
+            </button>
+            <button title="Numbered List" className="rounded-full px-3 py-1 text-sm text-gray-700 hover:bg-gray-100 active:scale-[0.98] transition" onClick={() => exec('insertOrderedList')}>
+              1. List
+            </button>
+
+            <span className="mx-1 h-5 w-px bg-gray-200" />
+
+            <button title="Heading 1" className="rounded-full px-3 py-1 text-sm text-gray-700 hover:bg-gray-100 active:scale-[0.98] transition" onClick={() => exec('formatBlock', 'H1')}>
+              H1
+            </button>
+            <button title="Heading 2" className="rounded-full px-3 py-1 text-sm text-gray-700 hover:bg-gray-100 active:scale-[0.98] transition" onClick={() => exec('formatBlock', 'H2')}>
+              H2
+            </button>
+            <button title="Paragraph" className="rounded-full px-3 py-1 text-sm text-gray-700 hover:bg-gray-100 active:scale-[0.98] transition" onClick={() => exec('formatBlock', 'P')}>
+              P
+            </button>
+          </div>
         </div>
 
         <div className="relative">
