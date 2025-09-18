@@ -45,18 +45,24 @@ const ContentEditor = () => {
           <button className={toolbarButtonClass} onClick={() => exec('formatBlock', 'P')}>P</button>
         </div>
 
-        <div
-          ref={editorRef}
-          className="min-h-80 border rounded p-4 focus:outline-none bg-white"
-          contentEditable
-          spellCheck={true}
-          lang="en"
-          onInput={onInput}
-          suppressContentEditableWarning
-          role="textbox"
-          aria-multiline="true"
-        >
-          Start writing here...
+        <div className="relative">
+          {(!plainText || plainText.trim().length === 0) && (
+            <span className="pointer-events-none absolute left-4 top-4 text-gray-400 select-none">
+              Start writing here...
+            </span>
+          )}
+          <div
+            ref={editorRef}
+            className="min-h-80 border rounded p-4 focus:outline-none bg-white"
+            contentEditable
+            spellCheck={true}
+            lang="en"
+            onInput={onInput}
+            suppressContentEditableWarning
+            role="textbox"
+            aria-multiline="true"
+            aria-label="Rich text editor"
+          />
         </div>
 
         <div className="mt-2 text-xs text-gray-500">Spelling mistakes are underlined by your browser.</div>
