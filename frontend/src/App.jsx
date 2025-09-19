@@ -8,10 +8,9 @@ import Dashboard from './Pages/Dashboard';
 import ContentEditor from './Pages/ContentEditor';
 import ReadabilityScoreEditor from './Pages/ReadabilityScoreEditor';
 import SettingsPage from './Pages/SettingsPage';
+import NotificationSystem from './Pages/NotificationSystem';
 
-const Dummy = ({ text }) => (
-  <div style={{ padding: '4rem', textAlign: 'center', fontSize: '2rem' }}>{text}</div>
-);
+
 
 const App = () => {
   const location = useLocation();
@@ -38,6 +37,7 @@ const App = () => {
           <Route path="/signin" element={<LoginPage />} />
           <Route path="/get-started" element={<SignupPage />} />
           <Route path="/profile" element={<SettingsPage />} />
+          <Route path="/notifications" element={<NotificationSystem />} />
         </Routes>
       </div>
     </div>

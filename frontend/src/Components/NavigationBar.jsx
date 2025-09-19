@@ -1,18 +1,20 @@
 import React, { useState, useEffect } from 'react';
-import { 
-  LayoutDashboard, 
-  Edit3, 
-  TrendingUp, 
-  CheckCircle2, 
-  Bell, 
-  FileText, 
-  User, 
-  HelpCircle, 
+import {
+  LayoutDashboard,
+  Edit3,
+  TrendingUp,
+  CheckCircle2,
+  Bell,
+  FileText,
+  User,
+  HelpCircle,
   LogOut,
   Menu,
   X,
   Crown
 } from 'lucide-react';
+
+const backendUrl = import.meta.env.VITE_BACKEND_URL;
 
 const NavigationBar = () => {
   const [userData, setUserData] = useState(null);
@@ -20,7 +22,7 @@ const NavigationBar = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [activeItem, setActiveItem] = useState('Dashboard');
   const [currentPath, setCurrentPath] = useState(window.location.pathname);
-  const backendUrl = import.meta.env.VITE_BACKEND_URL;
+  // backendUrl is already defined at the top
 
   const fetchUserProfile = async () => {
     try {
@@ -76,13 +78,76 @@ const NavigationBar = () => {
     }
   }, [currentPath]);
 
+  const getUserIdFromSession = () => {
+  try {
+    const userData = JSON.parse(sessionStorage.getItem("userData"));
+    return userData?.id || null;
+  } catch (error) {
+    console.error("Failed to parse userData from sessionStorage:", error);
+    return null;
+  }
+};
+
+const fetchUnreadCount = async () => {
+  try {
+    if (!backendUrl) return 0;
+
+    const userId = getUserIdFromSession();   // ✅ assign userId here
+    if (!userId) {
+      console.warn("No userId found in session storage");
+      return 0;
+    }
+
+    const token = sessionStorage.getItem("token");
+
+    const response = await fetch(
+      console.log("Fetching unread count for userId:", userId),
+      `${backendUrl}/api/v1/notifications/user/${userId}/unread-count`,
+      {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+    console.log("Unread count response status:", response.status);
+
+    if (!response.ok) {
+      throw new Error("Failed to fetch notification count");
+    }
+
+    const data = await response.json();
+    return data.count || 0;
+  } catch (error) {
+    console.error("Error fetching notification count:", error);
+    return 0;
+  }
+};
+
+
+
+  const [unreadCount, setUnreadCount] = useState(0);
+
+  useEffect(() => {
+    const userId = getUserIdFromSession();
+    if (userId) {
+      fetchUnreadCount(userId).then((count) => setUnreadCount(count));
+    } else {
+      setUnreadCount(0);
+    }
+  }, [userData]);
   const navigationItems = [
     { name: 'Dashboard', icon: LayoutDashboard, path: '/dashboard' },
     { name: 'Content Editor', icon: Edit3, path: '/content-editor' },
     { name: 'SEO Tools', icon: TrendingUp, path: '/seo-tools', badge: 'New', badgeColor: 'bg-green-500' },
     { name: 'Grammar Check', icon: CheckCircle2, path: '/grammar-check' },
     { name: 'Readability Score', icon: FileText, path: '/readability-score' },
-    { name: 'Notifications', icon: Bell, path: '/notifications', badge: '3', badgeColor: 'bg-blue-500' },
+    {
+      name: "Notifications",
+      icon: Bell,
+      path: "/notifications",
+      badge: unreadCount > 0 ? unreadCount.toString() : null,
+      badgeColor: "bg-blue-500",
+    }, ,
   ];
 
   const quickActions = [
@@ -130,7 +195,7 @@ const NavigationBar = () => {
 
   const ProfileAvatar = ({ size = "w-8 h-8", textSize = "text-xs" }) => {
     const [imageError, setImageError] = useState(false);
-    
+
     if (userData?.profile_picture_url && !imageError) {
       return (
         <img
@@ -141,7 +206,7 @@ const NavigationBar = () => {
         />
       );
     }
-    
+
     return (
       <div className={`${size} bg-blue-600 rounded-full flex items-center justify-center text-white font-medium ${textSize}`}>
         {getInitials(userData?.username, userData?.email)}
@@ -159,7 +224,7 @@ const NavigationBar = () => {
             <div className="h-4 bg-gray-700 rounded w-20"></div>
           </div>
         </div>
-        
+
         {/* Desktop Loading Sidebar */}
         <div className="hidden lg:block fixed left-0 top-0 h-full w-64 bg-[#171717] border-r border-gray-800 p-4 z-[50]">
           <div className="animate-pulse">
@@ -211,7 +276,7 @@ const NavigationBar = () => {
 
       {/* Mobile Menu Overlay */}
       {isMobileMenuOpen && (
-        <div 
+        <div
           className="fixed inset-0 bg-black bg-opacity-60 z-[55] lg:hidden backdrop-blur-sm"
           onClick={() => setIsMobileMenuOpen(false)}
         />
@@ -221,8 +286,8 @@ const NavigationBar = () => {
       <div className={`
         lg:hidden fixed left-0 right-0 top-16 bg-[#171717] border-b border-gray-800 z-[58] 
         transform transition-all duration-300 ease-out shadow-2xl backdrop-blur-md bg-opacity-95
-        ${isMobileMenuOpen 
-          ? 'translate-y-0 opacity-100 max-h-screen' 
+        ${isMobileMenuOpen
+          ? 'translate-y-0 opacity-100 max-h-screen'
           : '-translate-y-full opacity-0 max-h-0'
         }
         overflow-hidden
@@ -260,8 +325,8 @@ const NavigationBar = () => {
                   className={`
                     w-full flex items-center gap-4 px-4 py-3 rounded-xl text-left
                     transition-all duration-200 group relative
-                    ${activeItem === item.name 
-                      ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/30 transform scale-[1.02]' 
+                    ${activeItem === item.name
+                      ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/30 transform scale-[1.02]'
                       : 'text-gray-300 hover:bg-gray-800 hover:text-white hover:transform hover:scale-[1.01] active:scale-95'
                     }
                   `}
@@ -295,8 +360,8 @@ const NavigationBar = () => {
                   onClick={() => handleNavClick(item)}
                   className={`
                     w-full flex items-center gap-4 px-4 py-3 rounded-xl transition-all duration-200 relative
-                    ${activeItem === item.name 
-                      ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/30 transform scale-[1.02]' 
+                    ${activeItem === item.name
+                      ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/30 transform scale-[1.02]'
                       : 'text-gray-300 hover:bg-gray-800 hover:text-white hover:transform hover:scale-[1.01] active:scale-95'
                     }
                   `}
@@ -321,8 +386,8 @@ const NavigationBar = () => {
                   onClick={() => handleNavClick(item)}
                   className={`
                     w-full flex items-center gap-4 px-4 py-3 rounded-xl transition-all duration-200 relative
-                    ${activeItem === item.name 
-                      ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/30 transform scale-[1.02]' 
+                    ${activeItem === item.name
+                      ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/30 transform scale-[1.02]'
                       : 'text-gray-300 hover:bg-gray-800 hover:text-white hover:transform hover:scale-[1.01] active:scale-95'
                     }
                   `}
@@ -334,14 +399,14 @@ const NavigationBar = () => {
                   )}
                 </button>
               ))}
-              
+
               {/* Logout Button */}
               <button
                 onClick={handleLogout}
                 className={`
                   w-full flex items-center gap-4 px-4 py-3 rounded-xl transition-all duration-200 relative mt-2
-                  ${activeItem === 'Logout' 
-                    ? 'bg-red-600 text-white shadow-lg shadow-red-600/30 transform scale-[1.02]' 
+                  ${activeItem === 'Logout'
+                    ? 'bg-red-600 text-white shadow-lg shadow-red-600/30 transform scale-[1.02]'
                     : 'text-red-300 hover:bg-red-900 hover:bg-opacity-50 hover:text-white hover:transform hover:scale-[1.01] active:scale-95'
                   }
                 `}
@@ -380,8 +445,8 @@ const NavigationBar = () => {
               className={`
                 w-full flex items-center gap-3 px-3 py-2 rounded-lg text-left
                 transition-all duration-200 group relative
-                ${activeItem === item.name 
-                  ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/25 transform scale-[1.02]' 
+                ${activeItem === item.name
+                  ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/25 transform scale-[1.02]'
                   : 'text-gray-300 hover:bg-gray-800 hover:text-white hover:transform hover:scale-[1.01]'
                 }
               `}
@@ -412,8 +477,8 @@ const NavigationBar = () => {
                 onClick={() => handleNavClick(item)}
                 className={`
                   w-full flex items-center gap-3 px-3 py-2 rounded-lg transition-all duration-200
-                  ${activeItem === item.name 
-                    ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/25 transform scale-[1.02]' 
+                  ${activeItem === item.name
+                    ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/25 transform scale-[1.02]'
                     : 'text-gray-300 hover:bg-gray-800 hover:text-white hover:transform hover:scale-[1.01]'
                   }
                 `}
@@ -435,8 +500,8 @@ const NavigationBar = () => {
               onClick={() => handleNavClick(item)}
               className={`
                 w-full flex items-center gap-3 px-3 py-2 rounded-lg transition-all duration-200 relative
-                ${activeItem === item.name 
-                  ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/25 transform scale-[1.02]' 
+                ${activeItem === item.name
+                  ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/25 transform scale-[1.02]'
                   : 'text-gray-300 hover:bg-gray-800 hover:text-white hover:transform hover:scale-[1.01]'
                 }
               `}
@@ -448,13 +513,13 @@ const NavigationBar = () => {
               )}
             </button>
           ))}
-          
+
           <button
             onClick={handleLogout}
             className={`
               w-full flex items-center gap-3 px-3 py-2 rounded-lg transition-all duration-200 relative
-              ${activeItem === 'Logout' 
-                ? 'bg-red-600 text-white shadow-lg shadow-red-600/25 transform scale-[1.02]' 
+              ${activeItem === 'Logout'
+                ? 'bg-red-600 text-white shadow-lg shadow-red-600/25 transform scale-[1.02]'
                 : 'text-red-300 hover:bg-red-800 hover:text-white hover:transform hover:scale-[1.01]'
               }
             `}
