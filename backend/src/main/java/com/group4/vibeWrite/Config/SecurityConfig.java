@@ -49,7 +49,8 @@ public class SecurityConfig {
                                 "/drafts",
                                 "/api/readability/**",
                                 "/api/analyze/**",
-                                "/api/v1/notifications/**"
+                                "/api/v1/notifications/**",
+                                "/api/v1/grammar/**"
                         ).permitAll()
                         .anyRequest().authenticated()
                 )

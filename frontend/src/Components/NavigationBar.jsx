@@ -22,8 +22,9 @@ const NavigationBar = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [activeItem, setActiveItem] = useState('Dashboard');
   const [currentPath, setCurrentPath] = useState(window.location.pathname);
-  // backendUrl is already defined at the top
+  const [unreadCount, setUnreadCount] = useState(0);
 
+  // backendUrl is already defined at the top
   const fetchUserProfile = async () => {
     try {
       const token = sessionStorage.getItem('token');
@@ -48,6 +49,7 @@ const NavigationBar = () => {
       });
 
       console.log('Profile response status:', response.status);
+
       if (response.ok) {
         const userData = await response.json();
         sessionStorage.setItem('userData', JSON.stringify(userData));
@@ -62,6 +64,51 @@ const NavigationBar = () => {
     }
   };
 
+  const getUserIdFromSession = () => {
+    try {
+      const userData = JSON.parse(sessionStorage.getItem("userData"));
+      return userData?.id || null;
+    } catch (error) {
+      console.error("Failed to parse userData from sessionStorage:", error);
+      return null;
+    }
+  };
+
+  const fetchUnreadCount = async () => {
+    try {
+      if (!backendUrl) return 0;
+      const userId = getUserIdFromSession();   // ✅ assign userId here
+      if (!userId) {
+        console.warn("No userId found in session storage");
+        return 0;
+      }
+
+      const token = sessionStorage.getItem("token");
+      console.log("Fetching unread count for userId:", userId);
+      
+      const response = await fetch(
+        `${backendUrl}/api/v1/notifications/user/${userId}/unread-count`,
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      console.log("Unread count response status:", response.status);
+
+      if (!response.ok) {
+        throw new Error("Failed to fetch notification count");
+      }
+
+      const data = await response.json();
+      return data.count || 0;
+    } catch (error) {
+      console.error("Error fetching notification count:", error);
+      return 0;
+    }
+  };
+
   useEffect(() => {
     const savedUserData = sessionStorage.getItem('userData');
     if (savedUserData) {
@@ -70,62 +117,40 @@ const NavigationBar = () => {
     } else {
       fetchUserProfile();
     }
+  }, []);
+
+  useEffect(() => {
+    const navigationItems = [
+      { name: 'Dashboard', icon: LayoutDashboard, path: '/dashboard' },
+      { name: 'Content Editor', icon: Edit3, path: '/content-editor' },
+      { name: 'SEO Tools', icon: TrendingUp, path: '/seo-tools', badge: 'New', badgeColor: 'bg-green-500' },
+      { name: 'Grammar Check', icon: CheckCircle2, path: '/grammar-check' },
+      { name: 'Readability Score', icon: FileText, path: '/readability-score' },
+      {
+        name: "Notifications",
+        icon: Bell,
+        path: "/notifications",
+        badge: unreadCount > 0 ? unreadCount.toString() : null,
+        badgeColor: "bg-blue-500",
+      }
+    ];
+
+    const quickActions = [
+      { name: 'New Document', icon: FileText, path: '/new-document' }
+    ];
+
+    const bottomItems = [
+      { name: 'Profile & Settings', icon: User, path: '/profile' },
+      { name: 'Help & Support', icon: HelpCircle, path: '/help' },
+      { name: 'Logout', icon: LogOut, path: '/logout' }
+    ];
 
     const allItems = [...navigationItems, ...quickActions, ...bottomItems];
-    const currentItem = allItems.find(item => item.path === currentPath);
+    const currentItem = allItems.find(item => item && item.path === currentPath);
     if (currentItem) {
       setActiveItem(currentItem.name);
     }
-  }, [currentPath]);
-
-  const getUserIdFromSession = () => {
-  try {
-    const userData = JSON.parse(sessionStorage.getItem("userData"));
-    return userData?.id || null;
-  } catch (error) {
-    console.error("Failed to parse userData from sessionStorage:", error);
-    return null;
-  }
-};
-
-const fetchUnreadCount = async () => {
-  try {
-    if (!backendUrl) return 0;
-
-    const userId = getUserIdFromSession();   // ✅ assign userId here
-    if (!userId) {
-      console.warn("No userId found in session storage");
-      return 0;
-    }
-
-    const token = sessionStorage.getItem("token");
-
-    const response = await fetch(
-      console.log("Fetching unread count for userId:", userId),
-      `${backendUrl}/api/v1/notifications/user/${userId}/unread-count`,
-      {
-        headers: {
-          "Content-Type": "application/json",
-        },
-      }
-    );
-    console.log("Unread count response status:", response.status);
-
-    if (!response.ok) {
-      throw new Error("Failed to fetch notification count");
-    }
-
-    const data = await response.json();
-    return data.count || 0;
-  } catch (error) {
-    console.error("Error fetching notification count:", error);
-    return 0;
-  }
-};
-
-
-
-  const [unreadCount, setUnreadCount] = useState(0);
+  }, [currentPath, unreadCount]);
 
   useEffect(() => {
     const userId = getUserIdFromSession();
@@ -135,6 +160,7 @@ const fetchUnreadCount = async () => {
       setUnreadCount(0);
     }
   }, [userData]);
+
   const navigationItems = [
     { name: 'Dashboard', icon: LayoutDashboard, path: '/dashboard' },
     { name: 'Content Editor', icon: Edit3, path: '/content-editor' },
@@ -147,7 +173,7 @@ const fetchUnreadCount = async () => {
       path: "/notifications",
       badge: unreadCount > 0 ? unreadCount.toString() : null,
       badgeColor: "bg-blue-500",
-    }, ,
+    }
   ];
 
   const quickActions = [

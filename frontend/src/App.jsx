@@ -9,6 +9,8 @@ import ContentEditor from './Pages/ContentEditor';
 import ReadabilityScoreEditor from './Pages/ReadabilityScoreEditor';
 import SettingsPage from './Pages/SettingsPage';
 import NotificationSystem from './Pages/NotificationSystem';
+import GrammarChecker from './Pages/GrammarChecker';
+import PastGrammar from './Pages/PastGrammar';
 
 
 
@@ -38,6 +40,8 @@ const App = () => {
           <Route path="/get-started" element={<SignupPage />} />
           <Route path="/profile" element={<SettingsPage />} />
           <Route path="/notifications" element={<NotificationSystem />} />
+          <Route path="/grammar-check" element={<GrammarChecker />} />
+          <Route path="/past-grammar" element={<PastGrammar />} />
         </Routes>
       </div>
     </div>
