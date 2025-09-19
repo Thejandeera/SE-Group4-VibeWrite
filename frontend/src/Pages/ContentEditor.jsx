@@ -1,5 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 
+const backendUrl = import.meta.env.VITE_BACKEND_URL || 'http://localhost:5000';
+
 const toolbarButtonClass = 'px-3 py-1 border rounded text-sm hover:bg-gray-100';
 
 const ContentEditor = () => {
@@ -63,6 +65,24 @@ const ContentEditor = () => {
 
         <div className="mt-4 text-sm text-gray-600">
           <span className="font-medium">Character count:</span> {plainText.length}
+        </div>
+
+        <div className="mt-4">
+          <button
+            className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            onClick={() => {
+              fetch(`${backendUrl}/draft`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ text: plainText }),
+              })
+                .then((res) => res.json())
+                .then((data) => console.log("Draft saved:", data))
+                .catch((err) => console.error("Error saving draft:", err));
+            }}
+          >
+            Save Draft
+          </button>
         </div>
       </div>
     </div>
