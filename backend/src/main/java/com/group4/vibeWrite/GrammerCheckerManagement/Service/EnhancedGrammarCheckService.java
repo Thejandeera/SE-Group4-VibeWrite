@@ -158,7 +158,7 @@ public class EnhancedGrammarCheckService {
             response.setMetrics(metrics);
             response.setCheckedAt(LocalDateTime.now());
 
-            // Save to history if userId provided
+            // ✅ Save to history if userId provided in body
             if (userId != null && !userId.trim().isEmpty()) {
                 saveToHistory(response, userId);
             }
@@ -173,6 +173,7 @@ public class EnhancedGrammarCheckService {
             throw new RuntimeException("Failed to check grammar", e);
         }
     }
+
 
     private List<GrammarError> checkWithLanguageTool(String text) {
         List<GrammarError> errors = new ArrayList<>();

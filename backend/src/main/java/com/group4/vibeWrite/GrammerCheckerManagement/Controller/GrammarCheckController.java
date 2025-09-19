@@ -31,16 +31,12 @@ public class GrammarCheckController {
 
     @PostMapping("/check")
     public ResponseEntity<GrammarCheckResponse> checkGrammar(
-            @Valid @RequestBody GrammarCheckRequest request,
-            Authentication authentication) {
+            @Valid @RequestBody GrammarCheckRequest request) {
 
         try {
             log.info("Grammar check requested for text length: {}", request.getText().length());
 
-            String userId = null;
-            if (authentication != null && authentication.isAuthenticated()) {
-                userId = authentication.getName(); // Or however you get user ID
-            }
+            String userId = request.getUserId(); // ✅ Take userId from body
 
             GrammarCheckResponse response = grammarCheckService.checkGrammar(request, userId);
 
@@ -57,6 +53,7 @@ public class GrammarCheckController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
+
 
     @PostMapping("/check-anonymous")
     public ResponseEntity<GrammarCheckResponse> checkGrammarAnonymous(
@@ -81,24 +78,40 @@ public class GrammarCheckController {
         }
     }
 
-    @GetMapping("/history")
+    // Get full history for a user
+    @GetMapping("/history/user/{userId}")
     public ResponseEntity<List<GrammarCheckHistory>> getGrammarHistory(
-            Authentication authentication) {
-
-        if (authentication == null || !authentication.isAuthenticated()) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-        }
-
+            @PathVariable String userId) {
         try {
-            String userId = authentication.getName();
+            if (userId == null || userId.trim().isEmpty()) {
+                return ResponseEntity.badRequest().build();
+            }
+
             List<GrammarCheckHistory> history = grammarCheckService.getUserGrammarHistory(userId);
             return ResponseEntity.ok(history);
 
         } catch (Exception e) {
-            log.error("Error retrieving grammar history: ", e);
+            log.error("Error retrieving grammar history for userId {}: ", userId, e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
+
+    // Get a specific grammar check by record ID
+    @GetMapping("/history/{id}")
+    public ResponseEntity<GrammarCheckHistory> getGrammarCheckById(@PathVariable String id) {
+        try {
+            Optional<GrammarCheckHistory> grammarCheck = grammarCheckService.getGrammarCheckById(id);
+
+            return grammarCheck.map(ResponseEntity::ok)
+                    .orElseGet(() -> ResponseEntity.notFound().build());
+
+        } catch (Exception e) {
+            log.error("Error retrieving grammar check by ID: ", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
+
 
     @GetMapping("/history/paginated")
     public ResponseEntity<Page<GrammarCheckHistory>> getGrammarHistoryPaginated(
@@ -122,35 +135,35 @@ public class GrammarCheckController {
         }
     }
 
-    @GetMapping("/history/{id}")
-    public ResponseEntity<GrammarCheckHistory> getGrammarCheckById(
-            @PathVariable String id,
-            Authentication authentication) {
-
-        if (authentication == null || !authentication.isAuthenticated()) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-        }
-
-        try {
-            Optional<GrammarCheckHistory> grammarCheck = grammarCheckService.getGrammarCheckById(id);
-
-            if (grammarCheck.isEmpty()) {
-                return ResponseEntity.notFound().build();
-            }
-
-            // Verify the grammar check belongs to the authenticated user
-            String userId = authentication.getName();
-            if (!userId.equals(grammarCheck.get().getUserId())) {
-                return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
-            }
-
-            return ResponseEntity.ok(grammarCheck.get());
-
-        } catch (Exception e) {
-            log.error("Error retrieving grammar check by ID: ", e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-        }
-    }
+//    @GetMapping("/history/{id}")
+//    public ResponseEntity<GrammarCheckHistory> getGrammarCheckById(
+//            @PathVariable String id,
+//            Authentication authentication) {
+//
+//        if (authentication == null || !authentication.isAuthenticated()) {
+//            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+//        }
+//
+//        try {
+//            Optional<GrammarCheckHistory> grammarCheck = grammarCheckService.getGrammarCheckById(id);
+//
+//            if (grammarCheck.isEmpty()) {
+//                return ResponseEntity.notFound().build();
+//            }
+//
+//            // Verify the grammar check belongs to the authenticated user
+//            String userId = authentication.getName();
+//            if (!userId.equals(grammarCheck.get().getUserId())) {
+//                return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+//            }
+//
+//            return ResponseEntity.ok(grammarCheck.get());
+//
+//        } catch (Exception e) {
+//            log.error("Error retrieving grammar check by ID: ", e);
+//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+//        }
+//    }
 
     @GetMapping("/stats")
     public ResponseEntity<Map<String, Object>> getGrammarStats(
