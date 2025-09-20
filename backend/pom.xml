@@ -53,12 +53,32 @@
             <optional>true</optional>
         </dependency>
 
+        <!-- OpenNLP for Natural Language Processing -->
         <dependency>
             <groupId>org.apache.opennlp</groupId>
             <artifactId>opennlp-tools</artifactId>
-            <version>2.3.3</version> <!-- check for latest -->
+            <version>2.3.3</version>
         </dependency>
 
+        <!-- LanguageTool for Advanced Grammar Checking -->
+        <dependency>
+            <groupId>org.languagetool</groupId>
+            <artifactId>language-en</artifactId>
+            <version>6.3</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.languagetool</groupId>
+            <artifactId>languagetool-core</artifactId>
+            <version>6.3</version>
+        </dependency>
+
+        <!-- Apache Commons Text for text processing utilities -->
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-text</artifactId>
+            <version>1.10.0</version>
+        </dependency>
 
         <!-- JWT Dependencies -->
         <dependency>
@@ -109,6 +129,7 @@
                         <path>
                             <groupId>org.projectlombok</groupId>
                             <artifactId>lombok</artifactId>
+                            <version>${lombok.version}</version>
                         </path>
                     </annotationProcessorPaths>
                 </configuration>
@@ -116,6 +137,14 @@
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
+                <configuration>
+                    <excludes>
+                        <exclude>
+                            <groupId>org.projectlombok</groupId>
+                            <artifactId>lombok</artifactId>
+                        </exclude>
+                    </excludes>
+                </configuration>
             </plugin>
         </plugins>
     </build>
