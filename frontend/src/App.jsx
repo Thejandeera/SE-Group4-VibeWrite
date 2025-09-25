@@ -8,6 +8,7 @@ import Dashboard from './Pages/Dashboard';
 import ContentEditor from './Pages/ContentEditor';
 import ReadabilityScoreEditor from './Pages/ReadabilityScoreEditor';
 import SettingsPage from './Pages/SettingsPage';
+import TextEditor from './Pages/TextEditor';
 
 const Dummy = ({ text }) => (
   <div style={{ padding: '4rem', textAlign: 'center', fontSize: '2rem' }}>{text}</div>
@@ -38,6 +39,7 @@ const App = () => {
           <Route path="/signin" element={<LoginPage />} />
           <Route path="/get-started" element={<SignupPage />} />
           <Route path="/profile" element={<SettingsPage />} />
+          <Route path="/text-editor" element={<TextEditor />} />
         </Routes>
       </div>
     </div>

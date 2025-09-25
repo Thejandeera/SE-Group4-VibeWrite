@@ -52,7 +52,14 @@ const ContentEditor = () => {
   };
 
   const exec = (command, value = null) => {
-    document.execCommand(command, false, value);
+    if (editorRef.current) {
+      editorRef.current.focus();
+    }
+    // For headings/blockquote, ensure proper tag format for better browser support
+    const normalizedValue = typeof value === 'string' && /^(H\d|P|BLOCKQUOTE)$/i.test(value)
+      ? `<${value.toLowerCase()}>`
+      : value;
+    document.execCommand(command, false, normalizedValue);
     if (editorRef.current) {
       editorRef.current.focus();
       setPlainText(editorRef.current.innerText || '');
