@@ -136,7 +136,8 @@ const NavigationBar = () => {
     ];
 
     const quickActions = [
-      { name: 'New Document', icon: FileText, path: '/new-document' }
+      { name: 'New Document', icon: FileText, path: '/new-document' },
+      { name: 'View Drafts', icon: FileText, path: '/view-drafts' }
     ];
 
     const bottomItems = [
@@ -177,7 +178,8 @@ const NavigationBar = () => {
   ];
 
   const quickActions = [
-    { name: 'New Document', icon: FileText, path: '/new-document' }
+    { name: 'New Document', icon: FileText, path: '/new-document' },
+    { name: 'View Drafts', icon: FileText, path: '/view-drafts' }
   ];
 
   const bottomItems = [

@@ -6,10 +6,9 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/drafts")
@@ -22,5 +21,16 @@ public class DraftController {
     public ResponseEntity<Draft> createDraft(@Valid @RequestBody Draft draft) {
         Draft saved = draftService.createDraft(draft);
         return new ResponseEntity<>(saved, HttpStatus.CREATED);
+    }
+    @GetMapping("/{id}")
+    public ResponseEntity<Draft> getDraftById(@PathVariable String id) {
+        return draftService.getDraftById(id)
+                .map(draft -> new ResponseEntity<>(draft, HttpStatus.OK))
+                .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
+    }
+    @GetMapping("/by-user/{userId}")
+    public ResponseEntity<List<Draft>> getDraftsByUserId(@PathVariable String userId) {
+        List<Draft> drafts = draftService.getDraftsByUserId(userId);
+        return new ResponseEntity<>(drafts, HttpStatus.OK);
     }
 }
