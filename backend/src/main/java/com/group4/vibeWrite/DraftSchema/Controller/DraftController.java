@@ -22,9 +22,15 @@ public class DraftController {
         Draft saved = draftService.createDraft(draft);
         return new ResponseEntity<>(saved, HttpStatus.CREATED);
     }
-    @GetMapping("/by-username/{username}")
-    public ResponseEntity<List<Draft>> getDraftsByUsername(@PathVariable String username) {
-        List<Draft> drafts = draftService.getDraftsByUsername(username);
+    @GetMapping("/{id}")
+    public ResponseEntity<Draft> getDraftById(@PathVariable String id) {
+        return draftService.getDraftById(id)
+                .map(draft -> new ResponseEntity<>(draft, HttpStatus.OK))
+                .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
+    }
+    @GetMapping("/by-user/{userId}")
+    public ResponseEntity<List<Draft>> getDraftsByUserId(@PathVariable String userId) {
+        List<Draft> drafts = draftService.getDraftsByUserId(userId);
         return new ResponseEntity<>(drafts, HttpStatus.OK);
     }
 }
