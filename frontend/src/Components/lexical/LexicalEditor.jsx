@@ -29,7 +29,7 @@ function Placeholder() {
 }
 
 // Plugin to track content changes and character count
-function OnChangePlugin({ onChange }) {
+function OnChangePlugin({ onChange, onEditorStateChange }) {
   const [editor] = useLexicalComposerContext();
   
   React.useEffect(() => {
@@ -38,9 +38,10 @@ function OnChangePlugin({ onChange }) {
         const root = editor.getRootElement();
         const textContent = root ? root.textContent || "" : "";
         onChange(textContent);
+        onEditorStateChange(editorState);
       });
     });
-  }, [editor, onChange]);
+  }, [editor, onChange, onEditorStateChange]);
   
   return null;
 }
@@ -70,9 +71,35 @@ const editorConfig = {
 
 export default function LexicalEditor() {
   const [plainText, setPlainText] = useState('');
+  const [editorState, setEditorState] = useState(null);
 
   const handleContentChange = (textContent) => {
     setPlainText(textContent);
+  };
+
+  const handleEditorStateChange = (state) => {
+    setEditorState(state);
+  };
+
+  const handleSave = () => {
+    if (editorState) {
+      const editorStateJSON = JSON.stringify(editorState);
+      const draft = {
+        id: Date.now().toString(),
+        title: plainText.substring(0, 50) + (plainText.length > 50 ? '...' : ''),
+        content: editorStateJSON,
+        plainText: plainText,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
+      };
+      
+      // Save to localStorage
+      const existingDrafts = JSON.parse(localStorage.getItem('lexicalDrafts') || '[]');
+      existingDrafts.push(draft);
+      localStorage.setItem('lexicalDrafts', JSON.stringify(existingDrafts));
+      
+      alert('Draft saved successfully!');
+    }
   };
 
   return (
@@ -88,7 +115,7 @@ export default function LexicalEditor() {
               placeholder={<Placeholder />}
               ErrorBoundary={LexicalErrorBoundary}
             />
-            <OnChangePlugin onChange={handleContentChange} />
+            <OnChangePlugin onChange={handleContentChange} onEditorStateChange={handleEditorStateChange} />
             <HistoryPlugin />
             <AutoFocusPlugin />
             <CodeHighlightPlugin />
@@ -105,6 +132,16 @@ export default function LexicalEditor() {
       
       <div className="mt-4 text-sm text-gray-600">
         <span className="font-medium">Character count:</span> {plainText.length}
+      </div>
+      
+      <div className="mt-4 flex justify-end">
+        <button
+          onClick={handleSave}
+          disabled={!editorState || plainText.trim().length === 0}
+          className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors"
+        >
+          Save Draft
+        </button>
       </div>
     </div>
   );
