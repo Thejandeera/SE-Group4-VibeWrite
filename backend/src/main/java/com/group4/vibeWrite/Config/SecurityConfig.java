@@ -55,6 +55,7 @@ public class SecurityConfig {
                                 "/api/analyze/**",
                                 "/api/v1/notifications/**",
                                 "/api/v1/grammar/**",
+                                "/api/v1/semantic-analysis/**",
                                 "/api/test",           // Test endpoint
                                 "/api/health"          // Health check
                         ).permitAll()
