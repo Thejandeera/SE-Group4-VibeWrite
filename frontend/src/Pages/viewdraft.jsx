@@ -1,30 +1,34 @@
 import React, { useState, useEffect } from 'react';
 import { FileText, Calendar, Trash2, Edit3, Clock, User } from 'lucide-react';
-
-const backendUrl = 'http://localhost:8080';
-
+const backendUrl = import.meta.env.VITE_BACKEND_URL;
 const ViewDraft = () => {
   const [drafts, setDrafts] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
-
   useEffect(() => {
     fetchDrafts();
   }, []);
-
   const fetchDrafts = async () => {
     setIsLoading(true);
     setError(null);
-
-    const token = localStorage.getItem("token");
-    const userId = localStorage.getItem("userId");
-
+    const token = sessionStorage.getItem("token");
+    const userDataString = sessionStorage.getItem("userData");
+    let userId = null;
+    let username = null;
+    if (userDataString) {
+      try {
+        const userData = JSON.parse(userDataString);
+        userId = userData.id;
+        username = userData.username;
+      } catch (e) {
+        console.error("Error parsing userData:", e);
+      }
+    }
     if (!token || !userId) {
       setError("Authentication error: Token or User ID missing. Please log in.");
       setIsLoading(false);
       return;
     }
-
     try {
       const response = await fetch(`${backendUrl}/drafts/by-user/${userId}`, {
         method: "GET",
@@ -33,7 +37,6 @@ const ViewDraft = () => {
           "Authorization": `Bearer ${token}`,
         },
       });
-
       if (!response.ok) {
         const text = await response.text();
         console.error("Failed to fetch drafts:", text);
@@ -41,9 +44,7 @@ const ViewDraft = () => {
         setIsLoading(false);
         return;
       }
-
       let draftsData = await response.json();
-
       // Generate titles if missing
       draftsData = draftsData.map(d => ({
         ...d,
@@ -53,7 +54,6 @@ const ViewDraft = () => {
             : 'Untitled Draft'
         )
       }));
-
       setDrafts(draftsData);
     } catch (err) {
       console.error("Network error fetching drafts:", err);
@@ -62,11 +62,9 @@ const ViewDraft = () => {
       setIsLoading(false);
     }
   };
-
   const deleteDraft = async (draftId) => {
-    const token = localStorage.getItem("token");
+    const token = sessionStorage.getItem("token");
     if (!token) return;
-
     try {
       const response = await fetch(`${backendUrl}/drafts/${draftId}`, {
         method: 'DELETE',
@@ -75,7 +73,6 @@ const ViewDraft = () => {
           'Authorization': `Bearer ${token}`,
         },
       });
-
       if (response.ok) {
         setDrafts(drafts.filter(d => d.id !== draftId));
       } else {
@@ -85,11 +82,9 @@ const ViewDraft = () => {
       console.error('Error deleting draft:', err);
     }
   };
-
   const loadDraftInEditor = (draft) => {
     window.location.href = `/content-editor?draft=${encodeURIComponent(JSON.stringify(draft))}`;
   };
-
   const formatDate = (timestamp) => {
     const date = new Date(timestamp);
     return {
@@ -98,7 +93,6 @@ const ViewDraft = () => {
       relative: getRelativeTime(date)
     };
   };
-
   const getRelativeTime = (date) => {
     const now = new Date();
     const diff = Math.floor((now - date) / 1000);
@@ -108,12 +102,23 @@ const ViewDraft = () => {
     if (diff < 604800) return `${Math.floor(diff / 86400)} days ago`;
     return date.toLocaleDateString();
   };
-
   const getContentPreview = (content) => {
     const text = (content || '').replace(/<[^>]*>/g, '');
     return text.length > 200 ? text.substring(0, 200) + '...' : text;
   };
-
+  // Get username for display
+  const getUsername = () => {
+    const userDataString = sessionStorage.getItem("userData");
+    if (userDataString) {
+      try {
+        const userData = JSON.parse(userDataString);
+        return userData.username;
+      } catch (e) {
+        console.error("Error parsing userData:", e);
+      }
+    }
+    return "Unknown User";
+  };
   if (isLoading) {
     return (
       <div className="flex justify-center items-center min-h-screen">
@@ -121,19 +126,16 @@ const ViewDraft = () => {
       </div>
     );
   }
-
   if (error) {
     return <div className="text-center py-12 text-red-500">{error}</div>;
   }
-
   return (
     <div className="min-h-screen bg-gray-50 p-6">
       <h1 className="text-2xl font-semibold text-gray-900 mb-4">Saved Drafts</h1>
       <div className="flex items-center text-sm text-gray-500 mt-2 mb-4">
         <User size={14} className="mr-1" />
-        <span>Drafts for: {localStorage.getItem("username") || "Unknown User"}</span>
+        <span>Drafts for: {getUsername()}</span>
       </div>
-
       {drafts.length === 0 ? (
         <div className="text-center py-12 bg-white rounded shadow">
           <FileText size={48} className="mx-auto text-gray-400 mb-4" />
@@ -176,7 +178,4 @@ const ViewDraft = () => {
     </div>
   );
 };
-
 export default ViewDraft;
-
-
