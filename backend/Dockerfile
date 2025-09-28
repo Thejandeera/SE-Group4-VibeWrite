@@ -16,8 +16,8 @@ RUN chmod +x ./mvnw
 # Copy source code
 COPY src ./src
 
-# Build the project using Maven wrapper with increased memory
-RUN MAVEN_OPTS="-Xmx2g" ./mvnw clean package -DskipTests
+# Build the project using Maven wrapper
+RUN ./mvnw clean package -DskipTests
 
 # Find and copy the jar file (handles different naming)
 RUN find target -name "*.jar" -not -name "*-sources.jar" -not -name "*-javadoc.jar" -exec cp {} app.jar \;
@@ -25,8 +25,5 @@ RUN find target -name "*.jar" -not -name "*-sources.jar" -not -name "*-javadoc.j
 # Expose port 8080
 EXPOSE 8080
 
-# Set JVM memory options for runtime
-ENV JAVA_OPTS="-Xms512m -Xmx1536m -XX:+UseG1GC -XX:MaxGCPauseMillis=200"
-
-# Run the application with memory settings
-ENTRYPOINT ["sh", "-c", "java $JAVA_OPTS -jar app.jar"]
+# Run the application
+ENTRYPOINT ["java", "-jar", "app.jar"]
