@@ -12,21 +12,21 @@ import NotificationSystem from './Pages/NotificationSystem';
 import GrammarChecker from './Pages/GrammarChecker';
 import PastGrammar from './Pages/PastGrammar';
 import ViewDraft from './Pages/viewdraft';
-import SEOTools from './Pages/SEOTools';
-import SentimentAnalysis from './Pages/SentimentAnalysis';   // ✅ NEW PAGE IMPORT
-
-
+import SEOTools from './Pages/SEOTools';   // ✅ NEW PAGE IMPORT
+import SentimentAnalysis from './Pages/SentimentAnalysis'; 
 
 const App = () => {
   const location = useLocation();
-   // Pages where sidebar/nav should not show
+
+  // Pages where sidebar/nav should not show
   const hiddenNavPaths = ["/", "/signin", "/get-started"];
   const showNavigation = !hiddenNavPaths.includes(location.pathname);
 
   return (
     <div className="flex">
-     
+      {/* Navigation sidebar (only shows if not in hidden paths) */}
       {showNavigation && <NavigationBar />}
+
       {/* Main content */}
       <div className={`flex-1 ${showNavigation ? "lg:ml-64 pt-16 lg:pt-0" : ""}`}>
         <Routes>
@@ -34,7 +34,6 @@ const App = () => {
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/content-editor" element={<ContentEditor />} />
           <Route path="/readability-score" element={<ReadabilityScoreEditor />} />
-          <Route path="/sentiment-analysis" element={<SentimentAnalysis />} />
           <Route path="/view-drafts" element={<ViewDraft />} />
           <Route path="/signin" element={<LoginPage />} />
           <Route path="/get-started" element={<SignupPage />} />
@@ -42,7 +41,8 @@ const App = () => {
           <Route path="/notifications" element={<NotificationSystem />} />
           <Route path="/grammar-check" element={<GrammarChecker />} />
           <Route path="/past-grammar" element={<PastGrammar />} />
-          <Route path="/seo-tools" element={<SEOTools />} />
+          <Route path="/seo-tools" element={<SEOTools />} />   {/* ✅ NEW ROUTE */}
+          <Route path="/sentiment-analysis" element={<SentimentAnalysis />} />
         </Routes>
       </div>
     </div>
