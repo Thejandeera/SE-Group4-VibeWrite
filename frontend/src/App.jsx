@@ -12,7 +12,7 @@ import NotificationSystem from './Pages/NotificationSystem';
 import GrammarChecker from './Pages/GrammarChecker';
 import PastGrammar from './Pages/PastGrammar';
 import ViewDraft from './Pages/viewdraft';
-import SentimentAnalysis from './Pages/SentimentAnalysis'; 
+import SentimentAnalysis from './Pages/SentimentAnalysis';
 import SEOTools from './Pages/SEOTools';
 
 
@@ -34,9 +34,6 @@ const App = () => {
           <Route path="/readability-score" element={<ReadabilityScoreEditor />} />
           <Route path="/sentiment-analysis" element={<SentimentAnalysis />} />
           <Route path="/view-drafts" element={<ViewDraft />} />
-          {/* <Route path="/features" element={<Dummy text="Features Page" />} />
-          <Route path="/pricing" element={<Dummy text="Pricing Page" />} />
-          <Route path="/reviews" element={<Dummy text="Reviews Page" />} /> */}
           <Route path="/signin" element={<LoginPage />} />
           <Route path="/get-started" element={<SignupPage />} />
           <Route path="/profile" element={<SettingsPage />} />
