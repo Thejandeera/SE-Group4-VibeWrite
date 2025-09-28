@@ -12,14 +12,12 @@ import NotificationSystem from './Pages/NotificationSystem';
 import GrammarChecker from './Pages/GrammarChecker';
 import PastGrammar from './Pages/PastGrammar';
 import ViewDraft from './Pages/viewdraft';
-import SentimentAnalysis from './Pages/SentimentAnalysis';
-import SEOTools from './Pages/SEOTools'; 
+import SentimentAnalysis from './Pages/SentimentAnalysis'; 
+import SEOTools from './Pages/SEOTools';
 
 
 const App = () => {
   const location = useLocation();
-
- 
   const hiddenNavPaths = ["/", "/signin", "/get-started"];
   const showNavigation = !hiddenNavPaths.includes(location.pathname);
 
@@ -27,7 +25,6 @@ const App = () => {
     <div className="flex">
      
       {showNavigation && <NavigationBar />}
-
       
       <div className={`flex-1 ${showNavigation ? "lg:ml-64 pt-16 lg:pt-0" : ""}`}>
         <Routes>
