@@ -12,12 +12,14 @@ import NotificationSystem from './Pages/NotificationSystem';
 import GrammarChecker from './Pages/GrammarChecker';
 import PastGrammar from './Pages/PastGrammar';
 import ViewDraft from './Pages/viewdraft';
-import SentimentAnalysis from './Pages/SentimentAnalysis';
 import SEOTools from './Pages/SEOTools';
+import SentimentAnalysis from './Pages/SentimentAnalysis';   // ✅ NEW PAGE IMPORT
+
 
 
 const App = () => {
   const location = useLocation();
+   // Pages where sidebar/nav should not show
   const hiddenNavPaths = ["/", "/signin", "/get-started"];
   const showNavigation = !hiddenNavPaths.includes(location.pathname);
 
@@ -25,7 +27,7 @@ const App = () => {
     <div className="flex">
      
       {showNavigation && <NavigationBar />}
-      
+      {/* Main content */}
       <div className={`flex-1 ${showNavigation ? "lg:ml-64 pt-16 lg:pt-0" : ""}`}>
         <Routes>
           <Route path="/" element={<LandingPage />} />
