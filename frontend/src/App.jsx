@@ -13,7 +13,7 @@ import GrammarChecker from './Pages/GrammarChecker';
 import PastGrammar from './Pages/PastGrammar';
 import ViewDraft from './Pages/viewdraft';
 import SentimentAnalysis from './Pages/SentimentAnalysis';
-
+import SEOTools from './Pages/SEOTools'; 
 
 
 const App = () => {
@@ -46,6 +46,7 @@ const App = () => {
           <Route path="/notifications" element={<NotificationSystem />} />
           <Route path="/grammar-check" element={<GrammarChecker />} />
           <Route path="/past-grammar" element={<PastGrammar />} />
+          <Route path="/seo-tools" element={<SEOTools />} />
         </Routes>
       </div>
     </div>
