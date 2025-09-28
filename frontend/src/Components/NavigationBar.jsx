@@ -10,7 +10,8 @@ import {
   HelpCircle,
   LogOut,
   Menu,
-  X,
+  X,  
+  Smile,
   Crown
 } from 'lucide-react';
 
@@ -126,6 +127,7 @@ const NavigationBar = () => {
       { name: 'SEO Tools', icon: TrendingUp, path: '/seo-tools', badge: 'New', badgeColor: 'bg-green-500' },
       { name: 'Grammar Check', icon: CheckCircle2, path: '/grammar-check' },
       { name: 'Readability Score', icon: FileText, path: '/readability-score' },
+    { name: 'Sentiment Analysis', icon: Smile, path: '/sentiment-analysis' },
       {
         name: "Notifications",
         icon: Bell,
@@ -149,6 +151,7 @@ const NavigationBar = () => {
     const allItems = [...navigationItems, ...quickActions, ...bottomItems];
     const currentItem = allItems.find(item => item && item.path === currentPath);
     if (currentItem) {
+      console.log("Setting active item to:", currentItem.name);
       setActiveItem(currentItem.name);
     }
   }, [currentPath, unreadCount]);
@@ -168,6 +171,7 @@ const NavigationBar = () => {
     { name: 'SEO Tools', icon: TrendingUp, path: '/seo-tools', badge: 'New', badgeColor: 'bg-green-500' },
     { name: 'Grammar Check', icon: CheckCircle2, path: '/grammar-check' },
     { name: 'Readability Score', icon: FileText, path: '/readability-score' },
+    { name: 'Sentiment Analysis', icon: Smile, path: '/sentiment-analysis' },
     {
       name: "Notifications",
       icon: Bell,

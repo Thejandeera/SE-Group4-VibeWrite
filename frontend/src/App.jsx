@@ -12,6 +12,7 @@ import NotificationSystem from './Pages/NotificationSystem';
 import GrammarChecker from './Pages/GrammarChecker';
 import PastGrammar from './Pages/PastGrammar';
 import ViewDraft from './Pages/viewdraft';
+import SentimentAnalysis from './Pages/SentimentAnalysis';
 
 
 
@@ -34,6 +35,7 @@ const App = () => {
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/content-editor" element={<ContentEditor />} />
           <Route path="/readability-score" element={<ReadabilityScoreEditor />} />
+          <Route path="/sentiment-analysis" element={<SentimentAnalysis />} />
           <Route path="/view-drafts" element={<ViewDraft />} />
           {/* <Route path="/features" element={<Dummy text="Features Page" />} />
           <Route path="/pricing" element={<Dummy text="Pricing Page" />} />
