@@ -3,7 +3,7 @@ name: CI/CD Pipeline
 on:
   push:
     branches:
-      - main  
+      - main
 
 jobs:
   build-and-deploy:
@@ -30,9 +30,11 @@ jobs:
           echo "Finding pom.xml files:"
           find . -name "pom.xml" -type f
 
-      # 4. Build Maven project in backend
+      # 4. Build Maven project in backend with increased memory
       - name: Build Maven Project
         working-directory: backend
+        env:
+          MAVEN_OPTS: "-Xmx2g"
         run: |
           echo "Maven working directory: $(pwd)"
           ls -la
@@ -45,7 +47,7 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
 
-      # 6. Build Docker image
+      # 6. Build Docker image with build args
       - name: Build Docker Image
         working-directory: backend
         run: |
@@ -59,8 +61,16 @@ jobs:
           docker tag vibewrite-app:latest ${{ secrets.DOCKER_USERNAME }}/vibewrite-app:latest
           docker push ${{ secrets.DOCKER_USERNAME }}/vibewrite-app:latest
 
+      # 8. Trigger Render Deploy with environment variables
       - name: Trigger Render Deploy
         run: |
           curl -X POST https://api.render.com/v1/services/srv-d2mq8195pdvs73969mug/deploys \
           -H "Authorization: Bearer ${{ secrets.RENDER_API_KEY }}" \
-          -H "Content-Type: application/json"
+          -H "Content-Type: application/json" \
+          -d '{
+            "clearCache": false,
+            "envVars": {
+              "ENVIRONMENT": "production",
+              "SPRING_PROFILES_ACTIVE": "prod"
+            }
+          }'
