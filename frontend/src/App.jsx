@@ -13,6 +13,7 @@ import GrammarChecker from './Pages/GrammarChecker';
 import PastGrammar from './Pages/PastGrammar';
 import ViewDraft from './Pages/viewdraft';
 import SEOTools from './Pages/SEOTools';   // ✅ NEW PAGE IMPORT
+import SentimentAnalysis from './Pages/SentimentAnalysis';
 
 
 const App = () => {
@@ -42,6 +43,7 @@ const App = () => {
           <Route path="/grammar-check" element={<GrammarChecker />} />
           <Route path="/past-grammar" element={<PastGrammar />} />
           <Route path="/seo-tools" element={<SEOTools />} />   {/* ✅ NEW ROUTE */}
+          <Route path="/sentiment-analysis" element={<SentimentAnalysis />} />
         </Routes>
       </div>
     </div>
