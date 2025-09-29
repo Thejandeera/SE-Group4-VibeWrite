@@ -72,6 +72,9 @@ const editorConfig = {
 export default function LexicalEditor() {
   const [plainText, setPlainText] = useState('');
   const [editorState, setEditorState] = useState(null);
+  const [draftId, setDraftId] = useState(null);
+
+  const backendUrl = import.meta.env.VITE_BACKEND_URL;
 
   const handleContentChange = (textContent) => {
     setPlainText(textContent);
@@ -81,24 +84,50 @@ export default function LexicalEditor() {
     setEditorState(state);
   };
 
-  const handleSave = () => {
-    if (editorState) {
-      const editorStateJSON = JSON.stringify(editorState);
-      const draft = {
-        id: Date.now().toString(),
-        title: plainText.substring(0, 50) + (plainText.length > 50 ? '...' : ''),
-        content: editorStateJSON,
-        plainText: plainText,
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString()
-      };
-      
-      // Save to localStorage
-      const existingDrafts = JSON.parse(localStorage.getItem('lexicalDrafts') || '[]');
-      existingDrafts.push(draft);
-      localStorage.setItem('lexicalDrafts', JSON.stringify(existingDrafts));
-      
+  const handleSave = async () => {
+    if (!editorState) return;
+
+    // Serialize Lexical editor state (JSON string). Backend stores as string.
+    const content = JSON.stringify(editorState);
+
+    // Derive username from session (if logged in); fallback to 'anonymous'
+    let username = 'anonymous';
+    try {
+      const savedUserData = sessionStorage.getItem('userData');
+      if (savedUserData) {
+        const u = JSON.parse(savedUserData);
+        username = u.username || (u.email ? u.email.split('@')[0] : 'anonymous');
+      }
+    } catch (_) {}
+
+    try {
+      const url = draftId
+        ? `${backendUrl}/api/drafts/${draftId}`
+        : `${backendUrl}/api/drafts`;
+      const method = draftId ? 'PUT' : 'POST';
+      const body = draftId ? { content } : { content, username };
+
+      const res = await fetch(url, {
+        method,
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify(body),
+      });
+
+      if (!res.ok) {
+        const text = await res.text();
+        throw new Error(`Save failed: ${res.status} ${text}`);
+      }
+
+      const saved = await res.json();
+      if (!draftId && saved?.id) {
+        setDraftId(saved.id);
+      }
+
       alert('Draft saved successfully!');
+    } catch (err) {
+      console.error(err);
+      alert('Failed to save draft. Please try again.');
     }
   };
 
