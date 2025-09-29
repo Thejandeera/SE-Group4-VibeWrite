@@ -21,6 +21,7 @@ import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext
 import ListMaxIndentLevelPlugin from "./plugins/ListMaxIndentLevelPlugin.jsx";
 import CodeHighlightPlugin from "./plugins/CodeHighlightPlugin.jsx";
 import LexicalAutoLinkPlugin from "./plugins/AutoLinkPlugin.jsx";
+import RewriteSuggestionsPlugin from "./plugins/RewriteSuggestionsPlugin.jsx";
 
 import "./styles/lexical.css";
 
@@ -151,6 +152,11 @@ export default function LexicalEditor() {
             <ListPlugin />
             <LinkPlugin />
             <LexicalAutoLinkPlugin />
+            {/* Rewrite suggestions tooltip on selection */}
+            {/**/}
+            {/* eslint-disable-next-line react/jsx-no-undef */}
+            {/* The plugin is imported below */}
+            <RewriteSuggestionsPlugin />
             <ListMaxIndentLevelPlugin maxDepth={7} />
             <MarkdownShortcutPlugin transformers={TRANSFORMERS} />
           </div>

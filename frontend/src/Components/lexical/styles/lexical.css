@@ -42,6 +42,42 @@
   border-radius: 0.5rem;
 }
 
+/* Rewrite suggestions tooltip */
+.lexical-rewrite-tooltip {
+  position: absolute;
+  z-index: 60;
+  background: #111827; /* gray-900 */
+  color: #fff;
+  border-radius: 8px;
+  padding: 8px;
+  box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -4px rgba(0,0,0,0.1);
+}
+
+.lexical-rewrite-tooltip .lexical-rewrite-row {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 6px;
+}
+
+.lexical-rewrite-tooltip .lexical-rewrite-row:last-child {
+  margin-bottom: 0;
+}
+
+.lexical-rewrite-tooltip button {
+  font-size: 12px;
+  line-height: 1;
+  padding: 6px 8px;
+  background: #1f2937; /* gray-800 */
+  color: #f9fafb; /* gray-50 */
+  border: 1px solid #374151; /* gray-700 */
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.lexical-rewrite-tooltip button:hover {
+  background: #374151; /* gray-700 */
+}
+
 .editor-placeholder {
   color: #999;
   overflow: hidden;
