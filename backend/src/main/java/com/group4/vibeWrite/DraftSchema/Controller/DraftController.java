@@ -6,13 +6,10 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/drafts")
+@RequestMapping("/api/drafts")
 @RequiredArgsConstructor
 public class DraftController {
 
@@ -22,5 +19,11 @@ public class DraftController {
     public ResponseEntity<Draft> createDraft(@Valid @RequestBody Draft draft) {
         Draft saved = draftService.createDraft(draft);
         return new ResponseEntity<>(saved, HttpStatus.CREATED);
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<Draft> updateDraft(@PathVariable String id, @Valid @RequestBody Draft draft) {
+        Draft updated = draftService.updateDraft(id, draft);
+        return ResponseEntity.ok(updated);
     }
 }
