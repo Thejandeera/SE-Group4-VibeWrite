@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { BarChart2, FileText, TrendingUp } from "lucide-react";
+import { BarChart2, FileText, TrendingUp, Sparkles, Loader2, AlertCircle, CheckCircle, XCircle } from "lucide-react";
 import {
   BarChart,
   Bar,
@@ -8,164 +8,403 @@ import {
   CartesianGrid,
   Tooltip,
   ResponsiveContainer,
+  RadarChart,
+  PolarGrid,
+  PolarAngleAxis,
+  PolarRadiusAxis,
+  Radar,
+  Legend
 } from "recharts";
 
 export default function SEOTools() {
   const [content, setContent] = useState("");
-  const [wordCount, setWordCount] = useState(0);
-  const [keywords, setKeywords] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+  const [analysis, setAnalysis] = useState(null);
 
-  // Example starter data
-  const keywordData = [
-    { keyword: "AI", count: 4 },
-    { keyword: "writing", count: 3 },
-    { keyword: "SEO", count: 2 },
-    { keyword: "content", count: 2 },
-  ];
+  const GEMINI_API_KEY = "AIzaSyDMzcmuIQispYp8176WIPUCA_UjE-UPBPo";
 
-  const handleAnalyze = () => {
-    const words = content.trim().toLowerCase().split(/\s+/).filter(Boolean);
-    const total = words.length;
-    setWordCount(total);
+  const analyzeWithGemini = async () => {
+    if (!content.trim()) {
+      setError("Please enter some content to analyze");
+      return;
+    }
 
-    // Count frequency
-    const freq = {};
-    words.forEach((w) => {
-      freq[w] = (freq[w] || 0) + 1;
-    });
+    setLoading(true);
+    setError("");
+    setAnalysis(null);
 
-    // Convert to array with density %
-    const result = Object.entries(freq).map(([keyword, count]) => ({
-      keyword,
-      count,
-      density: ((count / total) * 100).toFixed(1),
-    }));
+    try {
+      const prompt = `You are an expert SEO analyst. Analyze the following content and provide a comprehensive SEO report in JSON format.
 
-    setKeywords(result);
+Content to analyze:
+"""
+${content}
+"""
+
+Provide your analysis in the following JSON structure (respond ONLY with valid JSON, no markdown or code blocks):
+{
+  "wordCount": number,
+  "characterCount": number,
+  "readabilityScore": number (0-100),
+  "seoScore": number (0-100),
+  "keywords": [
+    {"keyword": "string", "count": number, "density": "string (e.g., '2.5')"}
+  ],
+  "topKeywords": [
+    {"keyword": "string", "count": number, "relevance": number (0-100)}
+  ],
+  "suggestions": [
+    {"type": "success|warning|error", "message": "string"}
+  ],
+  "metaAnalysis": {
+    "titleQuality": number (0-100),
+    "keywordOptimization": number (0-100),
+    "contentStructure": number (0-100),
+    "readability": number (0-100),
+    "linkPotential": number (0-100)
+  },
+  "sentimentAnalysis": {
+    "tone": "string (e.g., professional, casual, formal)",
+    "sentiment": "positive|neutral|negative",
+    "score": number (0-100)
+  },
+  "improvements": [
+    "string array of specific improvement recommendations"
+  ]
+}`;
+
+      const response = await fetch(
+        `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "x-goog-api-key": GEMINI_API_KEY,
+          },
+          body: JSON.stringify({
+            contents: [
+              {
+                parts: [
+                  {
+                    text: prompt,
+                  },
+                ],
+              },
+            ],
+            generationConfig: {
+              temperature: 0.7,
+              topK: 40,
+              topP: 0.95,
+              maxOutputTokens: 8192,
+            },
+          }),
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error(`API request failed: ${response.status}`);
+      }
+
+      const data = await response.json();
+      const aiResponse = data.candidates[0].content.parts[0].text;
+      
+      // Clean the response - remove markdown code blocks if present
+      let cleanedResponse = aiResponse.trim();
+      if (cleanedResponse.startsWith("```json")) {
+        cleanedResponse = cleanedResponse.replace(/```json\n?/g, "").replace(/```\n?/g, "");
+      } else if (cleanedResponse.startsWith("```")) {
+        cleanedResponse = cleanedResponse.replace(/```\n?/g, "");
+      }
+      
+      const analysisData = JSON.parse(cleanedResponse);
+      setAnalysis(analysisData);
+    } catch (err) {
+      console.error("Error:", err);
+      setError("Failed to analyze content. Please try again.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const getSuggestionIcon = (type) => {
+    switch (type) {
+      case "success":
+        return <CheckCircle size={16} className="text-green-400" />;
+      case "warning":
+        return <AlertCircle size={16} className="text-yellow-400" />;
+      case "error":
+        return <XCircle size={16} className="text-red-400" />;
+      default:
+        return <AlertCircle size={16} className="text-blue-400" />;
+    }
+  };
+
+  const getScoreColor = (score) => {
+    if (score >= 80) return "text-green-400";
+    if (score >= 60) return "text-yellow-400";
+    return "text-red-400";
+  };
+
+  const getScoreBgColor = (score) => {
+    if (score >= 80) return "bg-green-500";
+    if (score >= 60) return "bg-yellow-500";
+    return "bg-red-500";
   };
 
   return (
-    <div className="flex-1 bg-[#0B0F19] text-gray-100 p-8">
+    <div className="min-h-screen bg-gradient-to-br from-[#0B0F19] via-[#111827] to-[#1F2937] text-gray-100 p-8">
       {/* Header */}
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold text-blue-400">SEO Tools</h1>
-        <button className="px-4 py-2 rounded-md bg-gradient-to-r from-pink-500 to-purple-600 font-medium hover:opacity-90 transition">
-          Past SEO Reports
-        </button>
-      </div>
-
-      {/* Content Analyzer */}
-      <div className="bg-[#111827] p-6 rounded-xl shadow-lg">
-        <h2 className="text-lg font-semibold text-gray-200 mb-3 flex items-center gap-2">
-          <FileText size={18} /> Content Analyzer
-        </h2>
-        <textarea
-          value={content}
-          onChange={(e) => setContent(e.target.value)}
-          className="w-full h-48 p-4 rounded-lg bg-[#1F2937] text-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500"
-          placeholder="Paste your content here for SEO analysis..."
-        ></textarea>
-
-        <div className="flex justify-end mt-4">
-          <button
-            onClick={handleAnalyze}
-            className="px-6 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg font-medium transition"
-          >
-            Analyze SEO
+      <div className="max-w-7xl mx-auto">
+        <div className="flex justify-between items-center mb-8">
+          <div>
+            <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-400 via-purple-500 to-pink-500 bg-clip-text text-transparent">
+              AI-Powered SEO Analyzer
+            </h1>
+            <p className="text-gray-400 mt-2">Powered by Google Gemini AI</p>
+          </div>
+          <button className="px-6 py-3 rounded-lg bg-gradient-to-r from-pink-500 to-purple-600 font-medium hover:opacity-90 transition shadow-lg">
+            Past SEO Reports
           </button>
         </div>
-      </div>
 
-      {/* Quick Insights + Suggestions */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6">
-        {/* Quick Insights */}
-        <div className="bg-[#111827] p-6 rounded-xl shadow-lg">
-          <h2 className="text-lg font-semibold text-gray-200 mb-4 flex items-center gap-2">
-            <BarChart2 size={18} /> Quick Insights
+        {/* Content Analyzer */}
+        <div className="bg-[#111827] p-6 rounded-2xl shadow-2xl border border-gray-800 mb-6">
+          <h2 className="text-xl font-semibold text-gray-200 mb-4 flex items-center gap-2">
+            <FileText size={20} className="text-blue-400" /> Content Analyzer
           </h2>
-
-          <ul className="space-y-3 text-sm mb-6">
-            <li className="flex justify-between border-b border-gray-700 pb-2">
-              <span className="text-gray-400">Word Count</span>
-              <span className="font-bold text-blue-400">{wordCount}</span>
-            </li>
-            <li className="flex justify-between border-b border-gray-700 pb-2">
-              <span className="text-gray-400">Keyword Density</span>
-              <span className="font-bold text-blue-400">
-                {keywords.length > 0 ? `${keywords[0].density}%` : "--%"}
-              </span>
-            </li>
-            <li className="flex justify-between">
-              <span className="text-gray-400">Readability Score</span>
-              <span className="font-bold text-blue-400">--</span>
-            </li>
-          </ul>
-
-          {/* Keyword Frequency Table (SCRUM-22) */}
-          {keywords.length > 0 && (
-            <div>
-              <h3 className="text-sm font-semibold text-gray-300 mb-2">
-                Keyword Frequency Table
-              </h3>
-              <table className="w-full text-sm border border-gray-700 rounded-lg overflow-hidden">
-                <thead className="bg-[#1F2937] text-gray-300">
-                  <tr>
-                    <th className="p-2 text-left">Keyword</th>
-                    <th className="p-2 text-right">Count</th>
-                    <th className="p-2 text-right">Density</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {keywords.map((k) => (
-                    <tr
-                      key={k.keyword}
-                      className="border-t border-gray-700 hover:bg-[#1F2937]"
-                    >
-                      <td className="p-2">{k.keyword}</td>
-                      <td className="p-2 text-right">{k.count}</td>
-                      <td className="p-2 text-right">{k.density}%</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+          <textarea
+            value={content}
+            onChange={(e) => setContent(e.target.value)}
+            className="w-full h-56 p-4 rounded-xl bg-[#1F2937] text-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500 border border-gray-700 resize-none"
+            placeholder="Paste your content here for advanced AI-powered SEO analysis..."
+          ></textarea>
+          
+          {error && (
+            <div className="mt-4 p-4 bg-red-500/10 border border-red-500/50 rounded-lg text-red-400 flex items-center gap-2">
+              <AlertCircle size={18} />
+              {error}
             </div>
           )}
 
-          {/* Chart */}
-          <h3 className="text-sm font-semibold text-gray-300 mt-6 mb-2">
-            Keyword Frequency Chart
-          </h3>
-          <div className="h-48">
-            <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={keywords.length > 0 ? keywords : keywordData}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
-                <XAxis dataKey="keyword" stroke="#9CA3AF" />
-                <YAxis stroke="#9CA3AF" />
-                <Tooltip
-                  contentStyle={{
-                    backgroundColor: "#111827",
-                    border: "1px solid #374151",
-                    color: "#F9FAFB",
-                  }}
-                />
-                <Bar dataKey="count" fill="#3B82F6" radius={[6, 6, 0, 0]} />
-              </BarChart>
-            </ResponsiveContainer>
+          <div className="flex justify-end mt-4">
+            <button
+              onClick={analyzeWithGemini}
+              disabled={loading}
+              className="px-8 py-3 bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white rounded-xl font-medium transition shadow-lg disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+            >
+              {loading ? (
+                <>
+                  <Loader2 size={18} className="animate-spin" />
+                  Analyzing...
+                </>
+              ) : (
+                <>
+                  <Sparkles size={18} />
+                  Analyze with AI
+                </>
+              )}
+            </button>
           </div>
         </div>
 
-        {/* SEO Suggestions */}
-        <div className="bg-[#111827] p-6 rounded-xl shadow-lg">
-          <h2 className="text-lg font-semibold text-gray-200 mb-4 flex items-center gap-2">
-            <TrendingUp size={18} /> SEO Suggestions
-          </h2>
-          <ul className="list-disc list-inside space-y-2 text-gray-400 text-sm">
-            <li>Use more H1 and H2 headings.</li>
-            <li>Add meta description for better CTR.</li>
-            <li>Increase keyword usage naturally.</li>
-            <li>Improve internal linking structure.</li>
-          </ul>
-        </div>
+        {/* Analysis Results */}
+        {analysis && (
+          <>
+            {/* Score Overview */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
+              <div className="bg-gradient-to-br from-blue-500/20 to-blue-600/20 p-6 rounded-2xl border border-blue-500/30 shadow-lg">
+                <div className="flex justify-between items-start mb-2">
+                  <h3 className="text-gray-400 text-sm">SEO Score</h3>
+                  <BarChart2 size={20} className="text-blue-400" />
+                </div>
+                <div className={`text-4xl font-bold ${getScoreColor(analysis.seoScore)}`}>
+                  {analysis.seoScore}
+                </div>
+                <div className="w-full bg-gray-700 rounded-full h-2 mt-3">
+                  <div
+                    className={`h-2 rounded-full ${getScoreBgColor(analysis.seoScore)}`}
+                    style={{ width: `${analysis.seoScore}%` }}
+                  ></div>
+                </div>
+              </div>
+
+              <div className="bg-gradient-to-br from-purple-500/20 to-purple-600/20 p-6 rounded-2xl border border-purple-500/30 shadow-lg">
+                <div className="flex justify-between items-start mb-2">
+                  <h3 className="text-gray-400 text-sm">Readability</h3>
+                  <FileText size={20} className="text-purple-400" />
+                </div>
+                <div className={`text-4xl font-bold ${getScoreColor(analysis.readabilityScore)}`}>
+                  {analysis.readabilityScore}
+                </div>
+                <div className="w-full bg-gray-700 rounded-full h-2 mt-3">
+                  <div
+                    className={`h-2 rounded-full ${getScoreBgColor(analysis.readabilityScore)}`}
+                    style={{ width: `${analysis.readabilityScore}%` }}
+                  ></div>
+                </div>
+              </div>
+
+              <div className="bg-gradient-to-br from-green-500/20 to-green-600/20 p-6 rounded-2xl border border-green-500/30 shadow-lg">
+                <div className="flex justify-between items-start mb-2">
+                  <h3 className="text-gray-400 text-sm">Word Count</h3>
+                  <FileText size={20} className="text-green-400" />
+                </div>
+                <div className="text-4xl font-bold text-green-400">
+                  {analysis.wordCount}
+                </div>
+                <p className="text-gray-400 text-sm mt-2">{analysis.characterCount} characters</p>
+              </div>
+
+              <div className="bg-gradient-to-br from-pink-500/20 to-pink-600/20 p-6 rounded-2xl border border-pink-500/30 shadow-lg">
+                <div className="flex justify-between items-start mb-2">
+                  <h3 className="text-gray-400 text-sm">Sentiment</h3>
+                  <TrendingUp size={20} className="text-pink-400" />
+                </div>
+                <div className="text-2xl font-bold text-pink-400 capitalize">
+                  {analysis.sentimentAnalysis.sentiment}
+                </div>
+                <p className="text-gray-400 text-sm mt-2 capitalize">{analysis.sentimentAnalysis.tone}</p>
+              </div>
+            </div>
+
+            {/* Main Analysis Grid */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+              {/* Keyword Analysis */}
+              <div className="bg-[#111827] p-6 rounded-2xl shadow-2xl border border-gray-800">
+                <h2 className="text-xl font-semibold text-gray-200 mb-4 flex items-center gap-2">
+                  <BarChart2 size={20} className="text-blue-400" /> Keyword Analysis
+                </h2>
+                
+                {analysis.keywords.length > 0 && (
+                  <>
+                    <div className="mb-6">
+                      <h3 className="text-sm font-semibold text-gray-300 mb-3">
+                        Top Keywords by Frequency
+                      </h3>
+                      <table className="w-full text-sm border border-gray-700 rounded-lg overflow-hidden">
+                        <thead className="bg-[#1F2937] text-gray-300">
+                          <tr>
+                            <th className="p-3 text-left">Keyword</th>
+                            <th className="p-3 text-right">Count</th>
+                            <th className="p-3 text-right">Density</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {analysis.keywords.slice(0, 10).map((k, idx) => (
+                            <tr
+                              key={idx}
+                              className="border-t border-gray-700 hover:bg-[#1F2937] transition"
+                            >
+                              <td className="p-3">{k.keyword}</td>
+                              <td className="p-3 text-right font-semibold text-blue-400">{k.count}</td>
+                              <td className="p-3 text-right text-purple-400">{k.density}%</td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+
+                    <h3 className="text-sm font-semibold text-gray-300 mb-3">
+                      Keyword Distribution Chart
+                    </h3>
+                    <div className="h-64">
+                      <ResponsiveContainer width="100%" height="100%">
+                        <BarChart data={analysis.topKeywords.slice(0, 8)}>
+                          <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
+                          <XAxis dataKey="keyword" stroke="#9CA3AF" angle={-45} textAnchor="end" height={80} />
+                          <YAxis stroke="#9CA3AF" />
+                          <Tooltip
+                            contentStyle={{
+                              backgroundColor: "#111827",
+                              border: "1px solid #374151",
+                              borderRadius: "8px",
+                              color: "#F9FAFB",
+                            }}
+                          />
+                          <Bar dataKey="count" fill="#3B82F6" radius={[8, 8, 0, 0]} />
+                        </BarChart>
+                      </ResponsiveContainer>
+                    </div>
+                  </>
+                )}
+              </div>
+
+              {/* Meta Analysis Radar */}
+              <div className="bg-[#111827] p-6 rounded-2xl shadow-2xl border border-gray-800">
+                <h2 className="text-xl font-semibold text-gray-200 mb-4 flex items-center gap-2">
+                  <TrendingUp size={20} className="text-purple-400" /> SEO Performance Metrics
+                </h2>
+                
+                <div className="h-80">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <RadarChart data={[
+                      { metric: "Title Quality", value: analysis.metaAnalysis.titleQuality },
+                      { metric: "Keywords", value: analysis.metaAnalysis.keywordOptimization },
+                      { metric: "Structure", value: analysis.metaAnalysis.contentStructure },
+                      { metric: "Readability", value: analysis.metaAnalysis.readability },
+                      { metric: "Link Potential", value: analysis.metaAnalysis.linkPotential }
+                    ]}>
+                      <PolarGrid stroke="#374151" />
+                      <PolarAngleAxis dataKey="metric" stroke="#9CA3AF" />
+                      <PolarRadiusAxis angle={90} domain={[0, 100]} stroke="#9CA3AF" />
+                      <Radar name="Score" dataKey="value" stroke="#8B5CF6" fill="#8B5CF6" fillOpacity={0.6} />
+                      <Legend />
+                    </RadarChart>
+                  </ResponsiveContainer>
+                </div>
+
+                <div className="grid grid-cols-2 gap-4 mt-6">
+                  {Object.entries(analysis.metaAnalysis).map(([key, value]) => (
+                    <div key={key} className="bg-[#1F2937] p-3 rounded-lg">
+                      <p className="text-gray-400 text-xs capitalize">{key.replace(/([A-Z])/g, ' $1').trim()}</p>
+                      <p className={`text-2xl font-bold ${getScoreColor(value)}`}>{value}</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            {/* Suggestions and Improvements */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              {/* AI Suggestions */}
+              <div className="bg-[#111827] p-6 rounded-2xl shadow-2xl border border-gray-800">
+                <h2 className="text-xl font-semibold text-gray-200 mb-4 flex items-center gap-2">
+                  <Sparkles size={20} className="text-yellow-400" /> AI Suggestions
+                </h2>
+                <div className="space-y-3">
+                  {analysis.suggestions.map((suggestion, idx) => (
+                    <div
+                      key={idx}
+                      className="flex items-start gap-3 p-3 bg-[#1F2937] rounded-lg hover:bg-[#252f3f] transition"
+                    >
+                      {getSuggestionIcon(suggestion.type)}
+                      <p className="text-sm text-gray-300 flex-1">{suggestion.message}</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Improvement Recommendations */}
+              <div className="bg-[#111827] p-6 rounded-2xl shadow-2xl border border-gray-800">
+                <h2 className="text-xl font-semibold text-gray-200 mb-4 flex items-center gap-2">
+                  <TrendingUp size={20} className="text-green-400" /> Improvement Recommendations
+                </h2>
+                <ul className="space-y-3">
+                  {analysis.improvements.map((improvement, idx) => (
+                    <li
+                      key={idx}
+                      className="flex items-start gap-3 text-sm text-gray-300 p-3 bg-[#1F2937] rounded-lg hover:bg-[#252f3f] transition"
+                    >
+                      <span className="text-green-400 font-bold mt-0.5">•</span>
+                      <span className="flex-1">{improvement}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+          </>
+        )}
       </div>
     </div>
   );
