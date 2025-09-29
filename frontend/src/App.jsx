@@ -12,7 +12,8 @@ import NotificationSystem from './Pages/NotificationSystem';
 import GrammarChecker from './Pages/GrammarChecker';
 import PastGrammar from './Pages/PastGrammar';
 import ViewDraft from './Pages/viewdraft';
-import SEOTools from './Pages/SEOTools';   // ✅ NEW PAGE IMPORT
+import SEOTools from './Pages/SEOTools';   
+import HelpAndSupport from './Pages/HelpAndSupport';
 
 
 const App = () => {
@@ -41,7 +42,8 @@ const App = () => {
           <Route path="/notifications" element={<NotificationSystem />} />
           <Route path="/grammar-check" element={<GrammarChecker />} />
           <Route path="/past-grammar" element={<PastGrammar />} />
-          <Route path="/seo-tools" element={<SEOTools />} />   {/* ✅ NEW ROUTE */}
+          <Route path="/seo-tools" element={<SEOTools />} />   
+          <Route path="/help" element={<HelpAndSupport />} />
         </Routes>
       </div>
     </div>

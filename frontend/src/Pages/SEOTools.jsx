@@ -130,20 +130,20 @@ Provide your analysis in the following JSON structure (respond ONLY with valid J
   const getSuggestionIcon = (type) => {
     switch (type) {
       case "success":
-        return <CheckCircle size={16} className="text-green-400" />;
+        return <CheckCircle size={16} className="text-green-500" />;
       case "warning":
-        return <AlertCircle size={16} className="text-yellow-400" />;
+        return <AlertCircle size={16} className="text-yellow-500" />;
       case "error":
-        return <XCircle size={16} className="text-red-400" />;
+        return <XCircle size={16} className="text-red-500" />;
       default:
-        return <AlertCircle size={16} className="text-blue-400" />;
+        return <AlertCircle size={16} className="text-blue-500" />;
     }
   };
 
   const getScoreColor = (score) => {
-    if (score >= 80) return "text-green-400";
-    if (score >= 60) return "text-yellow-400";
-    return "text-red-400";
+    if (score >= 80) return "text-green-600";
+    if (score >= 60) return "text-yellow-600";
+    return "text-red-600";
   };
 
   const getScoreBgColor = (score) => {
@@ -153,35 +153,35 @@ Provide your analysis in the following JSON structure (respond ONLY with valid J
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#0B0F19] via-[#111827] to-[#1F2937] text-gray-100 p-8">
+    <div className="min-h-screen bg-white text-gray-800 p-8">
       {/* Header */}
       <div className="max-w-7xl mx-auto">
         <div className="flex justify-between items-center mb-8">
           <div>
-            <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-400 via-purple-500 to-pink-500 bg-clip-text text-transparent">
+            <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 bg-clip-text text-transparent">
               AI-Powered SEO Analyzer
             </h1>
-            <p className="text-gray-400 mt-2">Powered by Google Gemini AI</p>
+            <p className="text-gray-600 mt-2">Powered by Google Gemini AI</p>
           </div>
-          <button className="px-6 py-3 rounded-lg bg-gradient-to-r from-pink-500 to-purple-600 font-medium hover:opacity-90 transition shadow-lg">
+          <button className="px-6 py-3 rounded-lg bg-gradient-to-r from-pink-500 to-purple-600 text-white font-medium hover:opacity-90 transition shadow-lg">
             Past SEO Reports
           </button>
         </div>
 
         {/* Content Analyzer */}
-        <div className="bg-[#111827] p-6 rounded-2xl shadow-2xl border border-gray-800 mb-6">
-          <h2 className="text-xl font-semibold text-gray-200 mb-4 flex items-center gap-2">
-            <FileText size={20} className="text-blue-400" /> Content Analyzer
+        <div className="bg-gray-50 p-6 rounded-2xl shadow-lg border border-gray-200 mb-6">
+          <h2 className="text-xl font-semibold text-gray-800 mb-4 flex items-center gap-2">
+            <FileText size={20} className="text-blue-600" /> Content Analyzer
           </h2>
           <textarea
             value={content}
             onChange={(e) => setContent(e.target.value)}
-            className="w-full h-56 p-4 rounded-xl bg-[#1F2937] text-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500 border border-gray-700 resize-none"
+            className="w-full h-56 p-4 rounded-xl bg-white text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500 border border-gray-300 resize-none"
             placeholder="Paste your content here for advanced AI-powered SEO analysis..."
           ></textarea>
           
           {error && (
-            <div className="mt-4 p-4 bg-red-500/10 border border-red-500/50 rounded-lg text-red-400 flex items-center gap-2">
+            <div className="mt-4 p-4 bg-red-50 border border-red-200 rounded-lg text-red-600 flex items-center gap-2">
               <AlertCircle size={18} />
               {error}
             </div>
@@ -213,15 +213,15 @@ Provide your analysis in the following JSON structure (respond ONLY with valid J
           <>
             {/* Score Overview */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
-              <div className="bg-gradient-to-br from-blue-500/20 to-blue-600/20 p-6 rounded-2xl border border-blue-500/30 shadow-lg">
+              <div className="bg-gradient-to-br from-blue-50 to-blue-100 p-6 rounded-2xl border border-blue-200 shadow-lg">
                 <div className="flex justify-between items-start mb-2">
-                  <h3 className="text-gray-400 text-sm">SEO Score</h3>
-                  <BarChart2 size={20} className="text-blue-400" />
+                  <h3 className="text-gray-600 text-sm">SEO Score</h3>
+                  <BarChart2 size={20} className="text-blue-600" />
                 </div>
                 <div className={`text-4xl font-bold ${getScoreColor(analysis.seoScore)}`}>
                   {analysis.seoScore}
                 </div>
-                <div className="w-full bg-gray-700 rounded-full h-2 mt-3">
+                <div className="w-full bg-gray-200 rounded-full h-2 mt-3">
                   <div
                     className={`h-2 rounded-full ${getScoreBgColor(analysis.seoScore)}`}
                     style={{ width: `${analysis.seoScore}%` }}
@@ -229,15 +229,15 @@ Provide your analysis in the following JSON structure (respond ONLY with valid J
                 </div>
               </div>
 
-              <div className="bg-gradient-to-br from-purple-500/20 to-purple-600/20 p-6 rounded-2xl border border-purple-500/30 shadow-lg">
+              <div className="bg-gradient-to-br from-purple-50 to-purple-100 p-6 rounded-2xl border border-purple-200 shadow-lg">
                 <div className="flex justify-between items-start mb-2">
-                  <h3 className="text-gray-400 text-sm">Readability</h3>
-                  <FileText size={20} className="text-purple-400" />
+                  <h3 className="text-gray-600 text-sm">Readability</h3>
+                  <FileText size={20} className="text-purple-600" />
                 </div>
                 <div className={`text-4xl font-bold ${getScoreColor(analysis.readabilityScore)}`}>
                   {analysis.readabilityScore}
                 </div>
-                <div className="w-full bg-gray-700 rounded-full h-2 mt-3">
+                <div className="w-full bg-gray-200 rounded-full h-2 mt-3">
                   <div
                     className={`h-2 rounded-full ${getScoreBgColor(analysis.readabilityScore)}`}
                     style={{ width: `${analysis.readabilityScore}%` }}
@@ -245,45 +245,45 @@ Provide your analysis in the following JSON structure (respond ONLY with valid J
                 </div>
               </div>
 
-              <div className="bg-gradient-to-br from-green-500/20 to-green-600/20 p-6 rounded-2xl border border-green-500/30 shadow-lg">
+              <div className="bg-gradient-to-br from-green-50 to-green-100 p-6 rounded-2xl border border-green-200 shadow-lg">
                 <div className="flex justify-between items-start mb-2">
-                  <h3 className="text-gray-400 text-sm">Word Count</h3>
-                  <FileText size={20} className="text-green-400" />
+                  <h3 className="text-gray-600 text-sm">Word Count</h3>
+                  <FileText size={20} className="text-green-600" />
                 </div>
-                <div className="text-4xl font-bold text-green-400">
+                <div className="text-4xl font-bold text-green-600">
                   {analysis.wordCount}
                 </div>
-                <p className="text-gray-400 text-sm mt-2">{analysis.characterCount} characters</p>
+                <p className="text-gray-600 text-sm mt-2">{analysis.characterCount} characters</p>
               </div>
 
-              <div className="bg-gradient-to-br from-pink-500/20 to-pink-600/20 p-6 rounded-2xl border border-pink-500/30 shadow-lg">
+              <div className="bg-gradient-to-br from-pink-50 to-pink-100 p-6 rounded-2xl border border-pink-200 shadow-lg">
                 <div className="flex justify-between items-start mb-2">
-                  <h3 className="text-gray-400 text-sm">Sentiment</h3>
-                  <TrendingUp size={20} className="text-pink-400" />
+                  <h3 className="text-gray-600 text-sm">Sentiment</h3>
+                  <TrendingUp size={20} className="text-pink-600" />
                 </div>
-                <div className="text-2xl font-bold text-pink-400 capitalize">
+                <div className="text-2xl font-bold text-pink-600 capitalize">
                   {analysis.sentimentAnalysis.sentiment}
                 </div>
-                <p className="text-gray-400 text-sm mt-2 capitalize">{analysis.sentimentAnalysis.tone}</p>
+                <p className="text-gray-600 text-sm mt-2 capitalize">{analysis.sentimentAnalysis.tone}</p>
               </div>
             </div>
 
             {/* Main Analysis Grid */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
               {/* Keyword Analysis */}
-              <div className="bg-[#111827] p-6 rounded-2xl shadow-2xl border border-gray-800">
-                <h2 className="text-xl font-semibold text-gray-200 mb-4 flex items-center gap-2">
-                  <BarChart2 size={20} className="text-blue-400" /> Keyword Analysis
+              <div className="bg-gray-50 p-6 rounded-2xl shadow-lg border border-gray-200">
+                <h2 className="text-xl font-semibold text-gray-800 mb-4 flex items-center gap-2">
+                  <BarChart2 size={20} className="text-blue-600" /> Keyword Analysis
                 </h2>
                 
                 {analysis.keywords.length > 0 && (
                   <>
                     <div className="mb-6">
-                      <h3 className="text-sm font-semibold text-gray-300 mb-3">
+                      <h3 className="text-sm font-semibold text-gray-700 mb-3">
                         Top Keywords by Frequency
                       </h3>
-                      <table className="w-full text-sm border border-gray-700 rounded-lg overflow-hidden">
-                        <thead className="bg-[#1F2937] text-gray-300">
+                      <table className="w-full text-sm border border-gray-300 rounded-lg overflow-hidden">
+                        <thead className="bg-gray-100 text-gray-700">
                           <tr>
                             <th className="p-3 text-left">Keyword</th>
                             <th className="p-3 text-right">Count</th>
@@ -294,32 +294,32 @@ Provide your analysis in the following JSON structure (respond ONLY with valid J
                           {analysis.keywords.slice(0, 10).map((k, idx) => (
                             <tr
                               key={idx}
-                              className="border-t border-gray-700 hover:bg-[#1F2937] transition"
+                              className="border-t border-gray-200 hover:bg-gray-100 transition"
                             >
-                              <td className="p-3">{k.keyword}</td>
-                              <td className="p-3 text-right font-semibold text-blue-400">{k.count}</td>
-                              <td className="p-3 text-right text-purple-400">{k.density}%</td>
+                              <td className="p-3 text-gray-800">{k.keyword}</td>
+                              <td className="p-3 text-right font-semibold text-blue-600">{k.count}</td>
+                              <td className="p-3 text-right text-purple-600">{k.density}%</td>
                             </tr>
                           ))}
                         </tbody>
                       </table>
                     </div>
 
-                    <h3 className="text-sm font-semibold text-gray-300 mb-3">
+                    <h3 className="text-sm font-semibold text-gray-700 mb-3">
                       Keyword Distribution Chart
                     </h3>
                     <div className="h-64">
                       <ResponsiveContainer width="100%" height="100%">
                         <BarChart data={analysis.topKeywords.slice(0, 8)}>
-                          <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
-                          <XAxis dataKey="keyword" stroke="#9CA3AF" angle={-45} textAnchor="end" height={80} />
-                          <YAxis stroke="#9CA3AF" />
+                          <CartesianGrid strokeDasharray="3 3" stroke="#D1D5DB" />
+                          <XAxis dataKey="keyword" stroke="#4B5563" angle={-45} textAnchor="end" height={80} />
+                          <YAxis stroke="#4B5563" />
                           <Tooltip
                             contentStyle={{
-                              backgroundColor: "#111827",
-                              border: "1px solid #374151",
+                              backgroundColor: "#ffffff",
+                              border: "1px solid #D1D5DB",
                               borderRadius: "8px",
-                              color: "#F9FAFB",
+                              color: "#111827",
                             }}
                           />
                           <Bar dataKey="count" fill="#3B82F6" radius={[8, 8, 0, 0]} />
@@ -331,9 +331,9 @@ Provide your analysis in the following JSON structure (respond ONLY with valid J
               </div>
 
               {/* Meta Analysis Radar */}
-              <div className="bg-[#111827] p-6 rounded-2xl shadow-2xl border border-gray-800">
-                <h2 className="text-xl font-semibold text-gray-200 mb-4 flex items-center gap-2">
-                  <TrendingUp size={20} className="text-purple-400" /> SEO Performance Metrics
+              <div className="bg-gray-50 p-6 rounded-2xl shadow-lg border border-gray-200">
+                <h2 className="text-xl font-semibold text-gray-800 mb-4 flex items-center gap-2">
+                  <TrendingUp size={20} className="text-purple-600" /> SEO Performance Metrics
                 </h2>
                 
                 <div className="h-80">
@@ -345,10 +345,10 @@ Provide your analysis in the following JSON structure (respond ONLY with valid J
                       { metric: "Readability", value: analysis.metaAnalysis.readability },
                       { metric: "Link Potential", value: analysis.metaAnalysis.linkPotential }
                     ]}>
-                      <PolarGrid stroke="#374151" />
-                      <PolarAngleAxis dataKey="metric" stroke="#9CA3AF" />
-                      <PolarRadiusAxis angle={90} domain={[0, 100]} stroke="#9CA3AF" />
-                      <Radar name="Score" dataKey="value" stroke="#8B5CF6" fill="#8B5CF6" fillOpacity={0.6} />
+                      <PolarGrid stroke="#D1D5DB" />
+                      <PolarAngleAxis dataKey="metric" stroke="#4B5563" />
+                      <PolarRadiusAxis angle={90} domain={[0, 100]} stroke="#4B5563" />
+                      <Radar name="Score" dataKey="value" stroke="#7C3AED" fill="#7C3AED" fillOpacity={0.6} />
                       <Legend />
                     </RadarChart>
                   </ResponsiveContainer>
@@ -356,8 +356,8 @@ Provide your analysis in the following JSON structure (respond ONLY with valid J
 
                 <div className="grid grid-cols-2 gap-4 mt-6">
                   {Object.entries(analysis.metaAnalysis).map(([key, value]) => (
-                    <div key={key} className="bg-[#1F2937] p-3 rounded-lg">
-                      <p className="text-gray-400 text-xs capitalize">{key.replace(/([A-Z])/g, ' $1').trim()}</p>
+                    <div key={key} className="bg-white p-3 rounded-lg border border-gray-200">
+                      <p className="text-gray-600 text-xs capitalize">{key.replace(/([A-Z])/g, ' $1').trim()}</p>
                       <p className={`text-2xl font-bold ${getScoreColor(value)}`}>{value}</p>
                     </div>
                   ))}
@@ -368,35 +368,35 @@ Provide your analysis in the following JSON structure (respond ONLY with valid J
             {/* Suggestions and Improvements */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
               {/* AI Suggestions */}
-              <div className="bg-[#111827] p-6 rounded-2xl shadow-2xl border border-gray-800">
-                <h2 className="text-xl font-semibold text-gray-200 mb-4 flex items-center gap-2">
-                  <Sparkles size={20} className="text-yellow-400" /> AI Suggestions
+              <div className="bg-gray-50 p-6 rounded-2xl shadow-lg border border-gray-200">
+                <h2 className="text-xl font-semibold text-gray-800 mb-4 flex items-center gap-2">
+                  <Sparkles size={20} className="text-yellow-600" /> AI Suggestions
                 </h2>
                 <div className="space-y-3">
                   {analysis.suggestions.map((suggestion, idx) => (
                     <div
                       key={idx}
-                      className="flex items-start gap-3 p-3 bg-[#1F2937] rounded-lg hover:bg-[#252f3f] transition"
+                      className="flex items-start gap-3 p-3 bg-white rounded-lg border border-gray-200 hover:bg-gray-100 transition"
                     >
                       {getSuggestionIcon(suggestion.type)}
-                      <p className="text-sm text-gray-300 flex-1">{suggestion.message}</p>
+                      <p className="text-sm text-gray-700 flex-1">{suggestion.message}</p>
                     </div>
                   ))}
                 </div>
               </div>
 
               {/* Improvement Recommendations */}
-              <div className="bg-[#111827] p-6 rounded-2xl shadow-2xl border border-gray-800">
-                <h2 className="text-xl font-semibold text-gray-200 mb-4 flex items-center gap-2">
-                  <TrendingUp size={20} className="text-green-400" /> Improvement Recommendations
+              <div className="bg-gray-50 p-6 rounded-2xl shadow-lg border border-gray-200">
+                <h2 className="text-xl font-semibold text-gray-800 mb-4 flex items-center gap-2">
+                  <TrendingUp size={20} className="text-green-600" /> Improvement Recommendations
                 </h2>
                 <ul className="space-y-3">
                   {analysis.improvements.map((improvement, idx) => (
                     <li
                       key={idx}
-                      className="flex items-start gap-3 text-sm text-gray-300 p-3 bg-[#1F2937] rounded-lg hover:bg-[#252f3f] transition"
+                      className="flex items-start gap-3 text-sm text-gray-700 p-3 bg-white rounded-lg border border-gray-200 hover:bg-gray-100 transition"
                     >
-                      <span className="text-green-400 font-bold mt-0.5">•</span>
+                      <span className="text-green-600 font-bold mt-0.5">•</span>
                       <span className="flex-1">{improvement}</span>
                     </li>
                   ))}
