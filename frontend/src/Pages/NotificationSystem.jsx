@@ -243,19 +243,19 @@ const NotificationSystem = ({
 
   const getPriorityIcon = (priority) => {
     switch (priority) {
-      case 'success': return <CheckCircle className="w-5 h-5 sm:w-6 sm:h-6 text-black" />;
-      case 'error': return <X className="w-5 h-5 sm:w-6 sm:h-6 text-white" />;
-      case 'warning': return <Info className="w-5 h-5 sm:w-6 sm:h-6 text-white" />;
-      default: return <Info className="w-5 h-5 sm:w-6 sm:h-6 text-white" />;
+      case 'success': return <CheckCircle className="w-5 h-5 sm:w-6 sm:h-6 text-green-600" />;
+      case 'error': return <X className="w-5 h-5 sm:w-6 sm:h-6 text-red-600" />;
+      case 'warning': return <AlertTriangle className="w-5 h-5 sm:w-6 sm:h-6 text-yellow-600" />;
+      default: return <Info className="w-5 h-5 sm:w-6 sm:h-6 text-blue-600" />;
     }
   };
 
   const getPriorityStyles = (priority) => {
     switch (priority) {
-      case 'success': return 'bg-white text-black border border-gray-300';
-      case 'error': return 'bg-red-600 text-white';
-      case 'warning': return 'bg-blue-600 text-white';
-      default: return 'bg-blue-600 text-white';
+      case 'success': return 'bg-green-50 text-gray-800 border border-green-200';
+      case 'error': return 'bg-red-50 text-gray-800 border border-red-200';
+      case 'warning': return 'bg-yellow-50 text-gray-800 border border-yellow-200';
+      default: return 'bg-blue-50 text-gray-800 border border-blue-200';
     }
   };
 
@@ -318,14 +318,14 @@ const NotificationSystem = ({
   }, []);
 
   return (
-    <div className="min-h-screen bg-black p-4 sm:p-6 lg:p-8">
+    <div className="min-h-screen bg-white p-4 sm:p-6 lg:p-8">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="mb-6 sm:mb-8">
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div>
-              <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-white mb-2">Notifications</h1>
-              <p className="text-gray-300 text-sm sm:text-base">
+              <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-800 mb-2">Notifications</h1>
+              <p className="text-gray-600 text-sm sm:text-base">
                 {unreadCount > 0 ? `${unreadCount} unread notification${unreadCount > 1 ? 's' : ''}` : 'All caught up!'}
               </p>
             </div>
@@ -356,13 +356,13 @@ const NotificationSystem = ({
         {loading ? (
           <div className="flex flex-col items-center justify-center py-16 sm:py-20">
             <div className="animate-spin rounded-full h-12 w-12 border-4 border-blue-600 border-t-transparent"></div>
-            <p className="ml-4 text-gray-300 text-base sm:text-lg mt-4">Loading notifications...</p>
+            <p className="ml-4 text-gray-600 text-base sm:text-lg mt-4">Loading notifications...</p>
           </div>
         ) : notifications.length === 0 ? (
           <div className="text-center py-16 sm:py-20">
-            <Bell className="w-16 h-16 sm:w-20 sm:h-20 mx-auto mb-6 text-gray-600" />
-            <h2 className="text-xl sm:text-2xl font-semibold text-white mb-2">No notifications</h2>
-            <p className="text-gray-300 text-base sm:text-lg">You're all caught up!</p>
+            <Bell className="w-16 h-16 sm:w-20 sm:h-20 mx-auto mb-6 text-gray-400" />
+            <h2 className="text-xl sm:text-2xl font-semibold text-gray-800 mb-2">No notifications</h2>
+            <p className="text-gray-600 text-base sm:text-lg">You're all caught up!</p>
           </div>
         ) : (
           <div className="grid gap-3 sm:gap-4 lg:gap-6 grid-cols-1 md:grid-cols-2 xl:grid-cols-3">
@@ -377,7 +377,7 @@ const NotificationSystem = ({
                       {getPriorityIcon(notification.priority)}
                     </div>
                     <div className="flex-1 min-w-0">
-                      <h3 className={`text-lg sm:text-xl font-semibold ${notification.priority === 'success' ? 'text-black' : 'text-white'} truncate`}>
+                      <h3 className="text-lg sm:text-xl font-semibold text-gray-800 truncate">
                         {notification.title}
                       </h3>
                     </div>
@@ -386,11 +386,7 @@ const NotificationSystem = ({
                     {!notification.read && (
                       <button
                         onClick={() => markAsRead(notification.id)}
-                        className={`p-1.5 sm:p-2 rounded-lg transition-colors duration-200 ${
-                          notification.priority === 'success' 
-                            ? 'hover:bg-black hover:bg-opacity-10 text-black' 
-                            : 'hover:bg-white hover:bg-opacity-10 text-white'
-                        }`}
+                        className="p-1.5 sm:p-2 rounded-lg transition-colors duration-200 hover:bg-gray-200 text-gray-600"
                         title="Mark as read"
                       >
                         <Check className="w-4 h-4 sm:w-5 sm:h-5" />
@@ -398,11 +394,7 @@ const NotificationSystem = ({
                     )}
                     <button
                       onClick={() => deleteNotification(notification.id)}
-                      className={`p-1.5 sm:p-2 rounded-lg transition-colors duration-200 ${
-                        notification.priority === 'success' 
-                          ? 'hover:bg-black hover:bg-opacity-10 text-black' 
-                          : 'hover:bg-white hover:bg-opacity-10 text-white'
-                      }`}
+                      className="p-1.5 sm:p-2 rounded-lg transition-colors duration-200 hover:bg-gray-200 text-gray-600"
                       title="Delete notification"
                     >
                       <X className="w-4 h-4 sm:w-5 sm:h-5" />
@@ -411,53 +403,35 @@ const NotificationSystem = ({
                 </div>
                 
                 <div className="flex-1 mb-4">
-                  <p className={`opacity-90 text-sm sm:text-base leading-relaxed line-clamp-3 ${
-                    notification.priority === 'success' ? 'text-black' : 'text-white'
-                  }`}>
+                  <p className="text-gray-700 text-sm sm:text-base leading-relaxed line-clamp-3">
                     {notification.message}
                   </p>
                 </div>
                 
-                <div className={`flex items-center justify-between mt-auto pt-3 border-t border-opacity-20 ${
-                  notification.priority === 'success' ? 'border-black' : 'border-white'
-                }`}>
-                  <span className={`text-xs sm:text-sm opacity-75 ${
-                    notification.priority === 'success' ? 'text-black' : 'text-white'
-                  }`}>
+                <div className="flex items-center justify-between mt-auto pt-3 border-t border-gray-200">
+                  <span className="text-xs sm:text-sm text-gray-500">
                     {formatTimeAgo(notification.timestamp)}
                   </span>
                   <div className="flex items-center gap-2">
-                    <span className={`text-xs px-2 sm:px-3 py-1 rounded-full border border-opacity-20 ${
-                      notification.priority === 'success' 
-                        ? 'bg-black bg-opacity-10 text-black border-black' 
-                        : 'bg-white bg-opacity-20 text-black border-white'
-                    }`}>
+                    <span className="text-xs px-2 sm:px-3 py-1 rounded-full bg-gray-100 text-gray-700 border border-gray-300">
                       {notification.type}
                     </span>
                     {!notification.read && (
-                      <span className={`w-2 h-2 sm:w-3 sm:h-3 rounded-full opacity-75 ${
-                        notification.priority === 'success' ? 'bg-black' : 'bg-white'
-                      }`}></span>
+                      <span className="w-2 h-2 sm:w-3 sm:h-3 rounded-full bg-blue-500"></span>
                     )}
                   </div>
                 </div>
 
                 {notification.actions && notification.actions.length > 0 && (
-                  <div className={`flex flex-wrap gap-2 sm:gap-3 mt-4 pt-4 border-t border-opacity-20 ${
-                    notification.priority === 'success' ? 'border-black' : 'border-white'
-                  }`}>
+                  <div className="flex flex-wrap gap-2 sm:gap-3 mt-4 pt-4 border-t border-gray-200">
                     {notification.actions.map((action, index) => (
                       <button
                         key={index}
                         onClick={() => action.onClick?.()}
                         className={`px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg font-medium transition-colors duration-200 text-xs sm:text-sm ${
                           action.type === 'primary'
-                            ? notification.priority === 'success'
-                              ? 'bg-black bg-opacity-10 hover:bg-opacity-20 text-black border border-black border-opacity-20'
-                              : 'bg-white bg-opacity-20 hover:bg-opacity-30 text-white'
-                            : notification.priority === 'success'
-                              ? 'border border-black border-opacity-30 hover:bg-black hover:bg-opacity-10 text-black'
-                              : 'border border-white border-opacity-30 hover:bg-white hover:bg-opacity-10 text-white'
+                            ? 'bg-blue-600 hover:bg-blue-700 text-white'
+                            : 'border border-gray-300 hover:bg-gray-100 text-gray-700'
                         }`}
                       >
                         {action.label}
