@@ -1,89 +1,23 @@
-import React, { useState, useRef, useEffect } from 'react';
-
-const backendUrl = import.meta.env.VITE_BACKEND_URL || 'http://localhost:5000';
-
-const toolbarButtonClass = 'px-3 py-1 border rounded text-sm hover:bg-gray-100';
+import React from 'react';
+import LexicalEditor from '../Components/lexical/LexicalEditor.jsx';
 
 const ContentEditor = () => {
-  const editorRef = useRef(null);
-  const [plainText, setPlainText] = useState('');
-
-  useEffect(() => {
-    if (editorRef.current) {
-      setPlainText(editorRef.current.innerText || '');
-    }
-  }, []);
-
-  const exec = (command, value = null) => {
-    document.execCommand(command, false, value);
-    if (editorRef.current) {
-      editorRef.current.focus();
-      setPlainText(editorRef.current.innerText || '');
-    }
-  };
-
-  const onInput = () => {
-    if (editorRef.current) {
-      setPlainText(editorRef.current.innerText || '');
-    }
-  };
 
   return (
     <div className="p-6 w-full">
       <div className="max-w-5xl mx-auto">
-        <h1 className="text-2xl font-semibold mb-4">Content Editor</h1>
-
-        <div className="flex gap-2 flex-wrap mb-3">
-          <button className={toolbarButtonClass} onClick={() => exec('bold')}><strong>B</strong></button>
-          <button className={toolbarButtonClass} onClick={() => exec('italic')}><em>I</em></button>
-          <button className={toolbarButtonClass} onClick={() => exec('underline')}><u>U</u></button>
-          <button className={toolbarButtonClass} onClick={() => exec('strikeThrough')}><span className="line-through">S</span></button>
-          <span className="mx-2" />
-          <button className={toolbarButtonClass} onClick={() => exec('insertUnorderedList')}>• List</button>
-          <button className={toolbarButtonClass} onClick={() => exec('insertOrderedList')}>1. List</button>
-          <span className="mx-2" />
-          <button className={toolbarButtonClass} onClick={() => exec('formatBlock', 'H1')}>H1</button>
-          <button className={toolbarButtonClass} onClick={() => exec('formatBlock', 'H2')}>H2</button>
-          <button className={toolbarButtonClass} onClick={() => exec('formatBlock', 'P')}>P</button>
+        <div className="mb-4">
+          <div className="mb-1 flex items-center gap-2">
+            <span className="inline-flex h-2 w-2 animate-pulse rounded-full bg-emerald-500" />
+            <span className="rounded-full bg-emerald-50 px-2 py-0.5 text-xs font-medium text-emerald-700">Editor</span>
+          </div>
+          <h1 className="text-3xl font-semibold tracking-tight">
+            <span className="bg-gradient-to-r from-gray-900 to-gray-600 bg-clip-text text-transparent">Content Editor</span>
+          </h1>
+          <p className="mt-1 text-sm text-gray-500">Write, format, and refine with a professional rich text editor powered by Lexical.</p>
         </div>
 
-        <div
-          ref={editorRef}
-          className="min-h-80 border rounded p-4 focus:outline-none bg-white"
-          contentEditable
-          spellCheck={true}
-          lang="en"
-          onInput={onInput}
-          suppressContentEditableWarning
-          role="textbox"
-          aria-multiline="true"
-        >
-          Start writing here...
-        </div>
-
-        <div className="mt-2 text-xs text-gray-500">Spelling mistakes are underlined by your browser.</div>
-
-        <div className="mt-4 text-sm text-gray-600">
-          <span className="font-medium">Character count:</span> {plainText.length}
-        </div>
-
-        <div className="mt-4">
-          <button
-            className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
-            onClick={() => {
-              fetch(`${backendUrl}/draft`, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ text: plainText }),
-              })
-                .then((res) => res.json())
-                .then((data) => console.log("Draft saved:", data))
-                .catch((err) => console.error("Error saving draft:", err));
-            }}
-          >
-            Save Draft
-          </button>
-        </div>
+        <LexicalEditor />
       </div>
     </div>
   );
