@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import LexicalTheme from "./themes/LexicalTheme.jsx";
 import { LexicalComposer } from "@lexical/react/LexicalComposer";
 import { RichTextPlugin } from "@lexical/react/LexicalRichTextPlugin";
@@ -17,12 +17,12 @@ import { ListPlugin } from "@lexical/react/LexicalListPlugin";
 import { MarkdownShortcutPlugin } from "@lexical/react/LexicalMarkdownShortcutPlugin";
 import { TRANSFORMERS } from "@lexical/markdown";
 import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
-
+import { $generateHtmlFromNodes, $generateNodesFromDOM } from '@lexical/html';
+import { $getRoot, $insertNodes } from 'lexical';
 import ListMaxIndentLevelPlugin from "./plugins/ListMaxIndentLevelPlugin.jsx";
 import CodeHighlightPlugin from "./plugins/CodeHighlightPlugin.jsx";
 import LexicalAutoLinkPlugin from "./plugins/AutoLinkPlugin.jsx";
 import RewriteSuggestionsPlugin from "./plugins/RewriteSuggestionsPlugin.jsx";
-
 import "./styles/lexical.css";
 
 function Placeholder() {
@@ -47,35 +47,52 @@ function OnChangePlugin({ onChange, onEditorStateChange }) {
   return null;
 }
 
-const editorConfig = {
-  // The editor theme
-  theme: LexicalTheme,
-  // Handling of errors during update
-  onError(error) {
-    throw error;
-  },
-  // Any custom nodes go here
-  nodes: [
-    HeadingNode,
-    ListNode,
-    ListItemNode,
-    QuoteNode,
-    CodeNode,
-    CodeHighlightNode,
-    TableNode,
-    TableCellNode,
-    TableRowNode,
-    AutoLinkNode,
-    LinkNode
-  ]
-};
+// Plugin to load initial HTML content
+function LoadInitialContentPlugin({ initialHtml }) {
+  const [editor] = useLexicalComposerContext();
+  const [hasLoaded, setHasLoaded] = React.useState(false);
 
-export default function LexicalEditor() {
+  React.useEffect(() => {
+    if (initialHtml && !hasLoaded) {
+      editor.update(() => {
+        const parser = new DOMParser();
+        const dom = parser.parseFromString(initialHtml, 'text/html');
+        const nodes = $generateNodesFromDOM(editor, dom);
+        
+        // Clear existing content
+        const root = $getRoot();
+        root.clear();
+        
+        // Insert new nodes
+        $insertNodes(nodes);
+      });
+      setHasLoaded(true);
+    }
+  }, [editor, initialHtml, hasLoaded]);
+
+  return null;
+}
+
+// Plugin to get HTML content
+function GetHtmlPlugin({ onHtmlChange }) {
+  const [editor] = useLexicalComposerContext();
+  
+  React.useEffect(() => {
+    return editor.registerUpdateListener(({ editorState }) => {
+      editorState.read(() => {
+        const htmlString = $generateHtmlFromNodes(editor);
+        onHtmlChange(htmlString);
+      });
+    });
+  }, [editor, onHtmlChange]);
+  
+  return null;
+}
+
+export default function LexicalEditor({ initialContent, onContentChange }) {
   const [plainText, setPlainText] = useState('');
   const [editorState, setEditorState] = useState(null);
-  const [draftId, setDraftId] = useState(null);
-
-  const backendUrl = import.meta.env.VITE_BACKEND_URL;
+  const [htmlContent, setHtmlContent] = useState('');
 
   const handleContentChange = (textContent) => {
     setPlainText(textContent);
@@ -85,51 +102,34 @@ export default function LexicalEditor() {
     setEditorState(state);
   };
 
-  const handleSave = async () => {
-    if (!editorState) return;
-
-    // Serialize Lexical editor state (JSON string). Backend stores as string.
-    const content = JSON.stringify(editorState);
-
-    // Derive username from session (if logged in); fallback to 'anonymous'
-    let username = 'anonymous';
-    try {
-      const savedUserData = sessionStorage.getItem('userData');
-      if (savedUserData) {
-        const u = JSON.parse(savedUserData);
-        username = u.username || (u.email ? u.email.split('@')[0] : 'anonymous');
-      }
-    } catch (_) {}
-
-    try {
-      const url = draftId
-        ? `${backendUrl}/api/drafts/${draftId}`
-        : `${backendUrl}/api/drafts`;
-      const method = draftId ? 'PUT' : 'POST';
-      const body = draftId ? { content } : { content, username };
-
-      const res = await fetch(url, {
-        method,
-        headers: { 'Content-Type': 'application/json' },
-        credentials: 'include',
-        body: JSON.stringify(body),
-      });
-
-      if (!res.ok) {
-        const text = await res.text();
-        throw new Error(`Save failed: ${res.status} ${text}`);
-      }
-
-      const saved = await res.json();
-      if (!draftId && saved?.id) {
-        setDraftId(saved.id);
-      }
-
-      alert('Draft saved successfully!');
-    } catch (err) {
-      console.error(err);
-      alert('Failed to save draft. Please try again.');
+  const handleHtmlChange = (html) => {
+    setHtmlContent(html);
+    if (onContentChange) {
+      onContentChange(html);
     }
+  };
+
+  const editorConfig = {
+    // The editor theme
+    theme: LexicalTheme,
+    // Handling of errors during update
+    onError(error) {
+      throw error;
+    },
+    // Any custom nodes go here
+    nodes: [
+      HeadingNode,
+      ListNode,
+      ListItemNode,
+      QuoteNode,
+      CodeNode,
+      CodeHighlightNode,
+      TableNode,
+      TableCellNode,
+      TableRowNode,
+      AutoLinkNode,
+      LinkNode
+    ]
   };
 
   return (
@@ -146,16 +146,14 @@ export default function LexicalEditor() {
               ErrorBoundary={LexicalErrorBoundary}
             />
             <OnChangePlugin onChange={handleContentChange} onEditorStateChange={handleEditorStateChange} />
+            <GetHtmlPlugin onHtmlChange={handleHtmlChange} />
+            {initialContent && <LoadInitialContentPlugin initialHtml={initialContent} />}
             <HistoryPlugin />
             <AutoFocusPlugin />
             <CodeHighlightPlugin />
             <ListPlugin />
             <LinkPlugin />
             <LexicalAutoLinkPlugin />
-            {/* Rewrite suggestions tooltip on selection */}
-            {/**/}
-            {/* eslint-disable-next-line react/jsx-no-undef */}
-            {/* The plugin is imported below */}
             <RewriteSuggestionsPlugin />
             <ListMaxIndentLevelPlugin maxDepth={7} />
             <MarkdownShortcutPlugin transformers={TRANSFORMERS} />
@@ -168,16 +166,6 @@ export default function LexicalEditor() {
       <div className="mt-4 text-sm text-gray-600">
         <span className="font-medium">Character count:</span> {plainText.length}
       </div>
-      
-      {/* <div className="mt-4 flex justify-end">
-        <button
-          onClick={handleSave}
-          disabled={!editorState || plainText.trim().length === 0}
-          className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors"
-        >
-          Save Draft
-        </button>
-      </div> */}
     </div>
   );
 }

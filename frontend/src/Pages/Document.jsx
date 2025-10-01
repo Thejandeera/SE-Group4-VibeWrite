@@ -21,7 +21,7 @@ const Document = () => {
   // Function to save draft
   const saveDraft = async () => {
     setIsSaving(true);
-    
+
     try {
       // Get userId from session storage
       const userDataString = sessionStorage.getItem('userData');
@@ -38,14 +38,14 @@ const Document = () => {
         return;
       }
 
-      // Get editor content
+      // Get editor content (plain text only)
       const editorContent = contentRef.current?.querySelector('.editor-input');
       if (!editorContent || !editorContent.textContent.trim()) {
         toast.error('Cannot save empty content');
         return;
       }
 
-      const content = editorContent.innerHTML;
+      const content = editorContent.textContent.trim(); // Only plain text
 
       // Send POST request
       const response = await fetch(`${backendUrl}/drafts`, {
@@ -65,7 +65,7 @@ const Document = () => {
 
       const result = await response.json();
       toast.success('Draft saved successfully!');
-      
+
     } catch (error) {
       console.error('Save draft error:', error);
       toast.error('Failed to save draft. Please try again.');
