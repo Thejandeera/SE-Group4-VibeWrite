@@ -1,12 +1,78 @@
 import React, { useState, useRef } from 'react';
 import { Download, FileText, Image, FileCode, Save, Loader2 } from 'lucide-react';
 import LexicalEditor from '../Components/lexical/LexicalEditor.jsx';
+import { toast, Toaster } from 'react-hot-toast';
+
+const backendUrl = import.meta.env.VITE_BACKEND_URL;
 
 const Document = () => {
   const [isExporting, setIsExporting] = useState(false);
   const [exportType, setExportType] = useState(null);
   const [title, setTitle] = useState('');
+  const [isSaving, setIsSaving] = useState(false);
   const contentRef = useRef(null);
+  const editorStateRef = useRef(null);
+
+  // Function to handle editor state changes
+  const handleEditorStateChange = (state) => {
+    editorStateRef.current = state;
+  };
+
+  // Function to save draft
+  const saveDraft = async () => {
+    setIsSaving(true);
+    
+    try {
+      // Get userId from session storage
+      const userDataString = sessionStorage.getItem('userData');
+      if (!userDataString) {
+        toast.error('Please login to save drafts');
+        return;
+      }
+
+      const userData = JSON.parse(userDataString);
+      const userId = userData.id;
+
+      if (!userId) {
+        toast.error('User ID not found. Please login again.');
+        return;
+      }
+
+      // Get editor content
+      const editorContent = contentRef.current?.querySelector('.editor-input');
+      if (!editorContent || !editorContent.textContent.trim()) {
+        toast.error('Cannot save empty content');
+        return;
+      }
+
+      const content = editorContent.innerHTML;
+
+      // Send POST request
+      const response = await fetch(`${backendUrl}/drafts`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          content: content,
+          userId: userId
+        })
+      });
+
+      if (!response.ok) {
+        throw new Error(`Failed to save: ${response.status}`);
+      }
+
+      const result = await response.json();
+      toast.success('Draft saved successfully!');
+      
+    } catch (error) {
+      console.error('Save draft error:', error);
+      toast.error('Failed to save draft. Please try again.');
+    } finally {
+      setIsSaving(false);
+    }
+  };
 
   // Sanitize filename
   const sanitizeFilename = (name) => {
@@ -438,6 +504,7 @@ const Document = () => {
 
   return (
     <div className="min-h-screen bg-white">
+      <Toaster position="top-right" />
       <div className="p-8 w-full">
         <div className="max-w-5xl mx-auto">
           {/* Title Input Section */}
@@ -452,73 +519,94 @@ const Document = () => {
             <div className="h-1 bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 mt-3 rounded-full" />
           </div>
 
-          {/* Export Buttons Bar */}
-          <div className="mb-6 flex flex-wrap items-center gap-3 pb-4 border-b border-gray-200">
-            <span className="text-sm font-medium text-gray-700 mr-2">Export as:</span>
-            
-            <button
-              onClick={exportAsPDF}
-              disabled={isExporting}
-              className="inline-flex items-center gap-2 px-4 py-2 bg-red-600 text-white text-sm font-medium rounded-lg hover:bg-red-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-all duration-200 shadow-sm hover:shadow"
-            >
-              {isExporting && exportType === 'pdf' ? (
-                <Loader2 className="h-4 w-4 animate-spin" />
-              ) : (
-                <FileText className="h-4 w-4" />
-              )}
-              <span>PDF</span>
-            </button>
-            
-            <button
-              onClick={exportAsPNG}
-              disabled={isExporting}
-              className="inline-flex items-center gap-2 px-4 py-2 bg-purple-600 text-white text-sm font-medium rounded-lg hover:bg-purple-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-all duration-200 shadow-sm hover:shadow"
-            >
-              {isExporting && exportType === 'png' ? (
-                <Loader2 className="h-4 w-4 animate-spin" />
-              ) : (
-                <Image className="h-4 w-4" />
-              )}
-              <span>PNG</span>
-            </button>
+          {/* Action Buttons Bar */}
+          <div className="mb-6 flex flex-wrap items-center justify-between gap-3 pb-4 border-b border-gray-200">
+            <div className="flex flex-wrap items-center gap-3">
+              <span className="text-sm font-medium text-gray-700 mr-2">Export as:</span>
+              
+              <button
+                onClick={exportAsPDF}
+                disabled={isExporting}
+                className="inline-flex items-center gap-2 px-4 py-2 bg-red-600 text-white text-sm font-medium rounded-lg hover:bg-red-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-all duration-200 shadow-sm hover:shadow"
+              >
+                {isExporting && exportType === 'pdf' ? (
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                ) : (
+                  <FileText className="h-4 w-4" />
+                )}
+                <span>PDF</span>
+              </button>
+              
+              <button
+                onClick={exportAsPNG}
+                disabled={isExporting}
+                className="inline-flex items-center gap-2 px-4 py-2 bg-purple-600 text-white text-sm font-medium rounded-lg hover:bg-purple-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-all duration-200 shadow-sm hover:shadow"
+              >
+                {isExporting && exportType === 'png' ? (
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                ) : (
+                  <Image className="h-4 w-4" />
+                )}
+                <span>PNG</span>
+              </button>
 
-            <button
-              onClick={exportAsHTML}
-              disabled={isExporting}
-              className="inline-flex items-center gap-2 px-4 py-2 bg-orange-600 text-white text-sm font-medium rounded-lg hover:bg-orange-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-all duration-200 shadow-sm hover:shadow"
-            >
-              {isExporting && exportType === 'html' ? (
-                <Loader2 className="h-4 w-4 animate-spin" />
-              ) : (
-                <FileCode className="h-4 w-4" />
-              )}
-              <span>HTML</span>
-            </button>
+              <button
+                onClick={exportAsHTML}
+                disabled={isExporting}
+                className="inline-flex items-center gap-2 px-4 py-2 bg-orange-600 text-white text-sm font-medium rounded-lg hover:bg-orange-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-all duration-200 shadow-sm hover:shadow"
+              >
+                {isExporting && exportType === 'html' ? (
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                ) : (
+                  <FileCode className="h-4 w-4" />
+                )}
+                <span>HTML</span>
+              </button>
 
-            <button
-              onClick={exportAsMarkdown}
-              disabled={isExporting}
-              className="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-all duration-200 shadow-sm hover:shadow"
-            >
-              {isExporting && exportType === 'md' ? (
-                <Loader2 className="h-4 w-4 animate-spin" />
-              ) : (
-                <Download className="h-4 w-4" />
-              )}
-              <span>Markdown</span>
-            </button>
+              <button
+                onClick={exportAsMarkdown}
+                disabled={isExporting}
+                className="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-all duration-200 shadow-sm hover:shadow"
+              >
+                {isExporting && exportType === 'md' ? (
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                ) : (
+                  <Download className="h-4 w-4" />
+                )}
+                <span>Markdown</span>
+              </button>
 
+              <button
+                onClick={exportAsTXT}
+                disabled={isExporting}
+                className="inline-flex items-center gap-2 px-4 py-2 bg-gray-600 text-white text-sm font-medium rounded-lg hover:bg-gray-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-all duration-200 shadow-sm hover:shadow"
+              >
+                {isExporting && exportType === 'txt' ? (
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                ) : (
+                  <FileText className="h-4 w-4" />
+                )}
+                <span>TXT</span>
+              </button>
+            </div>
+
+            {/* Save Draft Button */}
             <button
-              onClick={exportAsTXT}
-              disabled={isExporting}
-              className="inline-flex items-center gap-2 px-4 py-2 bg-gray-600 text-white text-sm font-medium rounded-lg hover:bg-gray-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-all duration-200 shadow-sm hover:shadow"
+              onClick={saveDraft}
+              disabled={isSaving}
+              className="inline-flex items-center gap-2 px-5 py-2 bg-green-600 text-white text-sm font-medium rounded-lg hover:bg-green-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-all duration-200 shadow-sm hover:shadow"
             >
-              {isExporting && exportType === 'txt' ? (
-                <Loader2 className="h-4 w-4 animate-spin" />
+              {isSaving ? (
+                <>
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                  <span>Saving...</span>
+                </>
               ) : (
-                <FileText className="h-4 w-4" />
+                <>
+                  <Save className="h-4 w-4" />
+                  <span>Save Draft</span>
+                </>
               )}
-              <span>TXT</span>
             </button>
           </div>
 
