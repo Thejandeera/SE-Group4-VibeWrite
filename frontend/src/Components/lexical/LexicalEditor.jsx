@@ -169,7 +169,7 @@ export default function LexicalEditor() {
         <span className="font-medium">Character count:</span> {plainText.length}
       </div>
       
-      <div className="mt-4 flex justify-end">
+      {/* <div className="mt-4 flex justify-end">
         <button
           onClick={handleSave}
           disabled={!editorState || plainText.trim().length === 0}
@@ -177,7 +177,7 @@ export default function LexicalEditor() {
         >
           Save Draft
         </button>
-      </div>
+      </div> */}
     </div>
   );
 }
