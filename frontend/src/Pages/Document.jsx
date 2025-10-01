@@ -1,17 +1,95 @@
 import React, { useState, useRef } from 'react';
-import { Download, FileText, Image, FileCode, Save, Loader2 } from 'lucide-react';
-import LexicalEditor from '../Components/lexical/LexicalEditor.jsx';
-import { toast, Toaster } from 'react-hot-toast';
-
-const backendUrl = import.meta.env.VITE_BACKEND_URL;
+import { Download, FileText, Image, FileCode, Save, Loader2, Sparkles } from 'lucide-react';
 
 const Document = () => {
   const [isExporting, setIsExporting] = useState(false);
   const [exportType, setExportType] = useState(null);
   const [title, setTitle] = useState('');
   const [isSaving, setIsSaving] = useState(false);
+  const [isGenerating, setIsGenerating] = useState(false);
+  const [generatedContent, setGeneratedContent] = useState('');
+  const [editorContent, setEditorContent] = useState('');
   const contentRef = useRef(null);
   const editorStateRef = useRef(null);
+
+  const GEMINI_API_KEY = "AIzaSyDMzcmuIQispYp8176WIPUCA_UjE-UPBPo";
+
+  // Function to generate content with AI
+  const generateContentWithAI = async () => {
+    if (!title.trim()) {
+      alert('Please enter a document title first');
+      return;
+    }
+
+    setIsGenerating(true);
+
+    try {
+      const prompt = `You are an expert content writer. Based on the following document title, create comprehensive, well-structured content. 
+
+Document Title: "${title}"
+
+Create detailed, professional content for this document. Include:
+- An engaging introduction
+- Well-organized sections with subheadings (use HTML heading tags)
+- Detailed paragraphs with valuable information
+- Use proper HTML formatting (paragraphs, headings, lists, etc.)
+- Make it informative and engaging
+
+Respond with ONLY the HTML content (body content only, no <html>, <head>, or <body> tags). Use semantic HTML tags like <h2>, <h3>, <p>, <ul>, <li>, <strong>, <em>, etc.`;
+
+      const response = await fetch(
+        `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "x-goog-api-key": GEMINI_API_KEY,
+          },
+          body: JSON.stringify({
+            contents: [
+              {
+                parts: [
+                  {
+                    text: prompt,
+                  },
+                ],
+              },
+            ],
+            generationConfig: {
+              temperature: 0.7,
+              topK: 40,
+              topP: 0.95,
+              maxOutputTokens: 8192,
+            },
+          }),
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error(`API request failed: ${response.status}`);
+      }
+
+      const data = await response.json();
+      const aiResponse = data.candidates[0].content.parts[0].text;
+
+      // Clean the response - remove markdown code blocks if present
+      let cleanedResponse = aiResponse.trim();
+      if (cleanedResponse.startsWith("```html")) {
+        cleanedResponse = cleanedResponse.replace(/```html\n?/g, "").replace(/```\n?/g, "");
+      } else if (cleanedResponse.startsWith("```")) {
+        cleanedResponse = cleanedResponse.replace(/```\n?/g, "");
+      }
+
+      setGeneratedContent(cleanedResponse);
+      setEditorContent(cleanedResponse);
+      alert('Content generated successfully! It has been loaded into the editor.');
+    } catch (err) {
+      console.error("Error:", err);
+      alert("Failed to generate content. Please try again.");
+    } finally {
+      setIsGenerating(false);
+    }
+  };
 
   // Function to handle editor state changes
   const handleEditorStateChange = (state) => {
@@ -21,12 +99,11 @@ const Document = () => {
   // Function to save draft
   const saveDraft = async () => {
     setIsSaving(true);
-
     try {
       // Get userId from session storage
       const userDataString = sessionStorage.getItem('userData');
       if (!userDataString) {
-        toast.error('Please login to save drafts');
+        alert('Please login to save drafts');
         return;
       }
 
@@ -34,21 +111,21 @@ const Document = () => {
       const userId = userData.id;
 
       if (!userId) {
-        toast.error('User ID not found. Please login again.');
+        alert('User ID not found. Please login again.');
         return;
       }
 
       // Get editor content (plain text only)
-      const editorContent = contentRef.current?.querySelector('.editor-input');
-      if (!editorContent || !editorContent.textContent.trim()) {
-        toast.error('Cannot save empty content');
+      const editorContentEl = contentRef.current?.querySelector('.editor-input');
+      if (!editorContentEl || !editorContentEl.textContent.trim()) {
+        alert('Cannot save empty content');
         return;
       }
 
-      const content = editorContent.textContent.trim(); // Only plain text
+      const content = editorContentEl.textContent.trim();
 
       // Send POST request
-      const response = await fetch(`${backendUrl}/drafts`, {
+      const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/drafts`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -63,12 +140,10 @@ const Document = () => {
         throw new Error(`Failed to save: ${response.status}`);
       }
 
-      const result = await response.json();
-      toast.success('Draft saved successfully!');
-
+      alert('Draft saved successfully!');
     } catch (error) {
       console.error('Save draft error:', error);
-      toast.error('Failed to save draft. Please try again.');
+      alert('Failed to save draft. Please try again.');
     } finally {
       setIsSaving(false);
     }
@@ -86,14 +161,14 @@ const Document = () => {
     setExportType('pdf');
     
     try {
-      const editorContent = contentRef.current?.querySelector('.editor-input');
-      if (!editorContent) {
+      const editorContentEl = contentRef.current?.querySelector('.editor-input');
+      if (!editorContentEl) {
         alert('No content to export');
         return;
       }
 
       const printWindow = window.open('', '_blank');
-      const contentHTML = editorContent.innerHTML;
+      const contentHTML = editorContentEl.innerHTML;
       const documentTitle = title.trim() || 'Untitled Document';
       
       printWindow.document.write(`
@@ -199,8 +274,8 @@ const Document = () => {
     try {
       const html2canvas = (await import('https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/+esm')).default;
       
-      const editorContent = contentRef.current?.querySelector('.editor-input');
-      if (!editorContent) {
+      const editorContentEl = contentRef.current?.querySelector('.editor-input');
+      if (!editorContentEl) {
         alert('No content to export');
         return;
       }
@@ -225,7 +300,7 @@ const Document = () => {
         </h1>
       `;
       
-      tempContainer.innerHTML = titleHtml + editorContent.innerHTML;
+      tempContainer.innerHTML = titleHtml + editorContentEl.innerHTML;
       document.body.appendChild(tempContainer);
 
       const canvas = await html2canvas(tempContainer, {
@@ -263,14 +338,14 @@ const Document = () => {
     setExportType('html');
     
     try {
-      const editorContent = contentRef.current?.querySelector('.editor-input');
-      if (!editorContent) {
+      const editorContentEl = contentRef.current?.querySelector('.editor-input');
+      if (!editorContentEl) {
         alert('No content to export');
         return;
       }
 
       const documentTitle = title.trim() || 'Untitled Document';
-      const contentHTML = editorContent.innerHTML;
+      const contentHTML = editorContentEl.innerHTML;
       
       const htmlContent = `<!DOCTYPE html>
 <html lang="en">
@@ -374,18 +449,17 @@ const Document = () => {
     setExportType('md');
     
     try {
-      const editorContent = contentRef.current?.querySelector('.editor-input');
-      if (!editorContent) {
+      const editorContentEl = contentRef.current?.querySelector('.editor-input');
+      if (!editorContentEl) {
         alert('No content to export');
         return;
       }
 
       const documentTitle = title.trim() || 'Untitled Document';
       
-      // Simple HTML to Markdown conversion
       let markdown = `# ${documentTitle}\n\n`;
       const tempDiv = document.createElement('div');
-      tempDiv.innerHTML = editorContent.innerHTML;
+      tempDiv.innerHTML = editorContentEl.innerHTML;
       
       const convertNode = (node) => {
         if (node.nodeType === Node.TEXT_NODE) {
@@ -474,14 +548,14 @@ const Document = () => {
     setExportType('txt');
     
     try {
-      const editorContent = contentRef.current?.querySelector('.editor-input');
-      if (!editorContent) {
+      const editorContentEl = contentRef.current?.querySelector('.editor-input');
+      if (!editorContentEl) {
         alert('No content to export');
         return;
       }
 
       const documentTitle = title.trim() || 'Untitled Document';
-      const textContent = `${documentTitle}\n${'='.repeat(documentTitle.length)}\n\n${editorContent.textContent}`;
+      const textContent = `${documentTitle}\n${'='.repeat(documentTitle.length)}\n\n${editorContentEl.textContent}`;
 
       const blob = new Blob([textContent], { type: 'text/plain' });
       const url = URL.createObjectURL(blob);
@@ -504,7 +578,6 @@ const Document = () => {
 
   return (
     <div className="min-h-screen bg-white">
-      <Toaster position="top-right" />
       
       {/* Sticky Header Section */}
       <div className="sticky top-0 z-50 bg-white shadow-md">
@@ -512,13 +585,32 @@ const Document = () => {
           <div className="max-w-5xl mx-auto">
             {/* Title Input Section */}
             <div className="mb-6">
-              <input
-                type="text"
-                value={title}
-                onChange={(e) => setTitle(e.target.value)}
-                placeholder="Enter document title..."
-                className="w-full text-4xl font-bold border-none outline-none focus:ring-0 placeholder-gray-300 text-gray-900 bg-transparent px-0"
-              />
+              <div className="flex items-center gap-3">
+                <input
+                  type="text"
+                  value={title}
+                  onChange={(e) => setTitle(e.target.value)}
+                  placeholder="Enter document title..."
+                  className="flex-1 text-4xl font-bold border-none outline-none focus:ring-0 placeholder-gray-300 text-gray-900 bg-transparent px-0"
+                />
+                <button
+                  onClick={generateContentWithAI}
+                  disabled={isGenerating}
+                  className="inline-flex items-center gap-2 px-5 py-3 bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white text-sm font-medium rounded-xl transition-all duration-200 shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  {isGenerating ? (
+                    <>
+                      <Loader2 className="h-5 w-5 animate-spin" />
+                      <span>Generating...</span>
+                    </>
+                  ) : (
+                    <>
+                      <Sparkles className="h-5 w-5" />
+                      <span>Generate Content</span>
+                    </>
+                  )}
+                </button>
+              </div>
               <div className="h-1 bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 mt-3 rounded-full" />
             </div>
 
@@ -620,7 +712,29 @@ const Document = () => {
       <div className="p-8 w-full">
         <div className="max-w-5xl mx-auto">
           <div ref={contentRef} className="bg-white">
-            <LexicalEditor />
+            <div className="w-full">
+              {/* Simple Rich Text Editor */}
+              <div className="editor-container border border-gray-300 rounded-lg">
+                <div
+                  contentEditable
+                  className="editor-input min-h-[500px] p-6 outline-none focus:ring-2 focus:ring-blue-500 rounded-lg"
+                  dangerouslySetInnerHTML={{ __html: editorContent }}
+                  onInput={(e) => setEditorContent(e.currentTarget.innerHTML)}
+                  style={{
+                    fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif',
+                    fontSize: '16px',
+                    lineHeight: '1.6',
+                    color: '#1f2937'
+                  }}
+                />
+              </div>
+              
+              <div className="mt-2 text-xs text-gray-500">Start writing or generate content with AI using the title above.</div>
+              
+              <div className="mt-4 text-sm text-gray-600">
+                <span className="font-medium">Character count:</span> {contentRef.current?.querySelector('.editor-input')?.textContent?.length || 0}
+              </div>
+            </div>
           </div>
         </div>
       </div>
