@@ -32,6 +32,15 @@ public class DraftService {
         return draftRepository.findById(id);
     }
 
+    public boolean deleteDraft(String id) {
+        Optional<Draft> draft = draftRepository.findById(id);
+        if (draft.isPresent()) {
+            draftRepository.deleteById(id);
+            return true;
+        }
+        return false;
+    }
+
     public List<Draft> getDraftsByUserId(String userId) {
         return draftRepository.findByUserId(userId);
     }

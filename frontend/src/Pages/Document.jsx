@@ -505,112 +505,120 @@ const Document = () => {
   return (
     <div className="min-h-screen bg-white">
       <Toaster position="top-right" />
-      <div className="p-8 w-full">
-        <div className="max-w-5xl mx-auto">
-          {/* Title Input Section */}
-          <div className="mb-8">
-            <input
-              type="text"
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-              placeholder="Enter document title..."
-              className="w-full text-4xl font-bold border-none outline-none focus:ring-0 placeholder-gray-300 text-gray-900 bg-transparent px-0"
-            />
-            <div className="h-1 bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 mt-3 rounded-full" />
-          </div>
-
-          {/* Action Buttons Bar */}
-          <div className="mb-6 flex flex-wrap items-center justify-between gap-3 pb-4 border-b border-gray-200">
-            <div className="flex flex-wrap items-center gap-3">
-              <span className="text-sm font-medium text-gray-700 mr-2">Export as:</span>
-              
-              <button
-                onClick={exportAsPDF}
-                disabled={isExporting}
-                className="inline-flex items-center gap-2 px-4 py-2 bg-red-600 text-white text-sm font-medium rounded-lg hover:bg-red-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-all duration-200 shadow-sm hover:shadow"
-              >
-                {isExporting && exportType === 'pdf' ? (
-                  <Loader2 className="h-4 w-4 animate-spin" />
-                ) : (
-                  <FileText className="h-4 w-4" />
-                )}
-                <span>PDF</span>
-              </button>
-              
-              <button
-                onClick={exportAsPNG}
-                disabled={isExporting}
-                className="inline-flex items-center gap-2 px-4 py-2 bg-purple-600 text-white text-sm font-medium rounded-lg hover:bg-purple-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-all duration-200 shadow-sm hover:shadow"
-              >
-                {isExporting && exportType === 'png' ? (
-                  <Loader2 className="h-4 w-4 animate-spin" />
-                ) : (
-                  <Image className="h-4 w-4" />
-                )}
-                <span>PNG</span>
-              </button>
-
-              <button
-                onClick={exportAsHTML}
-                disabled={isExporting}
-                className="inline-flex items-center gap-2 px-4 py-2 bg-orange-600 text-white text-sm font-medium rounded-lg hover:bg-orange-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-all duration-200 shadow-sm hover:shadow"
-              >
-                {isExporting && exportType === 'html' ? (
-                  <Loader2 className="h-4 w-4 animate-spin" />
-                ) : (
-                  <FileCode className="h-4 w-4" />
-                )}
-                <span>HTML</span>
-              </button>
-
-              <button
-                onClick={exportAsMarkdown}
-                disabled={isExporting}
-                className="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-all duration-200 shadow-sm hover:shadow"
-              >
-                {isExporting && exportType === 'md' ? (
-                  <Loader2 className="h-4 w-4 animate-spin" />
-                ) : (
-                  <Download className="h-4 w-4" />
-                )}
-                <span>Markdown</span>
-              </button>
-
-              <button
-                onClick={exportAsTXT}
-                disabled={isExporting}
-                className="inline-flex items-center gap-2 px-4 py-2 bg-gray-600 text-white text-sm font-medium rounded-lg hover:bg-gray-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-all duration-200 shadow-sm hover:shadow"
-              >
-                {isExporting && exportType === 'txt' ? (
-                  <Loader2 className="h-4 w-4 animate-spin" />
-                ) : (
-                  <FileText className="h-4 w-4" />
-                )}
-                <span>TXT</span>
-              </button>
+      
+      {/* Sticky Header Section */}
+      <div className="sticky top-0 z-50 bg-white shadow-md">
+        <div className="p-8 w-full">
+          <div className="max-w-5xl mx-auto">
+            {/* Title Input Section */}
+            <div className="mb-6">
+              <input
+                type="text"
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
+                placeholder="Enter document title..."
+                className="w-full text-4xl font-bold border-none outline-none focus:ring-0 placeholder-gray-300 text-gray-900 bg-transparent px-0"
+              />
+              <div className="h-1 bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 mt-3 rounded-full" />
             </div>
 
-            {/* Save Draft Button */}
-            <button
-              onClick={saveDraft}
-              disabled={isSaving}
-              className="inline-flex items-center gap-2 px-5 py-2 bg-green-600 text-white text-sm font-medium rounded-lg hover:bg-green-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-all duration-200 shadow-sm hover:shadow"
-            >
-              {isSaving ? (
-                <>
-                  <Loader2 className="h-4 w-4 animate-spin" />
-                  <span>Saving...</span>
-                </>
-              ) : (
-                <>
-                  <Save className="h-4 w-4" />
-                  <span>Save Draft</span>
-                </>
-              )}
-            </button>
-          </div>
+            {/* Action Buttons Bar */}
+            <div className="flex flex-wrap items-center justify-between gap-3 pb-4">
+              <div className="flex flex-wrap items-center gap-3">
+                <span className="text-sm font-medium text-gray-700 mr-2">Export as:</span>
+                
+                <button
+                  onClick={exportAsPDF}
+                  disabled={isExporting}
+                  className="inline-flex items-center gap-2 px-4 py-2 bg-red-600 text-white text-sm font-medium rounded-lg hover:bg-red-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-all duration-200 shadow-sm hover:shadow"
+                >
+                  {isExporting && exportType === 'pdf' ? (
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                  ) : (
+                    <FileText className="h-4 w-4" />
+                  )}
+                  <span>PDF</span>
+                </button>
+                
+                <button
+                  onClick={exportAsPNG}
+                  disabled={isExporting}
+                  className="inline-flex items-center gap-2 px-4 py-2 bg-purple-600 text-white text-sm font-medium rounded-lg hover:bg-purple-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-all duration-200 shadow-sm hover:shadow"
+                >
+                  {isExporting && exportType === 'png' ? (
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                  ) : (
+                    <Image className="h-4 w-4" />
+                  )}
+                  <span>PNG</span>
+                </button>
 
-          {/* Editor Section */}
+                <button
+                  onClick={exportAsHTML}
+                  disabled={isExporting}
+                  className="inline-flex items-center gap-2 px-4 py-2 bg-orange-600 text-white text-sm font-medium rounded-lg hover:bg-orange-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-all duration-200 shadow-sm hover:shadow"
+                >
+                  {isExporting && exportType === 'html' ? (
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                  ) : (
+                    <FileCode className="h-4 w-4" />
+                  )}
+                  <span>HTML</span>
+                </button>
+
+                <button
+                  onClick={exportAsMarkdown}
+                  disabled={isExporting}
+                  className="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-all duration-200 shadow-sm hover:shadow"
+                >
+                  {isExporting && exportType === 'md' ? (
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                  ) : (
+                    <Download className="h-4 w-4" />
+                  )}
+                  <span>Markdown</span>
+                </button>
+
+                <button
+                  onClick={exportAsTXT}
+                  disabled={isExporting}
+                  className="inline-flex items-center gap-2 px-4 py-2 bg-gray-600 text-white text-sm font-medium rounded-lg hover:bg-gray-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-all duration-200 shadow-sm hover:shadow"
+                >
+                  {isExporting && exportType === 'txt' ? (
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                  ) : (
+                    <FileText className="h-4 w-4" />
+                  )}
+                  <span>TXT</span>
+                </button>
+              </div>
+
+              {/* Save Draft Button */}
+              <button
+                onClick={saveDraft}
+                disabled={isSaving}
+                className="inline-flex items-center gap-2 px-5 py-2 bg-green-600 text-white text-sm font-medium rounded-lg hover:bg-green-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-all duration-200 shadow-sm hover:shadow"
+              >
+                {isSaving ? (
+                  <>
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                    <span>Saving...</span>
+                  </>
+                ) : (
+                  <>
+                    <Save className="h-4 w-4" />
+                    <span>Save Draft</span>
+                  </>
+                )}
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Editor Section */}
+      <div className="p-8 w-full">
+        <div className="max-w-5xl mx-auto">
           <div ref={contentRef} className="bg-white">
             <LexicalEditor />
           </div>

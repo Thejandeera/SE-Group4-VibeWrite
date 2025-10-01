@@ -33,4 +33,13 @@ public class DraftController {
         List<Draft> drafts = draftService.getDraftsByUserId(userId);
         return new ResponseEntity<>(drafts, HttpStatus.OK);
     }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteDraft(@PathVariable String id) {
+        boolean deleted = draftService.deleteDraft(id);
+        if (deleted) {
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }
+        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    }
 }

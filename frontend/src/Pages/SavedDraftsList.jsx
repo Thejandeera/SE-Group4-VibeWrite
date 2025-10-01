@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { FileText, Calendar, Trash2, Edit3 } from 'lucide-react';
 
-const backendUrl = import.meta.env.VITE_BACKEND_URL || 'http://localhost:5000';
+const backendUrl = import.meta.env.VITE_BACKEND_URL ;
 
 const SavedDraftsList = () => {
   const [drafts, setDrafts] = useState([]);
@@ -21,6 +21,7 @@ const SavedDraftsList = () => {
           'Content-Type': 'application/json',
         },
       });
+      console.log('Fetch drafts response:', response);
       
       if (response.ok) {
         const draftsData = await response.json();
