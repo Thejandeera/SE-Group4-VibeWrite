@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { FileText, Calendar, Trash2, Edit3, Clock, User, X } from 'lucide-react';
+import { toast, Toaster } from 'react-hot-toast';
 
 const backendUrl = import.meta.env.VITE_BACKEND_URL;
 
@@ -16,6 +17,7 @@ const ViewDraft = () => {
   const fetchDrafts = async () => {
     setIsLoading(true);
     setError(null);
+
     const token = sessionStorage.getItem("token");
     const userDataString = sessionStorage.getItem("userData");
     let userId = null;
@@ -33,6 +35,7 @@ const ViewDraft = () => {
 
     if (!token || !userId) {
       setError("Authentication error: Token or User ID missing. Please log in.");
+      toast.error("Authentication error: Token or User ID missing. Please log in.");
       setIsLoading(false);
       return;
     }
@@ -52,6 +55,7 @@ const ViewDraft = () => {
         const text = await response.text();
         console.error("Failed to fetch drafts:", text);
         setError("Server error: Could not fetch drafts.");
+        toast.error("Server error: Could not fetch drafts.");
         setIsLoading(false);
         return;
       }
@@ -70,9 +74,11 @@ const ViewDraft = () => {
 
       console.log("Fetched drafts data:", draftsData);
       setDrafts(draftsData);
+      toast.success(`Loaded ${draftsData.length} draft${draftsData.length !== 1 ? 's' : ''}`);
     } catch (err) {
       console.error("Network error fetching drafts:", err);
       setError("Network error: Could not reach server.");
+      toast.error("Network error: Could not reach server.");
     } finally {
       setIsLoading(false);
     }
@@ -81,6 +87,7 @@ const ViewDraft = () => {
   const deleteDraft = async (draftId, e) => {
     e.stopPropagation();
     const token = sessionStorage.getItem("token");
+
     if (!token) return;
 
     if (!window.confirm('Are you sure you want to delete this draft?')) {
@@ -100,19 +107,32 @@ const ViewDraft = () => {
         if (selectedDraft && selectedDraft.id === draftId) {
           setSelectedDraft(null);
         }
+        toast.success('Draft deleted successfully!');
       } else {
         console.error('Failed to delete draft');
-        alert('Failed to delete draft. Please try again.');
+        toast.error('Failed to delete draft. Please try again.');
       }
     } catch (err) {
       console.error('Error deleting draft:', err);
-      alert('Error deleting draft. Please try again.');
+      toast.error('Error deleting draft. Please try again.');
     }
   };
 
   const loadDraftInEditor = (draft, e) => {
     e.stopPropagation();
-    window.location.href = `/content-editor?draft=${encodeURIComponent(JSON.stringify(draft))}`;
+    console.log('Loading draft in editor:', draft);
+    
+    // Store draft data in sessionStorage for the editor to pick up
+    sessionStorage.setItem('draftToEdit', JSON.stringify({
+      id: draft.id,
+      content: draft.content,
+      title: draft.title
+    }));
+    
+    toast.success('Loading draft in editor...');
+    
+    // Navigate to content editor
+    window.location.href = '/content-editor';
   };
 
   const formatDate = (timestamp) => {
@@ -127,6 +147,7 @@ const ViewDraft = () => {
   const getRelativeTime = (date) => {
     const now = new Date();
     const diff = Math.floor((now - date) / 1000);
+
     if (diff < 60) return 'Just now';
     if (diff < 3600) return `${Math.floor(diff / 60)} minutes ago`;
     if (diff < 86400) return `${Math.floor(diff / 3600)} hours ago`;
@@ -175,6 +196,33 @@ const ViewDraft = () => {
 
   return (
     <div className="min-h-screen bg-gray-50 p-6">
+      <Toaster 
+        position="top-right"
+        toastOptions={{
+          duration: 3000,
+          style: {
+            background: '#ffffff',
+            color: '#000000',
+            border: '1px solid #e5e7eb',
+            boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
+          },
+          success: {
+            duration: 3000,
+            iconTheme: {
+              primary: '#10b981',
+              secondary: '#ffffff',
+            },
+          },
+          error: {
+            duration: 4000,
+            iconTheme: {
+              primary: '#ef4444',
+              secondary: '#ffffff',
+            },
+          },
+        }}
+      />
+      
       <h1 className="text-2xl font-semibold text-gray-900 mb-4">Saved Drafts</h1>
       <div className="flex items-center text-sm text-gray-500 mt-2 mb-4">
         <User size={14} className="mr-1" />
@@ -205,19 +253,29 @@ const ViewDraft = () => {
                 <div className="flex items-start justify-between mb-3">
                   <h3 className="font-medium text-gray-900">{d.title}</h3>
                   <div className="flex gap-2">
-                    <button onClick={(e) => loadDraftInEditor(d, e)} className="text-blue-600 hover:underline">
+                    <button 
+                      onClick={(e) => loadDraftInEditor(d, e)} 
+                      className="text-blue-600 hover:bg-blue-50 p-1 rounded transition-colors"
+                      title="Edit draft"
+                    >
                       <Edit3 size={16} />
                     </button>
-                    <button onClick={(e) => deleteDraft(d.id, e)} className="text-red-600 hover:underline">
+                    <button 
+                      onClick={(e) => deleteDraft(d.id, e)} 
+                      className="text-red-600 hover:bg-red-50 p-1 rounded transition-colors"
+                      title="Delete draft"
+                    >
                       <Trash2 size={16} />
                     </button>
                   </div>
                 </div>
+
                 <div className="flex items-center gap-2 text-sm text-gray-500 mb-2">
                   <Calendar size={14} /> <span>{date}</span>
                   <Clock size={14} /> <span>{time}</span>
                   <span>({relative})</span>
                 </div>
+
                 <p className="text-gray-700 text-sm">{getContentPreview(d.content)}</p>
               </div>
             );

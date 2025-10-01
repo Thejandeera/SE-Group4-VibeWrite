@@ -167,7 +167,7 @@ const GrammarChecker = () => {
       <div className="max-w-6xl mx-auto">
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 md:mb-8 gap-4">
           <h1 className="text-2xl md:text-3xl font-bold gradient-text">
-            Content Editor
+            Grammar Checker
           </h1>
           <button
             onClick={navigateToPastGrammar}
