@@ -41,6 +41,24 @@ public class DraftService {
         return false;
     }
 
+    public Draft updateDraft(String id, Draft updatedDraft) {
+        Optional<Draft> existingDraft = draftRepository.findById(id);
+
+        if (existingDraft.isEmpty()) {
+            throw new InvalidDraftException("Draft not found with id: " + id);
+        }
+
+        if (updatedDraft.getContent() == null || updatedDraft.getContent().isBlank()) {
+            throw new InvalidDraftException("Draft content cannot be empty");
+        }
+
+        Draft draft = existingDraft.get();
+        draft.setContent(updatedDraft.getContent());
+        draft.setUpdatedTimestamp(LocalDateTime.now()); // Update timestamp to reflect last modification
+
+        return draftRepository.save(draft);
+    }
+
     public List<Draft> getDraftsByUserId(String userId) {
         return draftRepository.findByUserId(userId);
     }
