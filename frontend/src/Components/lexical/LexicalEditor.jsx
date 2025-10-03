@@ -18,7 +18,7 @@ import { MarkdownShortcutPlugin } from "@lexical/react/LexicalMarkdownShortcutPl
 import { TRANSFORMERS } from "@lexical/markdown";
 import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
 import { $generateHtmlFromNodes, $generateNodesFromDOM } from '@lexical/html';
-import { $getRoot, $insertNodes } from 'lexical';
+import { $getRoot, $insertNodes, $createParagraphNode, $createTextNode } from 'lexical';
 import ListMaxIndentLevelPlugin from "./plugins/ListMaxIndentLevelPlugin.jsx";
 import CodeHighlightPlugin from "./plugins/CodeHighlightPlugin.jsx";
 import LexicalAutoLinkPlugin from "./plugins/AutoLinkPlugin.jsx";
@@ -47,28 +47,90 @@ function OnChangePlugin({ onChange, onEditorStateChange }) {
   return null;
 }
 
-// Plugin to load initial HTML content
-function LoadInitialContentPlugin({ initialHtml }) {
+// Plugin to load initial HTML content - COMPLETELY REVISED
+function LoadInitialContentPlugin({ initialHtml, onContentLoaded }) {
   const [editor] = useLexicalComposerContext();
-  const [hasLoaded, setHasLoaded] = React.useState(false);
+  const [isLoaded, setIsLoaded] = React.useState(false);
 
   React.useEffect(() => {
-    if (initialHtml && !hasLoaded) {
-      editor.update(() => {
-        const parser = new DOMParser();
-        const dom = parser.parseFromString(initialHtml, 'text/html');
-        const nodes = $generateNodesFromDOM(editor, dom);
-        
-        // Clear existing content
-        const root = $getRoot();
-        root.clear();
-        
-        // Insert new nodes
-        $insertNodes(nodes);
-      });
-      setHasLoaded(true);
+    if (initialHtml && initialHtml.trim() && !isLoaded) {
+      console.log('Attempting to load content into editor...');
+      
+      // Use setTimeout to ensure editor is fully ready
+      const timer = setTimeout(() => {
+        editor.update(() => {
+          try {
+            console.log('Loading HTML content:', initialHtml.substring(0, 200) + '...');
+            
+            // Clear existing content first
+            const root = $getRoot();
+            root.clear();
+            
+            if (initialHtml.trim()) {
+              // Create a temporary container to parse HTML
+              const container = document.createElement('div');
+              container.innerHTML = initialHtml;
+              
+              // Generate nodes from the parsed HTML
+              const nodes = $generateNodesFromDOM(editor, container);
+              
+              if (nodes && nodes.length > 0) {
+                // Insert the generated nodes
+                $insertNodes(nodes);
+                console.log('Successfully inserted', nodes.length, 'nodes');
+              } else {
+                // Fallback: create a paragraph with the text content
+                console.log('No nodes generated, using fallback');
+                const paragraph = $createParagraphNode();
+                const textNode = $createTextNode(container.textContent || '');
+                paragraph.append(textNode);
+                root.append(paragraph);
+              }
+            } else {
+              // Empty content - create empty paragraph
+              const paragraph = $createParagraphNode();
+              root.append(paragraph);
+            }
+            
+            setIsLoaded(true);
+            if (onContentLoaded) {
+              onContentLoaded(true);
+            }
+            
+            console.log('Content loaded successfully into editor');
+            
+          } catch (error) {
+            console.error('Error loading content into editor:', error);
+            // Fallback: try to set text content directly
+            try {
+              const root = $getRoot();
+              root.clear();
+              const paragraph = $createParagraphNode();
+              const textNode = $createTextNode(initialHtml.replace(/<[^>]*>/g, ''));
+              paragraph.append(textNode);
+              root.append(paragraph);
+              console.log('Used fallback text loading');
+            } catch (fallbackError) {
+              console.error('Fallback loading also failed:', fallbackError);
+            }
+            
+            if (onContentLoaded) {
+              onContentLoaded(false);
+            }
+          }
+        });
+      }, 100);
+      
+      return () => clearTimeout(timer);
     }
-  }, [editor, initialHtml, hasLoaded]);
+  }, [editor, initialHtml, isLoaded, onContentLoaded]);
+
+  // Reset loaded state when initialHtml changes
+  React.useEffect(() => {
+    if (initialHtml) {
+      setIsLoaded(false);
+    }
+  }, [initialHtml]);
 
   return null;
 }
@@ -93,6 +155,7 @@ export default function LexicalEditor({ initialContent, onContentChange }) {
   const [plainText, setPlainText] = useState('');
   const [editorState, setEditorState] = useState(null);
   const [htmlContent, setHtmlContent] = useState('');
+  const [contentLoaded, setContentLoaded] = useState(false);
 
   const handleContentChange = (textContent) => {
     setPlainText(textContent);
@@ -109,12 +172,17 @@ export default function LexicalEditor({ initialContent, onContentChange }) {
     }
   };
 
+  const handleContentLoaded = (success) => {
+    setContentLoaded(success);
+    console.log('Content loaded callback:', success);
+  };
+
   const editorConfig = {
     // The editor theme
     theme: LexicalTheme,
     // Handling of errors during update
     onError(error) {
-      throw error;
+      console.error('Lexical Editor Error:', error);
     },
     // Any custom nodes go here
     nodes: [
@@ -129,11 +197,25 @@ export default function LexicalEditor({ initialContent, onContentChange }) {
       TableRowNode,
       AutoLinkNode,
       LinkNode
-    ]
+    ],
+    // Add namespace to avoid conflicts
+    namespace: 'ContentEditor'
   };
 
   return (
     <div className="w-full">
+      {contentLoaded && initialContent && (
+        <div className="mb-2 text-sm text-green-600 bg-green-50 p-2 rounded border border-green-200">
+          ✓ Draft content loaded successfully
+        </div>
+      )}
+      
+      {initialContent && !contentLoaded && (
+        <div className="mb-2 text-sm text-blue-600 bg-blue-50 p-2 rounded border border-blue-200">
+          ⏳ Loading draft content...
+        </div>
+      )}
+      
       <LexicalComposer initialConfig={editorConfig}>
         <div className="editor-container">
           <div className="mb-3 flex flex-wrap items-center gap-2">
@@ -147,7 +229,10 @@ export default function LexicalEditor({ initialContent, onContentChange }) {
             />
             <OnChangePlugin onChange={handleContentChange} onEditorStateChange={handleEditorStateChange} />
             <GetHtmlPlugin onHtmlChange={handleHtmlChange} />
-            {initialContent && <LoadInitialContentPlugin initialHtml={initialContent} />}
+            <LoadInitialContentPlugin 
+              initialHtml={initialContent} 
+              onContentLoaded={handleContentLoaded}
+            />
             <HistoryPlugin />
             <AutoFocusPlugin />
             <CodeHighlightPlugin />
@@ -165,6 +250,13 @@ export default function LexicalEditor({ initialContent, onContentChange }) {
       
       <div className="mt-4 text-sm text-gray-600">
         <span className="font-medium">Character count:</span> {plainText.length}
+      </div>
+      
+      {/* Debug info */}
+      <div className="mt-2 text-xs text-gray-400">
+        <div>Initial Content Length: {initialContent?.length || 0}</div>
+        <div>Current HTML Length: {htmlContent.length}</div>
+        <div>Plain Text Length: {plainText.length}</div>
       </div>
     </div>
   );
