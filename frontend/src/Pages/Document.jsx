@@ -12,7 +12,7 @@ const Document = () => {
   const contentRef = useRef(null);
   const editorStateRef = useRef(null);
 
-  const GEMINI_API_KEY = "AIzaSyDMzcmuIQispYp8176WIPUCA_UjE-UPBPo";
+  const GEMINI_API_KEY = import.meta.env.VITE_GEMINI_API_KEY;
 
   // Function to generate content with AI
   const generateContentWithAI = async () => {
