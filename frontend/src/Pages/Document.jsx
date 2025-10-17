@@ -1,5 +1,5 @@
 import React, { useState, useRef } from 'react';
-import { Download, FileText, Image, FileCode, Save, Loader2, Sparkles } from 'lucide-react';
+import { Download, FileText, Image, FileCode, Save, Loader2, Sparkles, Bell } from 'lucide-react'; // Added Bell icon
 
 const Document = () => {
   const [isExporting, setIsExporting] = useState(false);
@@ -13,6 +13,55 @@ const Document = () => {
   const editorStateRef = useRef(null);
 
   const GEMINI_API_KEY = import.meta.env.VITE_GEMINI_API_KEY;
+  const BACKEND_URL = import.meta.env.VITE_BACKEND_URL; // Assuming you have a constant for VITE_BACKEND_URL
+
+  // Utility function to get user data from sessionStorage
+  const getUserData = () => {
+    const userDataString = sessionStorage.getItem('userData');
+    if (!userDataString) {
+      return null;
+    }
+    try {
+      return JSON.parse(userDataString);
+    } catch (e) {
+      console.error("Failed to parse userData from session storage:", e);
+      return null;
+    }
+  };
+
+  // NEW: Function to post a notification to the backend
+  const postNotification = async (name, description) => {
+    const userData = getUserData();
+    const userId = userData?.id;
+
+    if (!userId) {
+      console.warn("User ID not found for notification. Skipping POST.");
+      return;
+    }
+
+    try {
+      const notificationPayload = {
+        userId: userId,
+        name: name,
+        description: description,
+      };
+
+      const response = await fetch(`${BACKEND_URL}/api/v1/notifications`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(notificationPayload),
+      });
+
+      if (!response.ok) {
+        // Log the failure, but don't disrupt the main application flow
+        console.error(`Failed to post notification: ${response.status} ${response.statusText}`);
+      }
+    } catch (error) {
+      console.error('Error posting notification:', error);
+    }
+  };
 
   // Function to generate content with AI
   const generateContentWithAI = async () => {
@@ -25,7 +74,7 @@ const Document = () => {
 
     try {
       const prompt = `You are an expert content writer. Based on the following document title,
-       create comprehensive, well-structured content. 
+        create comprehensive, well-structured content. 
 
 Document Title: "${title}"
 
@@ -85,9 +134,13 @@ or <body> tags). Use semantic HTML tags like <h2>, <h3>, <p>, <ul>, <li>, <stron
       setGeneratedContent(cleanedResponse);
       setEditorContent(cleanedResponse);
       alert('Content generated successfully! It has been loaded into the editor.');
+      // NEW: Post notification on success
+      postNotification('Content Generation Success', `AI content for document "${title}" was successfully generated.`);
     } catch (err) {
       console.error("Error:", err);
       alert("Failed to generate content. Please try again.");
+      // NEW: Post notification on failure
+      postNotification('Content Generation Failed', `AI content generation for document "${title}" failed.`);
     } finally {
       setIsGenerating(false);
     }
@@ -101,19 +154,17 @@ or <body> tags). Use semantic HTML tags like <h2>, <h3>, <p>, <ul>, <li>, <stron
   // Function to save draft
   const saveDraft = async () => {
     setIsSaving(true);
+    let success = false;
+    let notificationTitle = 'Draft Save Failed';
+    let notificationDesc = 'Failed to save draft. Please try again.';
+
     try {
       // Get userId from session storage
-      const userDataString = sessionStorage.getItem('userData');
-      if (!userDataString) {
-        alert('Please login to save drafts');
-        return;
-      }
-
-      const userData = JSON.parse(userDataString);
-      const userId = userData.id;
+      const userData = getUserData();
+      const userId = userData?.id;
 
       if (!userId) {
-        alert('User ID not found. Please login again.');
+        alert('Please login to save drafts');
         return;
       }
 
@@ -127,7 +178,7 @@ or <body> tags). Use semantic HTML tags like <h2>, <h3>, <p>, <ul>, <li>, <stron
       const content = editorContentEl.textContent.trim();
 
       // Send POST request
-      const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/drafts`, {
+      const response = await fetch(`${BACKEND_URL}/drafts`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -143,11 +194,17 @@ or <body> tags). Use semantic HTML tags like <h2>, <h3>, <p>, <ul>, <li>, <stron
       }
 
       alert('Draft saved successfully!');
+      success = true;
+      notificationTitle = 'Draft Saved';
+      notificationDesc = `Draft "${title || 'Untitled Document'}" was successfully saved.`;
+
     } catch (error) {
       console.error('Save draft error:', error);
       alert('Failed to save draft. Please try again.');
     } finally {
       setIsSaving(false);
+      // NEW: Post notification
+      postNotification(notificationTitle, notificationDesc);
     }
   };
 
@@ -161,6 +218,9 @@ or <body> tags). Use semantic HTML tags like <h2>, <h3>, <p>, <ul>, <li>, <stron
   const exportAsPDF = async () => {
     setIsExporting(true);
     setExportType('pdf');
+    let success = false;
+    let notificationTitle = 'PDF Export Failed';
+    let notificationDesc = 'Failed to export document as PDF.';
     
     try {
       const editorContentEl = contentRef.current?.querySelector('.editor-input');
@@ -258,6 +318,10 @@ or <body> tags). Use semantic HTML tags like <h2>, <h3>, <p>, <ul>, <li>, <stron
         printWindow.print();
         printWindow.close();
       }, 500);
+
+      success = true;
+      notificationTitle = 'PDF Export Success';
+      notificationDesc = `Document "${documentTitle}" exported successfully as PDF.`;
       
     } catch (error) {
       console.error('PDF export error:', error);
@@ -265,6 +329,8 @@ or <body> tags). Use semantic HTML tags like <h2>, <h3>, <p>, <ul>, <li>, <stron
     } finally {
       setIsExporting(false);
       setExportType(null);
+      // NEW: Post notification
+      postNotification(notificationTitle, notificationDesc);
     }
   };
 
@@ -272,6 +338,9 @@ or <body> tags). Use semantic HTML tags like <h2>, <h3>, <p>, <ul>, <li>, <stron
   const exportAsPNG = async () => {
     setIsExporting(true);
     setExportType('png');
+    let success = false;
+    let notificationTitle = 'PNG Export Failed';
+    let notificationDesc = 'Failed to export document as PNG.';
     
     try {
       const html2canvas = (await import('https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/+esm')).default;
@@ -314,16 +383,23 @@ or <body> tags). Use semantic HTML tags like <h2>, <h3>, <p>, <ul>, <li>, <stron
 
       document.body.removeChild(tempContainer);
 
-      canvas.toBlob((blob) => {
-        const url = URL.createObjectURL(blob);
-        const link = document.createElement('a');
-        link.href = url;
-        link.download = `${sanitizeFilename(title)}.png`;
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-        URL.revokeObjectURL(url);
-      }, 'image/png');
+      await new Promise((resolve) => {
+        canvas.toBlob((blob) => {
+          const url = URL.createObjectURL(blob);
+          const link = document.createElement('a');
+          link.href = url;
+          link.download = `${sanitizeFilename(title)}.png`;
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+          URL.revokeObjectURL(url);
+          resolve();
+        }, 'image/png');
+      });
+
+      success = true;
+      notificationTitle = 'PNG Export Success';
+      notificationDesc = `Document "${documentTitle}" exported successfully as PNG.`;
 
     } catch (error) {
       console.error('PNG export error:', error);
@@ -331,6 +407,8 @@ or <body> tags). Use semantic HTML tags like <h2>, <h3>, <p>, <ul>, <li>, <stron
     } finally {
       setIsExporting(false);
       setExportType(null);
+      // NEW: Post notification
+      postNotification(notificationTitle, notificationDesc);
     }
   };
 
@@ -338,6 +416,9 @@ or <body> tags). Use semantic HTML tags like <h2>, <h3>, <p>, <ul>, <li>, <stron
   const exportAsHTML = async () => {
     setIsExporting(true);
     setExportType('html');
+    let success = false;
+    let notificationTitle = 'HTML Export Failed';
+    let notificationDesc = 'Failed to export document as HTML.';
     
     try {
       const editorContentEl = contentRef.current?.querySelector('.editor-input');
@@ -436,12 +517,18 @@ or <body> tags). Use semantic HTML tags like <h2>, <h3>, <p>, <ul>, <li>, <stron
       document.body.removeChild(link);
       URL.revokeObjectURL(url);
 
+      success = true;
+      notificationTitle = 'HTML Export Success';
+      notificationDesc = `Document "${documentTitle}" exported successfully as HTML.`;
+
     } catch (error) {
       console.error('HTML export error:', error);
       alert('Failed to export as HTML. Please try again.');
     } finally {
       setIsExporting(false);
       setExportType(null);
+      // NEW: Post notification
+      postNotification(notificationTitle, notificationDesc);
     }
   };
 
@@ -449,6 +536,9 @@ or <body> tags). Use semantic HTML tags like <h2>, <h3>, <p>, <ul>, <li>, <stron
   const exportAsMarkdown = async () => {
     setIsExporting(true);
     setExportType('md');
+    let success = false;
+    let notificationTitle = 'Markdown Export Failed';
+    let notificationDesc = 'Failed to export document as Markdown.';
     
     try {
       const editorContentEl = contentRef.current?.querySelector('.editor-input');
@@ -465,57 +555,71 @@ or <body> tags). Use semantic HTML tags like <h2>, <h3>, <p>, <ul>, <li>, <stron
       
       const convertNode = (node) => {
         if (node.nodeType === Node.TEXT_NODE) {
-          return node.textContent;
+          // Remove leading/trailing whitespace from text nodes
+          const text = node.textContent.trim();
+          if (text) {
+              return text;
+          }
+          return '';
         }
         
         const tag = node.tagName?.toLowerCase();
         let result = '';
-        
+        let childrenContent = '';
+
+        Array.from(node.childNodes).forEach(child => {
+            childrenContent += convertNode(child);
+        });
+
         switch (tag) {
           case 'h1':
-            result = `\n# ${node.textContent}\n\n`;
+            result = `\n# ${childrenContent.trim()}\n\n`;
             break;
           case 'h2':
-            result = `\n## ${node.textContent}\n\n`;
+            result = `\n## ${childrenContent.trim()}\n\n`;
             break;
           case 'h3':
-            result = `\n### ${node.textContent}\n\n`;
+            result = `\n### ${childrenContent.trim()}\n\n`;
             break;
           case 'p':
-            result = `${node.textContent}\n\n`;
+            result = `${childrenContent.trim()}\n\n`;
             break;
           case 'strong':
           case 'b':
-            result = `**${node.textContent}**`;
+            result = `**${childrenContent}**`;
             break;
           case 'em':
           case 'i':
-            result = `*${node.textContent}*`;
+            result = `*${childrenContent}*`;
             break;
           case 'code':
-            result = `\`${node.textContent}\``;
+            result = `\`${childrenContent}\``;
             break;
           case 'pre':
-            result = `\n\`\`\`\n${node.textContent}\n\`\`\`\n\n`;
+            result = `\n\`\`\`\n${childrenContent.trim()}\n\`\`\`\n\n`;
             break;
           case 'blockquote':
-            result = `\n> ${node.textContent}\n\n`;
+            result = `\n> ${childrenContent.trim().replace(/\n/g, '\n> ')}\n\n`;
             break;
           case 'a':
-            result = `[${node.textContent}](${node.href || '#'})`;
+            result = `[${childrenContent}](${node.href || '#'})`;
             break;
           case 'ul':
           case 'ol':
+            // Custom list handling to avoid recursive text content on inner <li>
+            result += '\n';
             Array.from(node.children).forEach((li, i) => {
-              const prefix = tag === 'ol' ? `${i + 1}. ` : '- ';
-              result += `${prefix}${li.textContent}\n`;
+                const prefix = tag === 'ol' ? `${i + 1}. ` : '- ';
+                const liContent = Array.from(li.childNodes).map(convertNode).join('');
+                result += `${prefix}${liContent.trim()}\n`;
             });
             result += '\n';
             break;
+          case 'div': // Default to processing children for editor content container
+            result = childrenContent;
+            break;
           default:
-            Array.from(node.childNodes).forEach(child => {
-              result += convertNode(child);
-            });
+            result = childrenContent;
         }
         
         return result;
@@ -524,6 +628,9 @@ or <body> tags). Use semantic HTML tags like <h2>, <h3>, <p>, <ul>, <li>, <stron
       Array.from(tempDiv.childNodes).forEach(child => {
         markdown += convertNode(child);
       });
+
+      // Cleanup multiple new lines
+      markdown = markdown.replace(/(\n\s*){3,}/g, '\n\n');
 
       const blob = new Blob([markdown], { type: 'text/markdown' });
       const url = URL.createObjectURL(blob);
@@ -535,12 +642,18 @@ or <body> tags). Use semantic HTML tags like <h2>, <h3>, <p>, <ul>, <li>, <stron
       document.body.removeChild(link);
       URL.revokeObjectURL(url);
 
+      success = true;
+      notificationTitle = 'Markdown Export Success';
+      notificationDesc = `Document "${documentTitle}" exported successfully as Markdown.`;
+
     } catch (error) {
       console.error('Markdown export error:', error);
       alert('Failed to export as Markdown. Please try again.');
     } finally {
       setIsExporting(false);
       setExportType(null);
+      // NEW: Post notification
+      postNotification(notificationTitle, notificationDesc);
     }
   };
 
@@ -548,6 +661,9 @@ or <body> tags). Use semantic HTML tags like <h2>, <h3>, <p>, <ul>, <li>, <stron
   const exportAsTXT = async () => {
     setIsExporting(true);
     setExportType('txt');
+    let success = false;
+    let notificationTitle = 'TXT Export Failed';
+    let notificationDesc = 'Failed to export document as TXT.';
     
     try {
       const editorContentEl = contentRef.current?.querySelector('.editor-input');
@@ -569,12 +685,18 @@ or <body> tags). Use semantic HTML tags like <h2>, <h3>, <p>, <ul>, <li>, <stron
       document.body.removeChild(link);
       URL.revokeObjectURL(url);
 
+      success = true;
+      notificationTitle = 'TXT Export Success';
+      notificationDesc = `Document "${documentTitle}" exported successfully as TXT.`;
+
     } catch (error) {
       console.error('TXT export error:', error);
       alert('Failed to export as TXT. Please try again.');
     } finally {
       setIsExporting(false);
       setExportType(null);
+      // NEW: Post notification
+      postNotification(notificationTitle, notificationDesc);
     }
   };
 
