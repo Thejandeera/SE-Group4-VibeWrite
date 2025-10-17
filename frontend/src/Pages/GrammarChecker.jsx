@@ -9,17 +9,53 @@ const GrammarChecker = () => {
   const [characterCount, setCharacterCount] = useState(0);
   const textareaRef = useRef(null);
   const navigate = useNavigate();
-  
+
   useEffect(() => {
     setCharacterCount(text.length);
   }, [text]);
-  
+
+  const getAuthDetails = () => {
+    const userData = JSON.parse(sessionStorage.getItem('userData'));
+    const token = sessionStorage.getItem('token');
+    return { userData, token };
+  };
+
+  const sendNotification = async (name, description) => {
+    const { userData, token } = getAuthDetails();
+    if (!userData || !token) {
+      console.warn('Cannot send notification: User not logged in.');
+      return;
+    }
+
+    const notificationPayload = {
+      userId: userData.id,
+      name: name,
+      description: description,
+    };
+
+    try {
+      await fetch(`${backendUrl}/api/v1/notifications`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(notificationPayload)
+      });
+    } catch (error) {
+      console.error('Error sending notification:', error);
+      // Fail silently to not interrupt the main app flow
+    }
+  };
+
   const applyFormatting = (command) => {
+    sendNotification('Text Formatted', `Applied ${command} formatting.`);
+
     const textarea = textareaRef.current;
     const start = textarea.selectionStart;
     const end = textarea.selectionEnd;
     const selectedText = text.substring(start, end);
-    
+
     if (selectedText) {
       let formattedText = selectedText;
       switch (command) {
@@ -38,47 +74,52 @@ const GrammarChecker = () => {
         default:
           break;
       }
-      
+
       const newText = text.substring(0, start) + formattedText + text.substring(end);
       setText(newText);
-      
+
       setTimeout(() => {
         textarea.focus();
         textarea.setSelectionRange(start, start + formattedText.length);
       }, 0);
     }
   };
-  
+
   const insertList = (type) => {
+    sendNotification('List Inserted', `Inserted a ${type} list.`);
+
     const textarea = textareaRef.current;
     const start = textarea.selectionStart;
     const listItem = type === 'bullet' ? '• List item\n' : '1. List item\n';
     const newText = text.substring(0, start) + listItem + text.substring(start);
     setText(newText);
-    
+
     setTimeout(() => {
       textarea.focus();
       textarea.setSelectionRange(start + listItem.length, start + listItem.length);
     }, 0);
   };
-  
+
   const insertHeading = (level) => {
+    sendNotification('Heading Inserted', `Inserted Heading level ${level}.`);
+
     const textarea = textareaRef.current;
     const start = textarea.selectionStart;
     const heading = level === 1 ? '# Heading 1\n' : '## Heading 2\n';
     const newText = text.substring(0, start) + heading + text.substring(start);
     setText(newText);
-    
+
     setTimeout(() => {
       textarea.focus();
       textarea.setSelectionRange(start + heading.length, start + heading.length);
     }, 0);
   };
-  
+
   const navigateToPastGrammar = () => {
+    sendNotification('Navigation', 'Navigated to Past Grammar Checks page.');
     navigate('/past-grammar');
   };
-  
+
   const checkGrammar = async () => {
     if (!text.trim()) {
       alert('Please enter some text to check');
@@ -86,13 +127,14 @@ const GrammarChecker = () => {
     }
     setIsLoading(true);
     try {
-      const userData = JSON.parse(sessionStorage.getItem('userData'));
-      const token = sessionStorage.getItem('token');
-      
+      const { userData, token } = getAuthDetails();
+
       if (!userData || !token) {
         alert('Please login first');
+        setIsLoading(false); // Ensure loading is stopped if we alert and return
         return;
       }
+
       const response = await fetch(`${backendUrl}/api/v1/grammar/check`, {
         method: 'POST',
         headers: {
@@ -110,14 +152,19 @@ const GrammarChecker = () => {
       }
       const data = await response.json();
       setResult(data);
+      
+      // ONLY send notification for the completed check
+      sendNotification('Grammar Check Complete', `Grammar check finished with a score of ${data.grammarScore}%.`);
+      
     } catch (error) {
       console.error('Error checking grammar:', error);
       alert('Failed to check grammar. Please try again.');
+      sendNotification('Grammar Check Failed', 'An error occurred during the grammar check.');
     } finally {
       setIsLoading(false);
     }
   };
-  
+
   const getSeverityColor = (severity) => {
     switch (severity) {
       case 'HIGH':
@@ -130,7 +177,7 @@ const GrammarChecker = () => {
         return 'bg-gray-100 text-gray-800 border-gray-200';
     }
   };
-  
+
   const getErrorTypeColor = (errorType) => {
     switch (errorType) {
       case 'GRAMMAR':
@@ -145,7 +192,7 @@ const GrammarChecker = () => {
         return 'bg-blue-500';
     }
   };
-  
+
   return (
     <div className="min-h-screen bg-white text-gray-800 p-4 md:p-6">
       <style jsx>{`
@@ -163,7 +210,7 @@ const GrammarChecker = () => {
           background-clip: text;
         }
       `}</style>
-      
+
       <div className="max-w-6xl mx-auto">
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 md:mb-8 gap-4">
           <h1 className="text-2xl md:text-3xl font-bold gradient-text">
@@ -176,7 +223,7 @@ const GrammarChecker = () => {
             Past Grammar Checks
           </button>
         </div>
-        
+
         <div className="bg-gray-50 rounded-xl p-4 md:p-6 shadow-lg border border-gray-200 mb-6 md:mb-8">
           {/* Formatting Toolbar */}
           <div className="flex flex-wrap gap-1 md:gap-2 mb-4 p-2 md:p-3 bg-gray-100 rounded-lg border border-gray-300">
@@ -234,7 +281,7 @@ const GrammarChecker = () => {
               P
             </button>
           </div>
-          
+
           {/* Text Area */}
           <textarea
             ref={textareaRef}
@@ -244,7 +291,7 @@ const GrammarChecker = () => {
             className="w-full h-60 md:h-80 p-3 md:p-4 bg-white text-gray-800 rounded-lg border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 resize-none transition-all duration-300"
             style={{ outline: 'none' }}
           />
-          
+
           <div className="flex flex-col md:flex-row justify-between items-start md:items-center mt-4 gap-2 md:gap-0">
             <div className="text-xs md:text-sm text-gray-600">
               <span>Spelling mistakes are underlined by your browser.</span>
@@ -253,7 +300,7 @@ const GrammarChecker = () => {
               Character count: {characterCount}
             </div>
           </div>
-          
+
           <div className="mt-6">
             <button
               onClick={checkGrammar}
@@ -271,7 +318,7 @@ const GrammarChecker = () => {
             </button>
           </div>
         </div>
-        
+
         {/* Results Section */}
         {result && (
           <div className="space-y-6 md:space-y-8 animate-fadeIn">
@@ -294,7 +341,7 @@ const GrammarChecker = () => {
                 <p className="text-xl md:text-3xl font-bold">{result.metrics.readabilityScore.toFixed(1)}</p>
               </div>
             </div>
-            
+
             {/* Original vs Corrected Text */}
             <div className="grid grid-cols-1 gap-4 md:gap-6 lg:grid-cols-2">
               <div className="bg-gray-50 p-4 md:p-6 rounded-xl border border-gray-200">
@@ -310,7 +357,7 @@ const GrammarChecker = () => {
                 </div>
               </div>
             </div>
-            
+
             {/* Errors Table */}
             {result.errors.length > 0 && (
               <div className="bg-gray-50 rounded-xl p-4 md:p-6 border border-gray-200">
@@ -355,7 +402,7 @@ const GrammarChecker = () => {
                 </div>
               </div>
             )}
-            
+
             {/* Detailed Metrics */}
             <div className="bg-gray-50 rounded-xl p-4 md:p-6 border border-gray-200">
               <h3 className="text-lg md:text-xl font-semibold mb-3 md:mb-4 text-blue-600">Detailed Metrics</h3>

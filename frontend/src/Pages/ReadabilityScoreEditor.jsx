@@ -29,6 +29,56 @@ const ReadabilityScoreEditor = () => {
     }
   };
 
+  const sendNotification = async (success) => {
+    let userId = null;
+    let username = 'User';
+
+    // 1. Get User ID from Session Storage
+    try {
+      const userDataString = sessionStorage.getItem('userData');
+      if (userDataString) {
+        const userData = JSON.parse(userDataString);
+        userId = userData.id;
+        username = userData.username || 'User'; // Get username for description
+      }
+    } catch (e) {
+      console.error('Error parsing userData from sessionStorage:', e);
+      // Continue even if userId is null, the backend might handle it, or we'll skip the call.
+    }
+
+    if (!userId) {
+      console.warn('Notification skipped: User ID not found in sessionStorage.');
+      return;
+    }
+
+    // 2. Prepare Notification Data
+    const status = success ? 'Success' : 'Failure';
+    const notificationPayload = {
+      userId: userId,
+      name: `Readability Analysis ${status}`,
+      description: `Readability calculation completed for your text, ${username}. Status: ${status}.`,
+    };
+
+    // 3. Send Notification to Backend
+    try {
+      const notificationResponse = await fetch(`${backendUrl}/api/v1/notifications`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(notificationPayload)
+      });
+
+      if (notificationResponse.ok) {
+        // console.log('Notification sent successfully!');
+      } else {
+        console.error('Failed to send notification. Status:', notificationResponse.status);
+      }
+    } catch (err) {
+      console.error('Error sending notification:', err);
+    }
+  };
+
   const calculateReadability = async () => {
     if (!plainText.trim()) return;
 
@@ -36,6 +86,7 @@ const ReadabilityScoreEditor = () => {
     setResult(null);
     setIsPulsing(true);
 
+    let success = false;
     try {
       const response = await fetch(`${backendUrl}/api/readability/analyze`, {
         method: 'POST',
@@ -48,12 +99,16 @@ const ReadabilityScoreEditor = () => {
       if (response.ok) {
         const data = await response.json();
         setResult(data);
+        success = true; // Set success flag
       } else {
         console.error('Failed to calculate readability');
       }
     } catch (err) {
       console.error('Error:', err);
     } finally {
+      // Always attempt to send a notification here
+      await sendNotification(success);
+
       setLoading(false);
       setTimeout(() => setIsPulsing(false), 300);
     }
@@ -143,7 +198,7 @@ const ReadabilityScoreEditor = () => {
         <div
           ref={editorRef}
           className="min-h-80 border border-gray-300 rounded-lg p-6 focus:outline-none bg-white 
-                     transition-all duration-300 focus:ring-2 focus:ring-blue-500 text-gray-800 text-lg"
+             transition-all duration-300 focus:ring-2 focus:ring-blue-500 text-gray-800 text-lg"
           contentEditable
           spellCheck={true}
           lang="en"
@@ -172,10 +227,10 @@ const ReadabilityScoreEditor = () => {
             onClick={calculateReadability}
             disabled={loading || !plainText.trim()}
             className={`px-8 py-3 bg-blue-600 text-white rounded-lg 
-                       hover:bg-blue-700 disabled:bg-gray-400 disabled:hover:bg-gray-400
-                       transition-all duration-300 transform hover:scale-105 active:scale-95 
-                       font-semibold flex items-center justify-center border border-blue-600
-                       ${isPulsing && !loading ? 'animate-pulse' : ''}`}
+                         hover:bg-blue-700 disabled:bg-gray-400 disabled:hover:bg-gray-400
+                         transition-all duration-300 transform hover:scale-105 active:scale-95 
+                         font-semibold flex items-center justify-center border border-blue-600
+                         ${isPulsing && !loading ? 'animate-pulse' : ''}`}
           >
             {loading ? (
               <>

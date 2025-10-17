@@ -14,6 +14,59 @@ const ViewDraft = () => {
     fetchDrafts();
   }, []);
 
+  // --- New Notification Function ---
+  const sendNotification = async (name, description) => {
+    const userDataString = sessionStorage.getItem("userData");
+    let userId = null;
+    let username = null;
+
+    if (userDataString) {
+      try {
+        const userData = JSON.parse(userDataString);
+        userId = userData.id;
+        username = userData.username;
+      } catch (e) {
+        console.error("Error parsing userData for notification:", e);
+        return;
+      }
+    }
+
+    if (!userId) {
+      console.error("Cannot send notification: User ID missing.");
+      return;
+    }
+
+    const token = sessionStorage.getItem("token");
+    if (!token) {
+      console.error("Cannot send notification: Token missing.");
+      return;
+    }
+
+    try {
+      const response = await fetch(`${backendUrl}/api/v1/notifications`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          userId: userId,
+          name: name,
+          description: description,
+        }),
+      });
+
+      if (!response.ok) {
+        console.error("Failed to send notification:", await response.text());
+      } else {
+        console.log("Notification sent successfully.");
+      }
+    } catch (err) {
+      console.error("Network error sending notification:", err);
+    }
+  };
+  // ---------------------------------
+
   const fetchDrafts = async () => {
     setIsLoading(true);
     setError(null);
@@ -87,6 +140,8 @@ const ViewDraft = () => {
   const deleteDraft = async (draftId, e) => {
     e.stopPropagation();
     const token = sessionStorage.getItem("token");
+    const draftToDelete = drafts.find(d => d.id === draftId);
+    const draftTitle = draftToDelete ? draftToDelete.title : 'Unknown Draft';
 
     if (!token) return;
 
@@ -108,6 +163,13 @@ const ViewDraft = () => {
           setSelectedDraft(null);
         }
         toast.success('Draft deleted successfully!');
+        
+        // --- Send Notification for Deletion ---
+        sendNotification(
+          "Draft Deleted",
+          `Draft "${draftTitle}" has been permanently deleted.`
+        );
+        // -------------------------------------
       } else {
         console.error('Failed to delete draft');
         toast.error('Failed to delete draft. Please try again.');
@@ -131,6 +193,13 @@ const ViewDraft = () => {
     
     toast.success('Loading draft in editor...');
     
+    // --- Send Notification for Editing ---
+    sendNotification(
+      "Draft Opened for Edit",
+      `Draft "${draft.title}" is now open in the content editor.`
+    );
+    // -------------------------------------
+
     // Navigate to content editor
     window.location.href = '/content-editor';
   };
