@@ -24,7 +24,8 @@ const Document = () => {
     setIsGenerating(true);
 
     try {
-      const prompt = `You are an expert content writer. Based on the following document title, create comprehensive, well-structured content. 
+      const prompt = `You are an expert content writer. Based on the following document title,
+       create comprehensive, well-structured content. 
 
 Document Title: "${title}"
 
@@ -35,7 +36,8 @@ Create detailed, professional content for this document. Include:
 - Use proper HTML formatting (paragraphs, headings, lists, etc.)
 - Make it informative and engaging
 
-Respond with ONLY the HTML content (body content only, no <html>, <head>, or <body> tags). Use semantic HTML tags like <h2>, <h3>, <p>, <ul>, <li>, <strong>, <em>, etc.`;
+Respond with ONLY the HTML content (body content only, no <html>, <head>, 
+or <body> tags). Use semantic HTML tags like <h2>, <h3>, <p>, <ul>, <li>, <strong>, <em>, etc.`;
 
       const response = await fetch(
         `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent`,
