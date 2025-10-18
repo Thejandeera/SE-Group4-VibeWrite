@@ -5,35 +5,47 @@ import LoginPage from './Pages/Landing/LoginPage';
 import SignupPage from './Pages/Landing/SignupPage';
 import NavigationBar from './Components/NavigationBar';
 import Dashboard from './Pages/Dashboard';
-import Settings from './Pages/Settings';
+import ContentEditor from './Pages/ContentEditor';
+import ReadabilityScoreEditor from './Pages/ReadabilityScoreEditor';
+import SettingsPage from './Pages/SettingsPage';
+import NotificationSystem from './Pages/NotificationSystem';
+import GrammarChecker from './Pages/GrammarChecker';
+import PastGrammar from './Pages/PastGrammar';
+import ViewDraft from './Pages/viewdraft';
+import SEOTools from './Pages/SEOTools';   
+import HelpAndSupport from './Pages/HelpAndSupport';
+import Document from './Pages/Document';
 
-const Dummy = ({ text }) => (
-  <div style={{ padding: '4rem', textAlign: 'center', fontSize: '2rem' }}>{text}</div>
-);
 
 const App = () => {
   const location = useLocation();
 
-  // Paths where the NavigationBar should NOT be shown
+  // Pages where sidebar/nav should not show
   const hiddenNavPaths = ["/", "/signin", "/get-started"];
   const showNavigation = !hiddenNavPaths.includes(location.pathname);
 
   return (
     <div className="flex">
-      {/* Show navigation bar only when not in hidden paths */}
+      {/* Navigation sidebar (only shows if not in hidden paths) */}
       {showNavigation && <NavigationBar />}
 
-      {/* Main content area */}
+      {/* Main content */}
       <div className={`flex-1 ${showNavigation ? "lg:ml-64 pt-16 lg:pt-0" : ""}`}>
         <Routes>
           <Route path="/" element={<LandingPage />} />
           <Route path="/dashboard" element={<Dashboard />} />
-          <Route path="/features" element={<Dummy text="Features Page" />} />
-          <Route path="/pricing" element={<Dummy text="Pricing Page" />} />
-          <Route path="/reviews" element={<Dummy text="Reviews Page" />} />
+          <Route path="/content-editor" element={<ContentEditor />} />
+          <Route path="/readability-score" element={<ReadabilityScoreEditor />} />
+          <Route path="/view-drafts" element={<ViewDraft />} />
           <Route path="/signin" element={<LoginPage />} />
           <Route path="/get-started" element={<SignupPage />} />
-          <Route path="/profile" element={<Settings />} />
+          <Route path="/profile" element={<SettingsPage />} />
+          <Route path="/notifications" element={<NotificationSystem />} />
+          <Route path="/grammar-check" element={<GrammarChecker />} />
+          <Route path="/past-grammar" element={<PastGrammar />} />
+          <Route path="/seo-tools" element={<SEOTools />} />   
+          <Route path="/help" element={<HelpAndSupport />} />
+          <Route path="/new-document" element={<Document />} />
         </Routes>
       </div>
     </div>
