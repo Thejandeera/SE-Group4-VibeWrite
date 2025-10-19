@@ -1,9 +1,9 @@
 package com.group4.vibeWrite.GrammerCheckerManagement.Repository;
 
-
 import com.group4.vibeWrite.GrammerCheckerManagement.Entity.GrammarCheckHistory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.mongodb.repository.Aggregation;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.data.mongodb.repository.Query;
 import org.springframework.stereotype.Repository;
@@ -36,9 +36,12 @@ public interface GrammarCheckRepository extends MongoRepository<GrammarCheckHist
     // Count total checks by user
     long countByUserId(String userId);
 
-    // Get average grammar score for a user
-    @Query("{ 'userId': ?0 }")
-    List<GrammarCheckHistory> findByUserIdForAverageCalculation(String userId);
+    @Aggregation(pipeline = {
+            "{ '$match': { 'userId': ?0 } }",
+            "{ '$group': { '_id': '$userId', 'averageScore': { '$avg': '$grammarScore' } } }",
+            "{ '$project': { 'averageScore': 1, '_id': 0 } }" // Optional: to only return the averageScore field
+    })
+    Optional<Double> findAverageScoreByUserId(String userId);
 
     // Find recent grammar checks (last 30 days)
     @Query("{ 'userId': ?0, 'checkedAt': { $gte: ?1 } }")

@@ -1,4 +1,5 @@
 package com.group4.vibeWrite.GrammerCheckerManagement.Entity;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
