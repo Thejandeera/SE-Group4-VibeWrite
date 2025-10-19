@@ -22,7 +22,7 @@ export default function SEOTools() {
   const [error, setError] = useState("");
   const [analysis, setAnalysis] = useState(null);
 
-  const GEMINI_API_KEY = "AIzaSyDMzcmuIQispYp8176WIPUCA_UjE-UPBPo";
+  const GEMINI_API_KEY = import.meta.env.VITE_GEMINI_API_KEY;
 
   const analyzeWithGemini = async () => {
     if (!content.trim()) {
