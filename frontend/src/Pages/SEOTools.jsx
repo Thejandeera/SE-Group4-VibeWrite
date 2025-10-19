@@ -21,6 +21,9 @@ export default function SEOTools() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [analysis, setAnalysis] = useState(null);
+  const [saving, setSaving] = useState(false);
+  const [saveSuccess, setSaveSuccess] = useState(false);
+  const [saveError, setSaveError] = useState("");
 
   const GEMINI_API_KEY = import.meta.env.VITE_GEMINI_API_KEY;
   const backendUrl = import.meta.env.VITE_BACKEND_URL;
@@ -154,7 +157,11 @@ export default function SEOTools() {
   const saveToBackend = async () => {
     if (!analysis) return;
 
-    const documentId = crypto?.randomUUID?.() ?? `doc-${Date.now()}`;
+    setSaving(true);
+    setSaveError("");
+
+    //const documentId = crypto?.randomUUID?.() ?? `doc-${Date.now()}`;
+    const documentId = `doc-${Date.now()}`;
 
     const dto = {
       documentId,
@@ -178,13 +185,28 @@ export default function SEOTools() {
       metaDescription: null
     };
 
-    const res = await fetch(`${backendUrl}/api/analyze/seo/client`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(dto)
-    });
+    try {
+      const res = await fetch(`${backendUrl}/api/analyze/seo/client`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(dto)
+      });
 
-    if (!res.ok) throw new Error(`Save failed: ${res.status}`);
+      if (!res.ok) {
+        const text = await res.text().catch(() => "");
+        throw new Error(`Save failed: ${res.status} ${text}`);
+      }
+
+      // show success modal
+      setSaveSuccess(true);
+      // auto-hide after 3 seconds
+      setTimeout(() => setSaveSuccess(false), 3000);
+    } catch (err) {
+      console.error("Save error:", err);
+      setSaveError("Failed to save SEO report. Please try again.");
+    } finally {
+      setSaving(false);
+    }
   };
 
   return (
@@ -438,11 +460,35 @@ export default function SEOTools() {
                 </ul>
               </div>
             </div>
-            <div className="mt-8 flex justify-center"> <button type="button" onClick={saveToBackend} disabled={!analysis} className="w-full max-w-2xl px-8 py-4 rounded-xl bg-gradient-to-r from-blue-500 to-purple-600 text-white font-medium shadow-lg hover:opacity-90" > Save SEO Report
-            </button> </div>
+            <div className="mt-8 flex flex-col items-center gap-3">
+              <div className="w-full max-w-2xl">
+                <button
+                  type="button"
+                  onClick={saveToBackend}
+                  disabled={!analysis || saving}
+                  className="w-full px-8 py-4 rounded-xl bg-gradient-to-r from-blue-500 to-purple-600 text-white font-medium shadow-lg hover:opacity-90 disabled:opacity-50 flex items-center justify-center gap-2"
+                >
+                  {saving ? (
+                    <>
+                      <Loader2 size={18} className="animate-spin" /> Saving...
+                    </>
+                  ) : (
+                    "Save SEO Report"
+                  )}
+                </button>
+              </div>
+
+              {saveError && (
+                <div className="mt-2 w-full max-w-2xl p-3 bg-red-50 border border-red-200 text-red-600 rounded-lg flex items-center gap-2">
+                  <AlertCircle size={16} />
+                  <span className="text-sm">{saveError}</span>
+                </div>
+              )}
+            </div>
           </>
         )}
       </div>
+      {saveSuccess && (<div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40"> <div className="bg-white rounded-2xl shadow-xl p-6 w-full max-w-sm text-center"> <div className="mx-auto mb-3 w-10 h-10 rounded-full bg-green-100 flex items-center justify-center"> <CheckCircle className="text-green-600" size={22} /> </div> <h3 className="text-lg font-semibold text-gray-900">SEO Report Saved</h3> <p className="text-gray-600 mt-1">Your analysis has been stored successfully.</p> </div> </div> )}
     </div>
   );
 }
