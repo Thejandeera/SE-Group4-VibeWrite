@@ -37,7 +37,7 @@ public class EnhancedGrammarCheckService {
     //private final LevenshteinDistance levenshteinDistance = new LevenshteinDistance();
 
     // Advanced grammar patterns
-    private final Map<String, String> advancedPatterns = new HashMap<>();
+    //private final Map<String, String> advancedPatterns = new HashMap<>();
     //private final Set<String> commonWords = new HashSet<>();
     private final Map<String, String> styleGuideRules = new HashMap<>();
 
@@ -53,8 +53,8 @@ public class EnhancedGrammarCheckService {
             languageTool.enableRuleCategory(new CategoryId("TYPOGRAPHY"));
             languageTool.enableRuleCategory(new CategoryId("STYLE"));
 
-            initializeAdvancedPatterns();
-            initializeCommonWords();
+            //initializeAdvancedPatterns();
+            //initializeCommonWords();
             initializeStyleGuideRules();
 
             log.info("Enhanced Grammar Check Service initialized successfully");
@@ -73,7 +73,7 @@ public class EnhancedGrammarCheckService {
         }
     }
 
-    private void initializeAdvancedPatterns() {
+    /*private void initializeAdvancedPatterns() {
         // Subject-verb agreement patterns
         advancedPatterns.put("\\b(he|she|it)\\s+(are|were)\\b", "Subject-verb disagreement");
         advancedPatterns.put("\\b(they|we|you)\\s+(is|was)\\b", "Subject-verb disagreement");
@@ -87,9 +87,9 @@ public class EnhancedGrammarCheckService {
         advancedPatterns.put("\\b(very|really|extremely)\\s+(very|really|extremely)\\b", "Avoid double intensifiers");
         advancedPatterns.put("\\b(more|most)\\s+\\w+er\\b", "Avoid double comparatives");
         advancedPatterns.put("\\b(more|most)\\s+\\w+est\\b", "Avoid double superlatives");
-    }
+    }*/
 
-    private void initializeCommonWords() {
+    /*private void initializeCommonWords() {
         String[] words = {
                 "the", "be", "to", "of", "and", "a", "in", "that", "have", "i", "it", "for",
                 "not", "on", "with", "he", "as", "you", "do", "at", "this", "but", "his",
@@ -103,7 +103,7 @@ public class EnhancedGrammarCheckService {
                 "even", "new", "want", "because", "any", "these", "give", "day", "most", "us"
         };
         commonWords.addAll(Arrays.asList(words));
-    }
+    }*/
 
     private void initializeStyleGuideRules() {
         // AP Style and common writing guidelines
@@ -128,7 +128,7 @@ public class EnhancedGrammarCheckService {
             errors.addAll(checkWithLanguageTool(originalText));
 
             // Add custom pattern checks
-            errors.addAll(checkCustomPatterns(originalText));
+            //errors.addAll(checkCustomPatterns(originalText));
 
             // Check style guide compliance
             errors.addAll(checkStyleGuide(originalText));
@@ -244,7 +244,7 @@ public class EnhancedGrammarCheckService {
         return "LOW";
     }
 
-    private List<GrammarError> checkCustomPatterns(String text) {
+    /*private List<GrammarError> checkCustomPatterns(String text) {
         List<GrammarError> errors = new ArrayList<>();
 
         for (Map.Entry<String, String> pattern : advancedPatterns.entrySet()) {
@@ -265,7 +265,7 @@ public class EnhancedGrammarCheckService {
         }
 
         return errors;
-    }
+    }*/
 
     private List<GrammarError> checkStyleGuide(String text) {
         List<GrammarError> errors = new ArrayList<>();
