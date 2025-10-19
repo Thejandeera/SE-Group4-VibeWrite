@@ -657,7 +657,7 @@ public class EnhancedGrammarCheckService {
         else return "stable";
     }
 
-    public List<GrammarError> getQuickSuggestions(String text) {
+    /*public List<GrammarError> getQuickSuggestions(String text) {
         try {
             // Quick check for immediate feedback (lighter version)
             List<GrammarError> quickErrors = new ArrayList<>();
@@ -679,7 +679,7 @@ public class EnhancedGrammarCheckService {
             log.error("Error in quick grammar suggestions: ", e);
             return Collections.emptyList();
         }
-    }
+    }*/
 
     private List<GrammarError> checkBasicSpelling(String text) {
         List<GrammarError> errors = new ArrayList<>();
