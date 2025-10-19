@@ -134,7 +134,7 @@ public class EnhancedGrammarCheckService {
             errors.addAll(checkStyleGuide(originalText));
 
             // Check readability issues
-            errors.addAll(checkReadability(originalText));
+            //errors.addAll(checkReadability(originalText));
 
             // Remove duplicate errors and sort by position
             errors = deduplicateAndSortErrors(errors);
@@ -290,7 +290,7 @@ public class EnhancedGrammarCheckService {
         return errors;
     }
 
-    private List<GrammarError> checkReadability(String text) {
+    /*private List<GrammarError> checkReadability(String text) {
         List<GrammarError> errors = new ArrayList<>();
 
         // Check for overly long sentences
@@ -337,7 +337,7 @@ public class EnhancedGrammarCheckService {
         }
 
         return errors;
-    }
+    }*/
 
     private List<GrammarError> deduplicateAndSortErrors(List<GrammarError> errors) {
         // Remove duplicates based on position and type
