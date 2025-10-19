@@ -124,7 +124,7 @@ const NavigationBar = () => {
       { name: 'Dashboard', icon: LayoutDashboard, path: '/dashboard' },
       { name: 'Content Editor', icon: Edit3, path: '/content-editor' },
       { name: 'SEO Tools', icon: TrendingUp, path: '/seo-tools', badge: 'New', badgeColor: 'bg-green-500' },
-      { name: 'Grammar Check', icon: CheckCircle2, path: '/grammar-check' },
+      { name: 'Grammar Checker', icon: CheckCircle2, path: '/grammar-check' },
       { name: 'Readability Score', icon: FileText, path: '/readability-score' },
       {
         name: "Notifications",
