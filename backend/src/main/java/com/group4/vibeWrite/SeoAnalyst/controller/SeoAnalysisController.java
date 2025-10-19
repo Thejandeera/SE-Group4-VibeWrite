@@ -2,7 +2,6 @@ package com.group4.vibeWrite.SeoAnalyst.controller;
 
 import com.group4.vibeWrite.SeoAnalyst.model.SeoAnalysisRequest;
 import com.group4.vibeWrite.SeoAnalyst.model.SeoAnalysis;
-import com.group4.vibeWrite.SeoAnalyst.model.Keyword;
 import com.group4.vibeWrite.SeoAnalyst.repository.SeoAnalysisRepository;
 import com.group4.vibeWrite.SeoAnalyst.service.SeoAnalyzerService;
 import org.springframework.beans.factory.annotation.Autowired;
