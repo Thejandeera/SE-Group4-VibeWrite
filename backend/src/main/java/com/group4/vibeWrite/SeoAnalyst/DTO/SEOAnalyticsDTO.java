@@ -13,7 +13,7 @@ public class SEOAnalyticsDTO {
     private String content;
 
     //values computed on the frontend (using AI)
-    private Double SeoScore;
+    private Double seoScore;
     private Double readabilityScore;
     private Integer wordCount;
     private String sentimentLabel;   //POSITIVE/NEUTRAL/NEGATIVE

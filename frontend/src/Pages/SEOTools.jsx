@@ -23,6 +23,7 @@ export default function SEOTools() {
   const [analysis, setAnalysis] = useState(null);
 
   const GEMINI_API_KEY = import.meta.env.VITE_GEMINI_API_KEY;
+  const backendUrl = import.meta.env.VITE_BACKEND_URL;
 
   const analyzeWithGemini = async () => {
     if (!content.trim()) {
@@ -36,43 +37,41 @@ export default function SEOTools() {
 
     try {
       const prompt = `You are an expert SEO analyst. Analyze the following content and provide a comprehensive SEO report in JSON format.
-
-Content to analyze:
-"""
-${content}
-"""
-
-Provide your analysis in the following JSON structure (respond ONLY with valid JSON, no markdown or code blocks):
-{
-  "wordCount": number,
-  "characterCount": number,
-  "readabilityScore": number (0-100),
-  "seoScore": number (0-100),
-  "keywords": [
-    {"keyword": "string", "count": number, "density": "string (e.g., '2.5')"}
-  ],
-  "topKeywords": [
-    {"keyword": "string", "count": number, "relevance": number (0-100)}
-  ],
-  "suggestions": [
-    {"type": "success|warning|error", "message": "string"}
-  ],
-  "metaAnalysis": {
-    "titleQuality": number (0-100),
-    "keywordOptimization": number (0-100),
-    "contentStructure": number (0-100),
-    "readability": number (0-100),
-    "linkPotential": number (0-100)
-  },
-  "sentimentAnalysis": {
-    "tone": "string (e.g., professional, casual, formal)",
-    "sentiment": "positive|neutral|negative",
-    "score": number (0-100)
-  },
-  "improvements": [
-    "string array of specific improvement recommendations"
-  ]
-}`;
+                      Content to analyze:
+                      """
+                      ${content}
+                      """
+                      Provide your analysis in the following JSON structure (respond ONLY with valid JSON, no markdown or code blocks):
+                      {
+                        "wordCount": number,
+                        "characterCount": number,
+                        "readabilityScore": number (0-100),
+                        "seoScore": number (0-100),
+                        "keywords": [
+                          {"keyword": "string", "count": number, "density": "string (e.g., '2.5')"}
+                        ],
+                        "topKeywords": [
+                          {"keyword": "string", "count": number, "relevance": number (0-100)}
+                        ],
+                        "suggestions": [
+                          {"type": "success|warning|error", "message": "string"}
+                        ],
+                        "metaAnalysis": {
+                          "titleQuality": number (0-100),
+                          "keywordOptimization": number (0-100),
+                          "contentStructure": number (0-100),
+                          "readability": number (0-100),
+                          "linkPotential": number (0-100)
+                        },
+                        "sentimentAnalysis": {
+                          "tone": "string (e.g., professional, casual, formal)",
+                          "sentiment": "positive|neutral|negative",
+                          "score": number (0-100)
+                        },
+                        "improvements": [
+                          "string array of specific improvement recommendations"
+                        ]
+                      }`;
 
       const response = await fetch(
         `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent`,
@@ -150,6 +149,42 @@ Provide your analysis in the following JSON structure (respond ONLY with valid J
     if (score >= 80) return "bg-green-500";
     if (score >= 60) return "bg-yellow-500";
     return "bg-red-500";
+  };
+
+  const saveToBackend = async () => {
+    if (!analysis) return;
+
+    const documentId = crypto?.randomUUID?.() ?? `doc-${Date.now()}`;
+
+    const dto = {
+      documentId,
+      content,
+      seoScore: analysis.seoScore,
+      readabilityScore: analysis.readabilityScore,
+      wordCount: analysis.wordCount,
+      sentimentLabel: analysis.sentimentAnalysis?.sentiment?.toUpperCase(),
+      keywordDensity: Object.fromEntries(
+        (analysis.keywords || []).slice(0, 20).map(k => [k.keyword, parseFloat(String(k.density).replace('%', ''))])
+      ),
+      performanceMetrics: {
+        titleQuality: analysis.metaAnalysis?.titleQuality,
+        keywordOptimization: analysis.metaAnalysis?.keywordOptimization,
+        contentStructure: analysis.metaAnalysis?.contentStructure,
+        readability: analysis.metaAnalysis?.readability,
+        linkPotential: analysis.metaAnalysis?.linkPotential
+      },
+      aiSuggestions: (analysis.suggestions || []).map(s => s.message),
+      recommendations: analysis.improvements || [],
+      metaDescription: null
+    };
+
+    const res = await fetch(`${backendUrl}/api/analyze/seo/client`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(dto)
+    });
+
+    if (!res.ok) throw new Error(`Save failed: ${res.status}`);
   };
 
   return (
@@ -403,6 +438,8 @@ Provide your analysis in the following JSON structure (respond ONLY with valid J
                 </ul>
               </div>
             </div>
+            <div className="mt-8 flex justify-center"> <button type="button" onClick={saveToBackend} disabled={!analysis} className="w-full max-w-2xl px-8 py-4 rounded-xl bg-gradient-to-r from-blue-500 to-purple-600 text-white font-medium shadow-lg hover:opacity-90" > Save SEO Report
+            </button> </div>
           </>
         )}
       </div>
