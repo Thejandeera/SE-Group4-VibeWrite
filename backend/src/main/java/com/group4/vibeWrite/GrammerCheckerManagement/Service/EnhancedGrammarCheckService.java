@@ -34,10 +34,11 @@ public class EnhancedGrammarCheckService {
     private final GrammarCheckRepository grammarCheckRepository;
 
     private JLanguageTool languageTool;
-    
+    //private final LevenshteinDistance levenshteinDistance = new LevenshteinDistance();
+
     // Advanced grammar patterns
     private final Map<String, String> advancedPatterns = new HashMap<>();
-    private final Set<String> commonWords = new HashSet<>();
+    //private final Set<String> commonWords = new HashSet<>();
     private final Map<String, String> styleGuideRules = new HashMap<>();
 
     @PostConstruct
