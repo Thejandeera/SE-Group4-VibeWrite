@@ -117,6 +117,43 @@ export default function SettingsPage() {
     }, 5000);
   };
 
+  // NEW FUNCTION: Send Notification
+  const sendNotification = async (name, description) => {
+    try {
+      const storedUserData = sessionStorage.getItem('userData');
+      if (!storedUserData) {
+        console.error('User data not found in session storage.');
+        return;
+      }
+      const user = JSON.parse(storedUserData);
+      const userId = user.id;
+
+      if (!userId) {
+        console.error('User ID not found in user data.');
+        return;
+      }
+
+      const notificationData = {
+        userId: userId,
+        name: name,
+        description: description,
+      };
+
+      await axios.post(
+        `${backendUrl}/api/v1/notifications`,
+        notificationData,
+        {
+          headers: getAuthHeaders(),
+          timeout: 5000
+        }
+      );
+      // console.log('Notification sent successfully:', notificationData);
+    } catch (error) {
+      console.error('Error sending notification:', error);
+      // Fail silently for notifications to not disrupt main flow
+    }
+  };
+
   const stats = [
     { label: 'Words Written', value: '45,230', icon: '📝', color: 'blue' },
     { label: 'SEO Score Avg', value: '87', icon: '📊', color: 'green' },
@@ -203,12 +240,20 @@ export default function SettingsPage() {
         username: updatedUser.username || '',
         email: updatedUser.email || ''
       });
-      showMessage('success', 'Profile updated successfully!');
+      showMessage('success', 'Profile updated successfully! Refreshing website...');
       setProfilePicture(null);
       setPreviewImage(null);
+
+      // Send Notification on success
+      await sendNotification(
+        'Profile Updated',
+        `Your profile information (username and/or picture) has been successfully updated.`
+      );
+
+      // FIX: Increased timeout to 1500ms so the user can see the success message
       setTimeout(() => {
         window.location.reload();
-      }, 1200);
+      }, 1500); 
     } catch (error) {
       console.error('Profile update error:', error);
       let errorMessage = 'Failed to update profile';
@@ -257,9 +302,17 @@ export default function SettingsPage() {
         newPassword: '',
         confirmPassword: ''
       });
+
+      // Send Notification on success
+      await sendNotification(
+        'Password Changed',
+        `Your account password has been successfully changed.`
+      );
+
+      // FIX: Increased timeout to 1500ms so the user can see the success message
       setTimeout(() => {
         window.location.reload();
-      }, 1200);
+      }, 1500);
     } catch (error) {
       console.error('Password change error:', error);
       let errorMessage = 'Failed to change password';
@@ -288,6 +341,7 @@ export default function SettingsPage() {
       if (userData.username) {
         formDataObj.append('username', userData.username);
       }
+      // Note: Backend logic is expected to handle the removal when profilePicture is absent from the form data
       const response = await axios.put(
         `${backendUrl}/api/users/profile`,
         formDataObj,
@@ -299,10 +353,18 @@ export default function SettingsPage() {
       const updatedUser = { ...response.data, profile_picture_url: null };
       setUserData(updatedUser);
       sessionStorage.setItem('userData', JSON.stringify(updatedUser));
-      showMessage('success', 'Profile picture removed successfully!');
+      showMessage('success', 'Profile picture removed successfully! Refreshing website...');
+
+      // Send Notification on success
+      await sendNotification(
+        'Profile Picture Removed',
+        `Your profile picture has been successfully removed.`
+      );
+
+      // FIX: Increased timeout to 1500ms so the user can see the success message
       setTimeout(() => {
         window.location.reload();
-      }, 1200);
+      }, 1500);
     } catch (error) {
       console.error('Remove profile picture error:', error);
       let errorMessage = 'Failed to remove profile picture';
@@ -867,7 +929,7 @@ export default function SettingsPage() {
           animation: fade-in 0.6s ease-out forwards;
         }
         
-        .animate-fade-in-up {
+.animate-fade-in-up {
           animation: fade-in-up 0.6s ease-out forwards;
         }
       `}</style>
