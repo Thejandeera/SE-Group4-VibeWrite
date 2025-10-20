@@ -13,6 +13,7 @@ import GrammarChecker from './Pages/GrammarChecker';
 import PastGrammar from './Pages/PastGrammar';
 import ViewDraft from './Pages/viewdraft';
 import SEOTools from './Pages/SEOTools';   
+import TextEnhancer from './Pages/TextEnhancer';
 import HelpAndSupport from './Pages/HelpAndSupport';
 import Document from './Pages/Document';
 
@@ -44,6 +45,7 @@ const App = () => {
           <Route path="/grammar-check" element={<GrammarChecker />} />
           <Route path="/past-grammar" element={<PastGrammar />} />
           <Route path="/seo-tools" element={<SEOTools />} />   
+          <Route path="/text-enhancer" element={<TextEnhancer />} />
           <Route path="/help" element={<HelpAndSupport />} />
           <Route path="/new-document" element={<Document />} />
         </Routes>
