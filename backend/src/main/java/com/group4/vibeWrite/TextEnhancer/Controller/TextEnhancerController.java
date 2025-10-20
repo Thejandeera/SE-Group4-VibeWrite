@@ -9,44 +9,32 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api/v1/text-enhancer")
-@CrossOrigin(origins = "*")
+@CrossOrigin(origins = "${frontend.url}")
 public class TextEnhancerController {
 
     @Autowired
     private TextEnhancerService textEnhancerService;
 
     @PostMapping("/enhance")
-    public ResponseEntity<Map<String, Object>> enhanceText(
-            @RequestParam String text,
-            @RequestParam(defaultValue = "professional") String tone,
-            @RequestParam(defaultValue = "improve") String style,
-            @RequestParam(defaultValue = "en") String language) {
-        
-        try {
-            Map<String, Object> result = textEnhancerService.enhanceText(text, tone, style, language);
-            return ResponseEntity.ok(result);
-        } catch (Exception e) {
-            return ResponseEntity.internalServerError().body(Map.of("error", "Failed to enhance text: " + e.getMessage()));
-        }
-    }
-
-    @PostMapping("/enhance-json")
-    public ResponseEntity<Map<String, Object>> enhanceTextJson(@RequestBody Map<String, String> request) {
+    public ResponseEntity<Map<String, Object>> enhanceText(@RequestBody Map<String, String> request) {
         try {
             String text = request.get("text");
-            String tone = request.getOrDefault("tone", "professional");
-            String style = request.getOrDefault("style", "improve");
-            String language = request.getOrDefault("language", "en");
-            
+            String tone = request.getOrDefault("tone", "Professional");
+            String style = request.getOrDefault("style", "Improve Clarity");
+            String language = request.getOrDefault("language", "English");
+
             if (text == null || text.trim().isEmpty()) {
-                return ResponseEntity.badRequest().body(Map.of("error", "Text is required"));
+                return ResponseEntity.badRequest().body(Map.of("error", "Text input is required."));
             }
-            
+
             Map<String, Object> result = textEnhancerService.enhanceText(text, tone, style, language);
             return ResponseEntity.ok(result);
+
         } catch (Exception e) {
-            return ResponseEntity.internalServerError().body(Map.of("error", "Failed to enhance text: " + e.getMessage()));
+            e.printStackTrace();
+            return ResponseEntity.internalServerError().body(Map.of(
+                    "error", "Failed to enhance text: " + e.getMessage()
+            ));
         }
     }
 }
-
