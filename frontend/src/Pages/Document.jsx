@@ -1,9 +1,7 @@
 import React, { useState, useRef } from 'react';
-import { useTranslation } from 'react-i18next';
 import { Download, FileText, Image, FileCode, Save, Loader2, Sparkles } from 'lucide-react';
 
 const Document = () => {
-  const { t } = useTranslation();
   const [isExporting, setIsExporting] = useState(false);
   const [exportType, setExportType] = useState(null);
   const [title, setTitle] = useState('');
@@ -19,7 +17,7 @@ const Document = () => {
   // Function to generate content with AI
   const generateContentWithAI = async () => {
     if (!title.trim()) {
-      alert(t('document.alerts.titleRequired'));
+      alert('Please enter a document title first');
       return;
     }
 
@@ -84,10 +82,10 @@ Respond with ONLY the HTML content (body content only, no <html>, <head>, or <bo
 
       setGeneratedContent(cleanedResponse);
       setEditorContent(cleanedResponse);
-      alert(t('document.alerts.generatedSuccess'));
+      alert('Content generated successfully! It has been loaded into the editor.');
     } catch (err) {
       console.error("Error:", err);
-      alert(t('document.alerts.generateFailed'));
+      alert("Failed to generate content. Please try again.");
     } finally {
       setIsGenerating(false);
     }
@@ -105,7 +103,7 @@ Respond with ONLY the HTML content (body content only, no <html>, <head>, or <bo
       // Get userId from session storage
       const userDataString = sessionStorage.getItem('userData');
       if (!userDataString) {
-        alert(t('document.alerts.loginToSave'));
+        alert('Please login to save drafts');
         return;
       }
 
@@ -113,14 +111,14 @@ Respond with ONLY the HTML content (body content only, no <html>, <head>, or <bo
       const userId = userData.id;
 
       if (!userId) {
-        alert(t('document.alerts.userIdMissing'));
+        alert('User ID not found. Please login again.');
         return;
       }
 
       // Get editor content (plain text only)
       const editorContentEl = contentRef.current?.querySelector('.editor-input');
       if (!editorContentEl || !editorContentEl.textContent.trim()) {
-        alert(t('document.alerts.emptyContent'));
+        alert('Cannot save empty content');
         return;
       }
 
@@ -142,10 +140,10 @@ Respond with ONLY the HTML content (body content only, no <html>, <head>, or <bo
         throw new Error(`Failed to save: ${response.status}`);
       }
 
-      alert(t('document.alerts.saveSuccess'));
+      alert('Draft saved successfully!');
     } catch (error) {
       console.error('Save draft error:', error);
-      alert(t('document.alerts.saveFailed'));
+      alert('Failed to save draft. Please try again.');
     } finally {
       setIsSaving(false);
     }
@@ -165,7 +163,7 @@ Respond with ONLY the HTML content (body content only, no <html>, <head>, or <bo
     try {
       const editorContentEl = contentRef.current?.querySelector('.editor-input');
       if (!editorContentEl) {
-        alert(t('document.alerts.noContentToExport'));
+        alert('No content to export');
         return;
       }
 
@@ -261,7 +259,7 @@ Respond with ONLY the HTML content (body content only, no <html>, <head>, or <bo
       
     } catch (error) {
       console.error('PDF export error:', error);
-      alert(t('document.alerts.exportFailedPdf'));
+      alert('Failed to export as PDF. Please try again.');
     } finally {
       setIsExporting(false);
       setExportType(null);
@@ -278,7 +276,7 @@ Respond with ONLY the HTML content (body content only, no <html>, <head>, or <bo
       
       const editorContentEl = contentRef.current?.querySelector('.editor-input');
       if (!editorContentEl) {
-        alert(t('document.alerts.noContentToExport'));
+        alert('No content to export');
         return;
       }
 
@@ -327,7 +325,7 @@ Respond with ONLY the HTML content (body content only, no <html>, <head>, or <bo
 
     } catch (error) {
       console.error('PNG export error:', error);
-      alert(t('document.alerts.exportFailedPng'));
+      alert('Failed to export as PNG. Please try again.');
     } finally {
       setIsExporting(false);
       setExportType(null);
@@ -342,7 +340,7 @@ Respond with ONLY the HTML content (body content only, no <html>, <head>, or <bo
     try {
       const editorContentEl = contentRef.current?.querySelector('.editor-input');
       if (!editorContentEl) {
-        alert(t('document.alerts.noContentToExport'));
+        alert('No content to export');
         return;
       }
 
@@ -438,7 +436,7 @@ Respond with ONLY the HTML content (body content only, no <html>, <head>, or <bo
 
     } catch (error) {
       console.error('HTML export error:', error);
-      alert(t('document.alerts.exportFailedHtml'));
+      alert('Failed to export as HTML. Please try again.');
     } finally {
       setIsExporting(false);
       setExportType(null);
@@ -453,7 +451,7 @@ Respond with ONLY the HTML content (body content only, no <html>, <head>, or <bo
     try {
       const editorContentEl = contentRef.current?.querySelector('.editor-input');
       if (!editorContentEl) {
-        alert(t('document.alerts.noContentToExport'));
+        alert('No content to export');
         return;
       }
 
@@ -571,7 +569,7 @@ Respond with ONLY the HTML content (body content only, no <html>, <head>, or <bo
 
     } catch (error) {
       console.error('TXT export error:', error);
-      alert(t('document.alerts.exportFailedTxt'));
+      alert('Failed to export as TXT. Please try again.');
     } finally {
       setIsExporting(false);
       setExportType(null);
@@ -592,7 +590,7 @@ Respond with ONLY the HTML content (body content only, no <html>, <head>, or <bo
                   type="text"
                   value={title}
                   onChange={(e) => setTitle(e.target.value)}
-                  placeholder={t('document.titlePlaceholder')}
+                  placeholder="Enter document title..."
                   className="flex-1 text-4xl font-bold border-none outline-none focus:ring-0 placeholder-gray-300 text-gray-900 bg-transparent px-0"
                 />
                 <button
@@ -603,12 +601,12 @@ Respond with ONLY the HTML content (body content only, no <html>, <head>, or <bo
                   {isGenerating ? (
                     <>
                       <Loader2 className="h-5 w-5 animate-spin" />
-                      <span>{t('document.generating')}</span>
+                      <span>Generating...</span>
                     </>
                   ) : (
                     <>
                       <Sparkles className="h-5 w-5" />
-                      <span>{t('document.generate')}</span>
+                      <span>Generate Content</span>
                     </>
                   )}
                 </button>
@@ -619,7 +617,7 @@ Respond with ONLY the HTML content (body content only, no <html>, <head>, or <bo
             {/* Action Buttons Bar */}
             <div className="flex flex-wrap items-center justify-between gap-3 pb-4">
               <div className="flex flex-wrap items-center gap-3">
-                <span className="text-sm font-medium text-gray-700 mr-2">{t('document.exportAs')}</span>
+                <span className="text-sm font-medium text-gray-700 mr-2">Export as:</span>
                 
                 <button
                   onClick={exportAsPDF}
@@ -631,7 +629,7 @@ Respond with ONLY the HTML content (body content only, no <html>, <head>, or <bo
                   ) : (
                     <FileText className="h-4 w-4" />
                   )}
-                  <span>{t('document.formats.pdf')}</span>
+                  <span>PDF</span>
                 </button>
                 
                 <button
@@ -644,7 +642,7 @@ Respond with ONLY the HTML content (body content only, no <html>, <head>, or <bo
                   ) : (
                     <Image className="h-4 w-4" />
                   )}
-                  <span>{t('document.formats.png')}</span>
+                  <span>PNG</span>
                 </button>
 
                 <button
@@ -657,7 +655,7 @@ Respond with ONLY the HTML content (body content only, no <html>, <head>, or <bo
                   ) : (
                     <FileCode className="h-4 w-4" />
                   )}
-                  <span>{t('document.formats.html')}</span>
+                  <span>HTML</span>
                 </button>
 
                 <button
@@ -670,7 +668,7 @@ Respond with ONLY the HTML content (body content only, no <html>, <head>, or <bo
                   ) : (
                     <Download className="h-4 w-4" />
                   )}
-                  <span>{t('document.formats.md')}</span>
+                  <span>Markdown</span>
                 </button>
 
                 <button
@@ -683,7 +681,7 @@ Respond with ONLY the HTML content (body content only, no <html>, <head>, or <bo
                   ) : (
                     <FileText className="h-4 w-4" />
                   )}
-                  <span>{t('document.formats.txt')}</span>
+                  <span>TXT</span>
                 </button>
               </div>
 
@@ -696,12 +694,12 @@ Respond with ONLY the HTML content (body content only, no <html>, <head>, or <bo
                 {isSaving ? (
                   <>
                     <Loader2 className="h-4 w-4 animate-spin" />
-                    <span>{t('document.saving')}</span>
+                    <span>Saving...</span>
                   </>
                 ) : (
                   <>
                     <Save className="h-4 w-4" />
-                    <span>{t('document.saveDraft')}</span>
+                    <span>Save Draft</span>
                   </>
                 )}
               </button>
