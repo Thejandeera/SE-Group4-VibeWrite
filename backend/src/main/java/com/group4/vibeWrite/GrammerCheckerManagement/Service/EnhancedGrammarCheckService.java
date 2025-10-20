@@ -6,13 +6,13 @@ import com.group4.vibeWrite.GrammerCheckerManagement.Dto.GrammarCheckRequest;
 import com.group4.vibeWrite.GrammerCheckerManagement.Dto.GrammarError;
 import com.group4.vibeWrite.GrammerCheckerManagement.Entity.GrammarCheckHistory;
 import com.group4.vibeWrite.GrammerCheckerManagement.Repository.GrammarCheckRepository;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.text.similarity.LevenshteinDistance;
 import org.languagetool.JLanguageTool;
 import org.languagetool.language.AmericanEnglish;
 import org.languagetool.rules.CategoryId;
 import org.languagetool.rules.RuleMatch;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -27,9 +27,11 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 @Service
-@RequiredArgsConstructor
 @Slf4j
 public class EnhancedGrammarCheckService {
+
+    // Singleton instance
+    private static EnhancedGrammarCheckService instance;
 
     private final GrammarCheckRepository grammarCheckRepository;
 
@@ -40,6 +42,30 @@ public class EnhancedGrammarCheckService {
     //private final Map<String, String> advancedPatterns = new HashMap<>();
     //private final Set<String> commonWords = new HashSet<>();
     private final Map<String, String> styleGuideRules = new HashMap<>();
+
+
+    // Public constructor for Spring dependency injection
+    @Autowired
+    public EnhancedGrammarCheckService(GrammarCheckRepository grammarCheckRepository) {
+        this.grammarCheckRepository = grammarCheckRepository;
+        // Ensure only one instance is created
+        if (instance == null) {
+            instance = this;
+        } else {
+            // This block should ideally not be reached in a Spring context
+            throw new IllegalStateException("Singleton instance already exists.");
+        }
+    }
+
+    // Public method to get the singleton instance
+    public static EnhancedGrammarCheckService getInstance() {
+        if (instance == null) {
+            // This can happen if accessed outside of Spring's context before initialization
+            throw new IllegalStateException("Service not initialized yet.");
+        }
+        return instance;
+    }
+
 
     @PostConstruct
     public void init() {
