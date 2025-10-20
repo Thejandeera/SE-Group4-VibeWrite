@@ -1,6 +1,7 @@
 package com.group4.vibeWrite.DraftSchema.Controller;
 
 import com.group4.vibeWrite.DraftSchema.Entity.Draft;
+import com.group4.vibeWrite.DraftSchema.Exception.InvalidDraftException;
 import com.group4.vibeWrite.DraftSchema.Service.DraftService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -32,5 +33,26 @@ public class DraftController {
     public ResponseEntity<List<Draft>> getDraftsByUserId(@PathVariable String userId) {
         List<Draft> drafts = draftService.getDraftsByUserId(userId);
         return new ResponseEntity<>(drafts, HttpStatus.OK);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteDraft(@PathVariable String id) {
+        boolean deleted = draftService.deleteDraft(id);
+        if (deleted) {
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }
+        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<Draft> updateDraft(
+            @PathVariable String id,
+            @Valid @RequestBody Draft draft) {
+        try {
+            Draft updated = draftService.updateDraft(id, draft);
+            return new ResponseEntity<>(updated, HttpStatus.OK);
+        } catch (InvalidDraftException e) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
     }
 }

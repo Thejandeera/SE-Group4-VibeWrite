@@ -138,7 +138,7 @@ const NavigationBar = () => {
     ];
 
     const quickActions = [
-      { name: 'New Document', icon: FileText, path: '/new-document' },
+      { name: 'New Document', icon: FileText, path: '/new-document', badge: 'New', badgeColor: 'bg-green-500' },
       { name: 'View Drafts', icon: FileText, path: '/view-drafts' }
     ];
 
@@ -182,7 +182,7 @@ const NavigationBar = () => {
   ];
 
   const quickActions = [
-    { name: 'New Document', icon: FileText, path: '/new-document' },
+    { name: 'New Document', icon: FileText, path: '/new-document', badge: 'New', badgeColor: 'bg-green-500' },
     { name: 'View Drafts', icon: FileText, path: '/view-drafts' }
   ];
 
@@ -366,11 +366,7 @@ const NavigationBar = () => {
                   <item.icon size={18} className={`${activeItem === item.name ? 'text-blue-100' : ''} flex-shrink-0`} />
                   <span className="font-medium flex-1 text-sm">{item.name}</span>
                   {item.badge && (
-                    <span className={`
-                      ${item.badgeColor} text-white text-xs px-2 py-1 rounded-full font-bold
-                      ${activeItem === item.name ? 'opacity-90 ring-2 ring-white ring-opacity-30' : ''}
-                      shadow-sm
-                    `}>
+                    <span className={`${item.badgeColor} text-white text-xs px-2 py-1 rounded-full font-bold ml-2`}>
                       {item.badge}
                     </span>
                   )}
@@ -400,6 +396,11 @@ const NavigationBar = () => {
                 >
                   <item.icon size={18} className={`${activeItem === item.name ? 'text-blue-100' : ''} flex-shrink-0`} />
                   <span className="font-medium text-sm">{item.name}</span>
+                  {item.badge && (
+                    <span className={`${item.badgeColor} text-white text-xs px-2 py-1 rounded-full font-bold ml-2`}>
+                      {item.badge}
+                    </span>
+                  )}
                   {activeItem === item.name && (
                     <div className="absolute left-0 top-0 bottom-0 w-1 bg-blue-200 rounded-r-full shadow-lg" />
                   )}
@@ -517,6 +518,11 @@ const NavigationBar = () => {
               >
                 <item.icon size={16} className={activeItem === item.name ? 'text-blue-100' : ''} />
                 <span className="font-medium text-sm">{item.name}</span>
+                {item.badge && (
+                  <span className={`${item.badgeColor} text-white text-xs px-1.5 py-0.5 rounded-full font-medium`}>
+                    {item.badge}
+                  </span>
+                )}
                 {activeItem === item.name && (
                   <div className="absolute left-0 top-0 bottom-0 w-1 bg-blue-200 rounded-r-full shadow-lg" />
                 )}

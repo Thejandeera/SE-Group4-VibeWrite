@@ -14,6 +14,9 @@ import PastGrammar from './Pages/PastGrammar';
 import ViewDraft from './Pages/viewdraft';
 import SEOTools from './Pages/SEOTools';   // ✅ NEW PAGE IMPORT
 import SentimentAnalysis from './Pages/SentimentAnalysis';
+import SEOTools from './Pages/SEOTools';   
+import HelpAndSupport from './Pages/HelpAndSupport';
+import Document from './Pages/Document';
 
 
 const App = () => {
@@ -44,6 +47,9 @@ const App = () => {
           <Route path="/past-grammar" element={<PastGrammar />} />
           <Route path="/seo-tools" element={<SEOTools />} />   {/* ✅ NEW ROUTE */}
           <Route path="/sentiment-analysis" element={<SentimentAnalysis />} />
+          <Route path="/seo-tools" element={<SEOTools />} />   
+          <Route path="/help" element={<HelpAndSupport />} />
+          <Route path="/new-document" element={<Document />} />
         </Routes>
       </div>
     </div>

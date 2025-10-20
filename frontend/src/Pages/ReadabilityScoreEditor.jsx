@@ -29,6 +29,56 @@ const ReadabilityScoreEditor = () => {
     }
   };
 
+  const sendNotification = async (success) => {
+    let userId = null;
+    let username = 'User';
+
+    // 1. Get User ID from Session Storage
+    try {
+      const userDataString = sessionStorage.getItem('userData');
+      if (userDataString) {
+        const userData = JSON.parse(userDataString);
+        userId = userData.id;
+        username = userData.username || 'User'; // Get username for description
+      }
+    } catch (e) {
+      console.error('Error parsing userData from sessionStorage:', e);
+      // Continue even if userId is null, the backend might handle it, or we'll skip the call.
+    }
+
+    if (!userId) {
+      console.warn('Notification skipped: User ID not found in sessionStorage.');
+      return;
+    }
+
+    // 2. Prepare Notification Data
+    const status = success ? 'Success' : 'Failure';
+    const notificationPayload = {
+      userId: userId,
+      name: `Readability Analysis ${status}`,
+      description: `Readability calculation completed for your text, ${username}. Status: ${status}.`,
+    };
+
+    // 3. Send Notification to Backend
+    try {
+      const notificationResponse = await fetch(`${backendUrl}/api/v1/notifications`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(notificationPayload)
+      });
+
+      if (notificationResponse.ok) {
+        // console.log('Notification sent successfully!');
+      } else {
+        console.error('Failed to send notification. Status:', notificationResponse.status);
+      }
+    } catch (err) {
+      console.error('Error sending notification:', err);
+    }
+  };
+
   const calculateReadability = async () => {
     if (!plainText.trim()) return;
 
@@ -36,6 +86,7 @@ const ReadabilityScoreEditor = () => {
     setResult(null);
     setIsPulsing(true);
 
+    let success = false;
     try {
       const response = await fetch(`${backendUrl}/api/readability/analyze`, {
         method: 'POST',
@@ -48,90 +99,94 @@ const ReadabilityScoreEditor = () => {
       if (response.ok) {
         const data = await response.json();
         setResult(data);
+        success = true; // Set success flag
       } else {
         console.error('Failed to calculate readability');
       }
     } catch (err) {
       console.error('Error:', err);
     } finally {
+      // Always attempt to send a notification here
+      await sendNotification(success);
+
       setLoading(false);
       setTimeout(() => setIsPulsing(false), 300);
     }
   };
 
   return (
-    <div className="min-h-screen bg-black text-white p-6 w-full">
+    <div className="min-h-screen bg-white text-gray-800 p-6 w-full">
       <div className="max-w-5xl mx-auto">
-        <h1 className="text-3xl font-bold mb-6 text-white text-center animate-fade-in">
+        <h1 className="text-3xl font-bold mb-6 text-gray-800 text-center animate-fade-in">
           Readability Score Analyzer
         </h1>
 
         {/* Toolbar */}
-        <div className="flex gap-2 flex-wrap mb-5 justify-center p-4 bg-black rounded-lg border border-white">
+        <div className="flex gap-2 flex-wrap mb-5 justify-center p-4 bg-gray-50 rounded-lg border border-gray-300">
           <button 
-            className="px-4 py-2 bg-black text-white rounded-lg transition-all duration-200 hover:bg-white hover:text-black active:scale-95 border border-white"
+            className="px-4 py-2 bg-white text-gray-800 rounded-lg transition-all duration-200 hover:bg-gray-800 hover:text-white active:scale-95 border border-gray-300"
             onClick={() => exec('bold')}
             title="Bold"
           >
             <strong>B</strong>
           </button>
           <button 
-            className="px-4 py-2 bg-black text-white rounded-lg transition-all duration-200 hover:bg-white hover:text-black active:scale-95 border border-white"
+            className="px-4 py-2 bg-white text-gray-800 rounded-lg transition-all duration-200 hover:bg-gray-800 hover:text-white active:scale-95 border border-gray-300"
             onClick={() => exec('italic')}
             title="Italic"
           >
             <em>I</em>
           </button>
           <button 
-            className="px-4 py-2 bg-black text-white rounded-lg transition-all duration-200 hover:bg-white hover:text-black active:scale-95 border border-white"
+            className="px-4 py-2 bg-white text-gray-800 rounded-lg transition-all duration-200 hover:bg-gray-800 hover:text-white active:scale-95 border border-gray-300"
             onClick={() => exec('underline')}
             title="Underline"
           >
             <u>U</u>
           </button>
           <button 
-            className="px-4 py-2 bg-black text-white rounded-lg transition-all duration-200 hover:bg-white hover:text-black active:scale-95 border border-white"
+            className="px-4 py-2 bg-white text-gray-800 rounded-lg transition-all duration-200 hover:bg-gray-800 hover:text-white active:scale-95 border border-gray-300"
             onClick={() => exec('strikeThrough')}
             title="Strikethrough"
           >
             <span className="line-through">S</span>
           </button>
           
-          <div className="mx-2 border-l border-white h-8 self-center"></div>
+          <div className="mx-2 border-l border-gray-300 h-8 self-center"></div>
           
           <button 
-            className="px-4 py-2 bg-black text-white rounded-lg transition-all duration-200 hover:bg-white hover:text-black active:scale-95 border border-white"
+            className="px-4 py-2 bg-white text-gray-800 rounded-lg transition-all duration-200 hover:bg-gray-800 hover:text-white active:scale-95 border border-gray-300"
             onClick={() => exec('insertUnorderedList')}
             title="Bullet List"
           >
             • List
           </button>
           <button 
-            className="px-4 py-2 bg-black text-white rounded-lg transition-all duration-200 hover:bg-white hover:text-black active:scale-95 border border-white"
+            className="px-4 py-2 bg-white text-gray-800 rounded-lg transition-all duration-200 hover:bg-gray-800 hover:text-white active:scale-95 border border-gray-300"
             onClick={() => exec('insertOrderedList')}
             title="Numbered List"
           >
             1. List
           </button>
           
-          <div className="mx-2 border-l border-white h-8 self-center"></div>
+          <div className="mx-2 border-l border-gray-300 h-8 self-center"></div>
           
           <button 
-            className="px-4 py-2 bg-black text-white rounded-lg transition-all duration-200 hover:bg-white hover:text-black active:scale-95 border border-white"
+            className="px-4 py-2 bg-white text-gray-800 rounded-lg transition-all duration-200 hover:bg-gray-800 hover:text-white active:scale-95 border border-gray-300"
             onClick={() => exec('formatBlock', 'H1')}
             title="Heading 1"
           >
             H1
           </button>
           <button 
-            className="px-4 py-2 bg-black text-white rounded-lg transition-all duration-200 hover:bg-white hover:text-black active:scale-95 border border-white"
+            className="px-4 py-2 bg-white text-gray-800 rounded-lg transition-all duration-200 hover:bg-gray-800 hover:text-white active:scale-95 border border-gray-300"
             onClick={() => exec('formatBlock', 'H2')}
             title="Heading 2"
           >
             H2
           </button>
           <button 
-            className="px-4 py-2 bg-black text-white rounded-lg transition-all duration-200 hover:bg-white hover:text-black active:scale-95 border border-white"
+            className="px-4 py-2 bg-white text-gray-800 rounded-lg transition-all duration-200 hover:bg-gray-800 hover:text-white active:scale-95 border border-gray-300"
             onClick={() => exec('formatBlock', 'P')}
             title="Paragraph"
           >
@@ -142,8 +197,8 @@ const ReadabilityScoreEditor = () => {
         {/* Editable Area */}
         <div
           ref={editorRef}
-          className="min-h-80 border border-white rounded-lg p-6 focus:outline-none bg-black 
-                     transition-all duration-300 focus:ring-2 focus:ring-white text-white text-lg"
+          className="min-h-80 border border-gray-300 rounded-lg p-6 focus:outline-none bg-white 
+             transition-all duration-300 focus:ring-2 focus:ring-blue-500 text-gray-800 text-lg"
           contentEditable
           spellCheck={true}
           lang="en"
@@ -155,14 +210,14 @@ const ReadabilityScoreEditor = () => {
           Start writing here...
         </div>
 
-        <div className="mt-3 text-sm text-gray-300 text-center">
+        <div className="mt-3 text-sm text-gray-600 text-center">
           Spelling mistakes are underlined by your browser.
         </div>
 
         {/* Character Count */}
-        <div className="mt-5 text-md text-white flex justify-center">
-          <span className="font-medium bg-black py-2 px-4 rounded-lg border border-white">
-            Character count: <span className="text-white font-bold">{plainText.length}</span>
+        <div className="mt-5 text-md text-gray-800 flex justify-center">
+          <span className="font-medium bg-gray-50 py-2 px-4 rounded-lg border border-gray-300">
+            Character count: <span className="text-gray-800 font-bold">{plainText.length}</span>
           </span>
         </div>
 
@@ -171,11 +226,11 @@ const ReadabilityScoreEditor = () => {
           <button
             onClick={calculateReadability}
             disabled={loading || !plainText.trim()}
-            className={`px-8 py-3 bg-black text-white rounded-lg 
-                       hover:bg-white hover:text-black disabled:bg-gray-800 disabled:hover:bg-gray-800 disabled:hover:text-white
-                       transition-all duration-300 transform hover:scale-105 active:scale-95 
-                       font-semibold flex items-center justify-center border border-white
-                       ${isPulsing && !loading ? 'animate-pulse' : ''}`}
+            className={`px-8 py-3 bg-blue-600 text-white rounded-lg 
+                         hover:bg-blue-700 disabled:bg-gray-400 disabled:hover:bg-gray-400
+                         transition-all duration-300 transform hover:scale-105 active:scale-95 
+                         font-semibold flex items-center justify-center border border-blue-600
+                         ${isPulsing && !loading ? 'animate-pulse' : ''}`}
           >
             {loading ? (
               <>
@@ -191,37 +246,37 @@ const ReadabilityScoreEditor = () => {
 
         {/* Display Result */}
         {result && (
-          <div className="mt-6 p-6 bg-black rounded-lg border border-white animate-fade-in">
-            <h2 className="text-2xl font-bold mb-4 text-white text-center border-b border-white pb-2">
+          <div className="mt-6 p-6 bg-gray-50 rounded-lg border border-gray-300 animate-fade-in">
+            <h2 className="text-2xl font-bold mb-4 text-gray-800 text-center border-b border-gray-300 pb-2">
               Readability Results
             </h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-white">
-              <div className="p-4 bg-black rounded-lg border border-white transition-transform duration-200 hover:scale-[1.02]">
-                <strong className="text-white">Flesch-Kincaid Score:</strong> 
-                <span className="float-right text-white font-bold text-xl">{result.fleschKincaidScore}</span>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-gray-800">
+              <div className="p-4 bg-white rounded-lg border border-gray-300 transition-transform duration-200 hover:scale-[1.02]">
+                <strong className="text-gray-800">Flesch-Kincaid Score:</strong> 
+                <span className="float-right text-blue-600 font-bold text-xl">{result.fleschKincaidScore}</span>
               </div>
-              <div className="p-4 bg-black rounded-lg border border-white transition-transform duration-200 hover:scale-[1.02]">
-                <strong className="text-white">Grade Level:</strong> 
-                <span className="float-right text-white font-bold text-xl">{result.gradeLevel}</span>
+              <div className="p-4 bg-white rounded-lg border border-gray-300 transition-transform duration-200 hover:scale-[1.02]">
+                <strong className="text-gray-800">Grade Level:</strong> 
+                <span className="float-right text-green-600 font-bold text-xl">{result.gradeLevel}</span>
               </div>
-              <div className="p-4 bg-black rounded-lg border border-white transition-transform duration-200 hover:scale-[1.02]">
-                <strong className="text-white">Total Words:</strong> 
+              <div className="p-4 bg-white rounded-lg border border-gray-300 transition-transform duration-200 hover:scale-[1.02]">
+                <strong className="text-gray-800">Total Words:</strong> 
                 <span className="float-right">{result.totalWords}</span>
               </div>
-              <div className="p-4 bg-black rounded-lg border border-white transition-transform duration-200 hover:scale-[1.02]">
-                <strong className="text-white">Total Sentences:</strong> 
+              <div className="p-4 bg-white rounded-lg border border-gray-300 transition-transform duration-200 hover:scale-[1.02]">
+                <strong className="text-gray-800">Total Sentences:</strong> 
                 <span className="float-right">{result.totalSentences}</span>
               </div>
-              <div className="p-4 bg-black rounded-lg border border-white transition-transform duration-200 hover:scale-[1.02]">
-                <strong className="text-white">Total Syllables:</strong> 
+              <div className="p-4 bg-white rounded-lg border border-gray-300 transition-transform duration-200 hover:scale-[1.02]">
+                <strong className="text-gray-800">Total Syllables:</strong> 
                 <span className="float-right">{result.totalSyllables}</span>
               </div>
-              <div className="p-4 bg-black rounded-lg border border-white transition-transform duration-200 hover:scale-[1.02]">
-                <strong className="text-white">Average Words Per Sentence:</strong> 
+              <div className="p-4 bg-white rounded-lg border border-gray-300 transition-transform duration-200 hover:scale-[1.02]">
+                <strong className="text-gray-800">Average Words Per Sentence:</strong> 
                 <span className="float-right">{result.averageWordsPerSentence}</span>
               </div>
-              <div className="p-4 bg-black rounded-lg border border-white md:col-span-2 transition-transform duration-200 hover:scale-[1.02]">
-                <strong className="text-white">Average Syllables Per Word:</strong> 
+              <div className="p-4 bg-white rounded-lg border border-gray-300 md:col-span-2 transition-transform duration-200 hover:scale-[1.02]">
+                <strong className="text-gray-800">Average Syllables Per Word:</strong> 
                 <span className="float-right">{result.averageSyllablesPerWord}</span>
               </div>
             </div>
@@ -236,9 +291,9 @@ const ReadabilityScoreEditor = () => {
           to { opacity: 1; transform: translateY(0); }
         }
         @keyframes pulse {
-          0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.7); }
-          70% { transform: scale(1); box-shadow: 0 0 0 10px rgba(255, 255, 255, 0); }
-          100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(255, 255, 255, 0); }
+          0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.7); }
+          70% { transform: scale(1); box-shadow: 0 0 0 10px rgba(59, 130, 246, 0); }
+          100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(59, 130, 246, 0); }
         }
         .animate-fade-in {
           animation: fadeIn 0.8s ease-out forwards;
