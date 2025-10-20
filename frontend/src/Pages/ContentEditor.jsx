@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { toast, Toaster } from 'react-hot-toast';
 import LexicalEditor from '../Components/lexical/LexicalEditor.jsx';
 
@@ -7,6 +8,7 @@ const ContentEditor = () => {
   const [editingDraft, setEditingDraft] = useState(null);
   const [initialContent, setInitialContent] = useState('');
   const [currentContent, setCurrentContent] = useState('');
+  const { t } = useTranslation();
   
   const backendUrl = import.meta.env.VITE_BACKEND_URL;
 
@@ -20,15 +22,15 @@ const ContentEditor = () => {
         setInitialContent(draftToEdit.content || '');
         setCurrentContent(draftToEdit.content || '');
         console.log('Loading draft for editing:', draftToEdit);
-        toast.success('Draft loaded for editing');
+        toast.success(t('editor.toasts.draftLoaded'));
         // Clear the sessionStorage after loading
         sessionStorage.removeItem('draftToEdit');
       } catch (e) {
         console.error('Error parsing draft to edit:', e);
-        toast.error('Failed to load draft');
+        toast.error(t('editor.toasts.loadFailed'));
       }
     }
-  }, []);
+  }, [t]);
 
   const handleContentChange = (htmlContent) => {
     setCurrentContent(htmlContent);
@@ -41,7 +43,7 @@ const ContentEditor = () => {
       // Get userId from session storage
       const userDataString = sessionStorage.getItem('userData');
       if (!userDataString) {
-        toast.error('Please login to save drafts');
+        toast.error(t('editor.toasts.loginToSave'));
         setIsSaving(false);
         return;
       }
@@ -50,7 +52,7 @@ const ContentEditor = () => {
       const userId = userData.id;
       
       if (!userId) {
-        toast.error('User ID not found. Please login again.');
+        toast.error(t('editor.toasts.userIdMissing'));
         setIsSaving(false);
         return;
       }
@@ -61,7 +63,7 @@ const ContentEditor = () => {
       const textContent = tempDiv.textContent || tempDiv.innerText || '';
       
       if (!textContent.trim()) {
-        toast.error('Cannot save empty content');
+        toast.error(t('editor.toasts.emptyContent'));
         setIsSaving(false);
         return;
       }
@@ -88,7 +90,7 @@ const ContentEditor = () => {
 
         const result = await response.json();
         console.log('Draft updated:', result);
-        toast.success('Draft updated successfully!');
+        toast.success(t('editor.toasts.updateSuccess'));
         
         // Update the editing draft with new content
         setEditingDraft({ ...editingDraft, content: textContent.trim() });
@@ -114,7 +116,7 @@ const ContentEditor = () => {
 
         const result = await response.json();
         console.log('Draft saved:', result);
-        toast.success('Draft saved successfully!');
+        toast.success(t('editor.toasts.saveSuccess'));
         
         // Set the newly created draft as the editing draft
         if (result.id) {
@@ -128,18 +130,18 @@ const ContentEditor = () => {
       
     } catch (error) {
       console.error('Save draft error:', error);
-      toast.error('Failed to save draft. Please try again.');
+      toast.error(t('editor.toasts.saveFailed'));
     } finally {
       setIsSaving(false);
     }
   };
 
   const handleCancel = () => {
-    if (window.confirm('Are you sure you want to cancel editing? Any unsaved changes will be lost.')) {
+    if (window.confirm(t('editor.confirmations.cancelEditing'))) {
       setEditingDraft(null);
       setInitialContent('');
       setCurrentContent('');
-      toast.success('Editing cancelled');
+      toast.success(t('editor.confirmations.editingCancelled'));
       window.location.reload();
     }
   };
@@ -176,20 +178,20 @@ const ContentEditor = () => {
         <div className="mb-4">
           <div className="mb-1 flex items-center gap-2">
             <span className="inline-flex h-2 w-2 animate-pulse rounded-full bg-emerald-500" />
-            <span className="rounded-full bg-emerald-50 px-2 py-0.5 text-xs font-medium text-emerald-700">Editor</span>
+            <span className="rounded-full bg-emerald-50 px-2 py-0.5 text-xs font-medium text-emerald-700">{t('editor.status.editor')}</span>
             {editingDraft && (
               <span className="rounded-full bg-blue-50 px-2 py-0.5 text-xs font-medium text-blue-700">
-                Editing Draft
+                {t('editor.editingDraft')}
               </span>
             )}
           </div>
           <h1 className="text-3xl font-semibold tracking-tight">
-            <span className="bg-gradient-to-r from-gray-900 to-gray-600 bg-clip-text text-transparent">Content Editor</span>
+            <span className="bg-gradient-to-r from-gray-900 to-gray-600 bg-clip-text text-transparent">{t('editor.title')}</span>
           </h1>
           <p className="mt-1 text-sm text-gray-500">
             {editingDraft 
-              ? `Editing: ${editingDraft.title || 'Draft'}`
-              : 'Write, format, and refine with a professional rich text editor powered by Lexical.'
+              ? t('editor.status.editing', { title: editingDraft.title || 'Draft' })
+              : t('editor.subtitle')
             }
           </p>
         </div>
@@ -205,7 +207,7 @@ const ContentEditor = () => {
               onClick={handleCancel}
               className="px-4 py-2 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300 transition-colors"
             >
-              Cancel
+              {t('editor.buttons.cancel')}
             </button>
           )}
           <button
@@ -213,7 +215,7 @@ const ContentEditor = () => {
             disabled={isSaving}
             className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors"
           >
-            {isSaving ? 'Saving...' : editingDraft ? 'Update Draft' : 'Save Draft'}
+            {isSaving ? t('editor.buttons.saving') : editingDraft ? t('editor.buttons.update') : t('editor.buttons.save')}
           </button>
         </div> 
       </div>
