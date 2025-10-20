@@ -1,46 +1,49 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { Star } from 'lucide-react';
 
 export default function TestimonialsAndFooter() {
+  const { t } = useTranslation();
+  
   const testimonials = [
     {
       rating: 5,
-      text: "This AI writing assistant has transformed how our team creates content. The SEO suggestions are incredibly accurate.",
-      name: "Sarah Chen",
-      title: "Content Manager at TechCorp",
+      text: t('testimonials.sarah.text'),
+      name: t('testimonials.sarah.name'),
+      title: t('testimonials.sarah.title'),
       initials: "SC"
     },
     {
       rating: 5,
-      text: "The grammar checker caught issues I completely missed. It's like having a professional editor available 24/7.",
-      name: "Marcus Johnson",
-      title: "Freelance Writer at Independent",
+      text: t('testimonials.marcus.text'),
+      name: t('testimonials.marcus.name'),
+      title: t('testimonials.marcus.title'),
       initials: "MJ"
     },
     {
       rating: 5,
-      text: "Our content quality has improved dramatically. The AI suggestions help us maintain consistency across all our writing.",
-      name: "Emily Rodriguez",
-      title: "Marketing Director at StartupXYZ",
+      text: t('testimonials.emily.text'),
+      name: t('testimonials.emily.name'),
+      title: t('testimonials.emily.title'),
       initials: "ER"
     }
   ];
 
   const footerLinks = {
     Product: [
-      { label: 'Features', href: '#features' },
-      { label: 'Pricing', href: '#pricing' },
-      { label: 'API', href: '#api' }
+      { label: t('footer.product.features'), href: '#features' },
+      { label: t('footer.product.pricing'), href: '#pricing' },
+      { label: t('footer.product.api'), href: '#api' }
     ],
     Company: [
-      { label: 'About', href: '#about' },
-      { label: 'Blog', href: '#blog' },
-      { label: 'Careers', href: '#careers' }
+      { label: t('footer.company.about'), href: '#about' },
+      { label: t('footer.company.blog'), href: '#blog' },
+      { label: t('footer.company.careers'), href: '#careers' }
     ],
     Legal: [
-      { label: 'Privacy', href: '#privacy' },
-      { label: 'Terms', href: '#terms' },
-      { label: 'Contact', href: '#contact' }
+      { label: t('footer.legal.privacy'), href: '#privacy' },
+      { label: t('footer.legal.terms'), href: '#terms' },
+      { label: t('footer.legal.contact'), href: '#contact' }
     ]
   };
 
@@ -63,10 +66,10 @@ export default function TestimonialsAndFooter() {
       
           <div className="text-center mb-12 sm:mb-16 lg:mb-20">
             <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-4 sm:mb-6">
-              Loved by Writers Everywhere
+              {t('testimonials.title')}
             </h2>
             <p className="text-lg sm:text-xl text-gray-400 max-w-3xl mx-auto">
-              See what our users have to say about their experience with WriteAI.
+              {t('testimonials.subtitle')}
             </p>
           </div>
 
@@ -87,7 +90,7 @@ export default function TestimonialsAndFooter() {
                   "{testimonial.text}"
                 </blockquote>
 
-         
+        
                 <div className="flex items-center">
                   <div className="w-10 h-10 bg-gradient-to-br from-purple-600 to-blue-600 rounded-full flex items-center justify-center text-white font-semibold text-sm mr-3">
                     {testimonial.initials}
@@ -119,10 +122,10 @@ export default function TestimonialsAndFooter() {
                     <path d="M14.5 2c1.38 0 2.5 1.12 2.5 2.5v15c0 1.38-1.12 2.5-2.5 2.5h-5C8.12 22 7 20.88 7 19.5v-15C7 3.12 8.12 2 9.5 2h5zm-5 2C8.67 4 8 4.67 8 5.5v13c0 .83.67 1.5 1.5 1.5h5c.83 0 1.5-.67 1.5-1.5v-13c0-.83-.67-1.5-1.5-1.5h-5zm1.5 2h3c.28 0 .5.22.5.5s-.22.5-.5.5h-3c-.28 0-.5-.22-.5-.5s.22-.5.5-.5zm0 2h3c.28 0 .5.22.5.5s-.22.5-.5.5h-3c-.28 0-.5-.22-.5-.5s.22-.5.5-.5z"/>
                   </svg>
                 </div>
-                <span className="font-semibold text-lg">WriteAI</span>
+                <span className="font-semibold text-lg">{t('auth.brand')}</span>
               </div>
               <p className="text-gray-400 leading-relaxed">
-                Empowering writers with AI-powered tools for better content creation.
+                {t('footer.description')}
               </p>
             </div>
 
@@ -148,7 +151,7 @@ export default function TestimonialsAndFooter() {
          
           <div className="mt-12 pt-8 border-t border-gray-800/50 text-center">
             <p className="text-gray-400">
-              © 2025 WriteAI. All rights reserved.
+              {t('footer.copyright')}
             </p>
           </div>
         </div>

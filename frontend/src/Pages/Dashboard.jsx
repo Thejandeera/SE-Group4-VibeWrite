@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { 
   TrendingUp, Users, FileText, Activity, Calendar, Bell, Settings,
   ChevronDown, Plus, Filter, Search, MoreVertical, Eye, Edit, Trash2,
@@ -19,14 +20,15 @@ const Dashboard = () => {
   const [userData, setUserData] = useState(null);
   const [greeting, setGreeting] = useState('');
   const [currentTime, setCurrentTime] = useState(new Date());
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
+  const { t } = useTranslation();
   
   // Real data states
   const [draftsData, setDraftsData] = useState([]);
   const [grammarHistory, setGrammarHistory] = useState([]);
   const [stats, setStats] = useState([
     { 
-      title: 'Total Drafts', 
+      title: t('dashboard.stats.totalDrafts'), 
       value: '0', 
       change: '+0%', 
       trend: 'up',
@@ -36,7 +38,7 @@ const Dashboard = () => {
       textColor: 'text-blue-600'
     },
     { 
-      title: 'Grammar Checks', 
+      title: t('dashboard.stats.grammarChecks'), 
       value: '0', 
       change: '+0%', 
       trend: 'up',
@@ -46,7 +48,7 @@ const Dashboard = () => {
       textColor: 'text-green-600'
     },
     { 
-      title: 'Avg Grammar Score', 
+      title: t('dashboard.stats.avgGrammarScore'), 
       value: '0%', 
       change: '+0%', 
       trend: 'up',
@@ -56,7 +58,7 @@ const Dashboard = () => {
       textColor: 'text-purple-600'
     },
     { 
-      title: 'Total Words', 
+      title: t('dashboard.stats.totalWords'), 
       value: '0', 
       change: '+0%', 
       trend: 'up',
@@ -86,9 +88,9 @@ const Dashboard = () => {
   useEffect(() => {
     const updateGreeting = () => {
       const hour = new Date().getHours();
-      if (hour < 12) setGreeting('Good Morning');
-      else if (hour < 18) setGreeting('Good Afternoon');
-      else setGreeting('Good Evening');
+      if (hour < 12) setGreeting(t('dashboard.greetings.morning'));
+      else if (hour < 18) setGreeting(t('dashboard.greetings.afternoon'));
+      else setGreeting(t('dashboard.greetings.evening'));
     };
     
     updateGreeting();
@@ -194,37 +196,37 @@ const Dashboard = () => {
   const quickActions = [
     { 
       icon: Plus, 
-      label: 'New Draft', 
+      label: t('dashboard.quick.newDraft'), 
       color: 'from-blue-500 to-blue-600', 
       onClick: () => window.location.href = '/content-editor' 
     },
     { 
       icon: FileText, 
-      label: 'View Drafts', 
+      label: t('dashboard.quick.viewDrafts'), 
       color: 'from-green-500 to-green-600', 
       onClick: () => window.location.href = '/view-draft' 
     },
     { 
       icon: BarChart2, 
-      label: 'SEO Analysis', 
+      label: t('dashboard.quick.seoAnalysis'), 
       color: 'from-purple-500 to-purple-600', 
       onClick: () => window.location.href = '/seo-tools' 
     },
     { 
       icon: CheckCircle, 
-      label: 'Grammar Check', 
+      label: t('dashboard.quick.grammarCheck'), 
       color: 'from-orange-500 to-orange-600', 
       onClick: () => window.location.href = '/grammar-check' 
     },
     { 
       icon: Target, 
-      label: 'Readability', 
+      label: t('dashboard.quick.readability'), 
       color: 'from-pink-500 to-pink-600', 
       onClick: () => window.location.href = '/readability' 
     },
     { 
       icon: Settings, 
-      label: 'Settings', 
+      label: t('dashboard.quick.settings'), 
       color: 'from-gray-500 to-gray-600', 
       onClick: () => window.location.href = '/settings' 
     }
@@ -242,7 +244,7 @@ const Dashboard = () => {
     recentDrafts.forEach(draft => {
       activities.push({
         id: `draft-${draft.id}`,
-        user: userData?.username || 'You',
+        user: userData?.username || t('dashboard.you'),
         action: 'Created new draft',
         time: getTimeAgo(new Date(draft.timestamp)),
         avatar: userData?.username?.charAt(0).toUpperCase() || 'U',
@@ -259,7 +261,7 @@ const Dashboard = () => {
     recentGrammar.forEach(check => {
       activities.push({
         id: `grammar-${check.id}`,
-        user: userData?.username || 'You',
+        user: userData?.username || t('dashboard.you'),
         action: `Grammar check (${check.grammarScore}% score)`,
         time: getTimeAgo(new Date(check.checkedAt)),
         avatar: userData?.username?.charAt(0).toUpperCase() || 'U',
@@ -336,26 +338,26 @@ const Dashboard = () => {
     return [
       { 
         icon: Award, 
-        label: 'Pro Writer', 
-        description: `${totalDrafts} drafts created`, 
+        label: t('dashboard.badges.proWriter'), 
+        description: t('dashboard.badges.draftsCreated', { count: totalDrafts }), 
         earned: totalDrafts >= 10 
       },
       { 
         icon: Star, 
-        label: 'Grammar Master', 
-        description: `${avgScore}% average score`, 
+        label: t('dashboard.badges.grammarMaster'), 
+        description: t('dashboard.badges.avgScore', { score: avgScore }), 
         earned: avgScore >= 90 
       },
       { 
         icon: Zap, 
-        label: 'Speed Demon', 
-        description: `${totalGrammar} grammar checks`, 
+        label: t('dashboard.badges.speedDemon'), 
+        description: t('dashboard.badges.grammarChecks', { count: totalGrammar }), 
         earned: totalGrammar >= 50 
       },
       { 
         icon: Target, 
-        label: 'Word Smith', 
-        description: `${totalWords.toLocaleString()} words written`, 
+        label: t('dashboard.badges.wordSmith'), 
+        description: t('dashboard.badges.wordsWritten', { count: totalWords.toLocaleString() }), 
         earned: totalWords >= 10000 
       },
     ];
@@ -389,7 +391,7 @@ const Dashboard = () => {
       <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-blue-50 flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-blue-600 mx-auto mb-4"></div>
-          <p className="text-gray-600">Loading your dashboard...</p>
+          <p className="text-gray-600">{t('dashboard.loading')}</p>
         </div>
       </div>
     );
@@ -463,7 +465,7 @@ const Dashboard = () => {
             <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
             <input
               type="text"
-              placeholder="Search drafts, grammar checks, or content..."
+              placeholder={t('dashboard.searchPlaceholder')}
               className="w-full pl-12 pr-4 py-3 bg-white/50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all text-sm"
             />
           </div>
@@ -502,7 +504,7 @@ const Dashboard = () => {
         <div className="glass-card rounded-2xl p-4 sm:p-6 animate-fade-in">
           <h2 className="text-lg sm:text-xl font-bold text-gray-900 mb-4 flex items-center gap-2">
             <Zap className="text-blue-600" size={24} />
-            Quick Actions
+            {t('dashboard.quickActions')}
           </h2>
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
             {quickActions.map((action, index) => (
@@ -525,7 +527,7 @@ const Dashboard = () => {
         <div className="glass-card rounded-2xl p-4 sm:p-6 animate-fade-in">
           <h2 className="text-lg sm:text-xl font-bold text-gray-900 mb-4 flex items-center gap-2">
             <Award className="text-yellow-500" size={24} />
-            Your Achievements
+            {t('dashboard.achievements')}
           </h2>
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
             {achievements.map((achievement, index) => (
@@ -551,25 +553,25 @@ const Dashboard = () => {
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-lg sm:text-xl font-bold text-gray-900 flex items-center gap-2">
                 <FileText className="text-blue-600" size={24} />
-                Recent Drafts
+                {t('dashboard.recentDrafts')}
               </h2>
               <button
                 onClick={() => window.location.href = '/view-draft'}
                 className="text-xs sm:text-sm text-blue-600 hover:text-blue-700 font-medium"
               >
-                View All →
+                {t('dashboard.buttons.viewAll')}
               </button>
             </div>
             
             {projects.length === 0 ? (
             <div className="text-center py-12">
                 <FileText className="w-16 h-16 mx-auto text-gray-300 mb-4" />
-                <p className="text-gray-500 mb-4">No drafts yet</p>
+                <p className="text-gray-500 mb-4">{t('dashboard.noDrafts')}</p>
                 <button
                   onClick={() => window.location.href = '/content-editor'}
                   className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
                 >
-                  Create Your First Draft
+                  {t('dashboard.createFirstDraft')}
                 </button>
             </div>
             ) : (
@@ -604,7 +606,7 @@ const Dashboard = () => {
                     
                     <div className="space-y-2">
                       <div className="flex items-center justify-between text-xs sm:text-sm">
-                        <span className="text-gray-600">Progress</span>
+                        <span className="text-gray-600">{t('dashboard.progress')}</span>
                         <span className="font-semibold text-gray-900">{project.progress}%</span>
                       </div>
                       <div className="progress-container">
@@ -635,15 +637,15 @@ const Dashboard = () => {
 
           {/* Activity Feed */}
           <div className="glass-card rounded-2xl p-4 sm:p-6 animate-slide-left">
-            <h2 className="text-lg sm:text-xl font-bold text-gray-900 mb-4 flex items-center gap-2">
+              <h2 className="text-lg sm:text-xl font-bold text-gray-900 mb-4 flex items-center gap-2">
               <Activity className="text-green-600" size={24} />
-              Recent Activity
+                {t('dashboard.recentActivity')}
             </h2>
             
             {recentActivities.length === 0 ? (
               <div className="text-center py-12">
                 <Activity className="w-16 h-16 mx-auto text-gray-300 mb-4" />
-                <p className="text-gray-500">No recent activity</p>
+                <p className="text-gray-500">{t('dashboard.activityEmpty')}</p>
               </div>
             ) : (
               <div className="space-y-4">

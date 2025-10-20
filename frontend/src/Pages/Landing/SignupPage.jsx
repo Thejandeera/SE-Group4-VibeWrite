@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { ArrowLeft, Mail, Lock, Github, Eye, EyeOff, CheckCircle, XCircle, User, Sparkles } from 'lucide-react';
 import { useNavigate } from 'react-router-dom'; 
 const backendUrl = import.meta.env.VITE_BACKEND_URL;
@@ -11,6 +12,7 @@ const SignupPage = () => {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [toast, setToast] = useState({ show: false, message: '', type: '' });
+  const { t } = useTranslation();
   const navigate = useNavigate();
 
   
@@ -26,22 +28,22 @@ const SignupPage = () => {
     
     
     if (!email || !password || !confirmPassword) {
-      showToast('Please fill in all fields', 'error');
+      showToast(t('auth.signup.toasts.fillAll'), 'error');
       return;
     }
 
     if (!email.includes('@')) {
-      showToast('Please enter a valid email address', 'error');
+      showToast(t('auth.signup.toasts.invalidEmail'), 'error');
       return;
     }
 
     if (password.length < 6) {
-      showToast('Password must be at least 6 characters long', 'error');
+      showToast(t('auth.signup.toasts.passwordLength'), 'error');
       return;
     }
 
     if (password !== confirmPassword) {
-      showToast('Passwords do not match', 'error');
+      showToast(t('auth.signup.toasts.passwordMismatch'), 'error');
       return;
     }
 
@@ -65,7 +67,7 @@ const SignupPage = () => {
         
         sessionStorage.setItem('token', data.access_token);
         
-        showToast('Account created successfully! Welcome to WriteAI.', 'success');
+        showToast(t('auth.signup.toasts.success'), 'success');
         
         
         setTimeout(() => {
@@ -74,12 +76,12 @@ const SignupPage = () => {
         
       } else {
         
-        const errorMessage = data.message || data.error || 'Registration failed. Please try again.';
+        const errorMessage = data.message || data.error || t('auth.signup.toasts.failed');
         showToast(errorMessage, 'error');
       }
     } catch (error) {
       console.error('Registration error:', error);
-      showToast('Network error. Please check your connection and try again.', 'error');
+      showToast(t('auth.signup.toasts.network'), 'error');
     } finally {
       setIsLoading(false);
     }
@@ -87,13 +89,13 @@ const SignupPage = () => {
 
   const handleGoogleSignUp = async () => {
     setIsLoading(true);
-    showToast('Google sign-up coming soon!', 'info');
+    showToast(t('auth.google.comingSoon'), 'info');
     setTimeout(() => setIsLoading(false), 1000);
   };
 
   const handleGithubSignUp = async () => {
     setIsLoading(true);
-    showToast('GitHub sign-up coming soon!', 'info');
+    showToast(t('auth.github.comingSoon'), 'info');
     setTimeout(() => setIsLoading(false), 1000);
   };
 
@@ -132,7 +134,7 @@ const SignupPage = () => {
           className="flex items-center gap-3 text-gray-300 hover:text-white transition-all duration-300 group"
         >
           <ArrowLeft className="w-5 h-5 group-hover:-translate-x-1 transition-transform duration-300" />
-          <span className="text-sm sm:text-base">Back to Home</span>
+          <span className="text-sm sm:text-base">{t('auth.backToHome')}</span>
         </button>
       </div>
 
@@ -149,14 +151,14 @@ const SignupPage = () => {
                   </div>
                   <div className="absolute -inset-1.5 bg-gradient-to-r from-blue-500 to-purple-600 rounded-xl opacity-75 -z-10 blur-md"></div>
                 </div>
-                <h1 className="text-2xl font-bold bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">WriteAI</h1>
+                <h1 className="text-2xl font-bold bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">{t('auth.brand')}</h1>
               </div>
               
               <h2 className="text-2xl font-bold text-white mb-2">
-                Create Account
+                {t('auth.signup.title')}
               </h2>
               <p className="text-gray-400 text-sm">
-                Sign up to start writing with AI assistance
+                {t('auth.signup.subtitle')}
               </p>
             </div>
 
@@ -173,7 +175,7 @@ const SignupPage = () => {
                   <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
                   <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
                 </svg>
-                Continue with Google
+                {t('auth.google.continue')}
               </button>
 
               <button
@@ -182,7 +184,7 @@ const SignupPage = () => {
                 className="w-full bg-gray-800/60 hover:bg-gray-700/60 border border-gray-700/50 hover:border-gray-600/50 text-white font-medium py-3 px-4 rounded-xl flex items-center justify-center gap-3 transition-all duration-300 group disabled:opacity-50 disabled:cursor-not-allowed transform hover:scale-[1.02] active:scale-[0.98] backdrop-blur-sm"
               >
                 <Github className="w-5 h-5 group-hover:scale-110 transition-transform duration-300" />
-                Continue with GitHub
+                {t('auth.github.continue')}
               </button>
             </div>
 
@@ -192,7 +194,7 @@ const SignupPage = () => {
                 <div className="w-full border-t border-gray-700/50"></div>
               </div>
               <div className="relative flex justify-center text-xs uppercase">
-                <span className="bg-gray-900/70 px-4 text-gray-400 font-medium backdrop-blur-sm">OR CONTINUE WITH EMAIL</span>
+                <span className="bg-gray-900/70 px-4 text-gray-400 font-medium backdrop-blur-sm">{t('auth.orEmail')}</span>
               </div>
             </div>
 
@@ -201,7 +203,7 @@ const SignupPage = () => {
               
               <div className="space-y-2">
                 <label htmlFor="email" className="block text-sm font-medium text-gray-300">
-                  Email
+                  {t('auth.email')}
                 </label>
                 <div className="relative group">
                   <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5 group-focus-within:text-blue-400 transition-colors duration-300" />
@@ -210,7 +212,7 @@ const SignupPage = () => {
                     id="email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    placeholder="Enter your email"
+                    placeholder={t('auth.placeholders.email')}
                     className="w-full bg-gray-800/40 border border-gray-700/50 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/30 text-white placeholder-gray-400 rounded-xl py-3 pl-11 pr-4 transition-all duration-300 focus:outline-none backdrop-blur-sm"
                   />
                 </div>
@@ -219,7 +221,7 @@ const SignupPage = () => {
               
               <div className="space-y-2">
                 <label htmlFor="password" className="block text-sm font-medium text-gray-300">
-                  Password
+                  {t('auth.password')}
                 </label>
                 <div className="relative group">
                   <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5 group-focus-within:text-blue-400 transition-colors duration-300" />
@@ -228,7 +230,7 @@ const SignupPage = () => {
                     id="password"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    placeholder="Enter your password"
+                    placeholder={t('auth.placeholders.password')}
                     className="w-full bg-gray-800/40 border border-gray-700/50 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/30 text-white placeholder-gray-400 rounded-xl py-3 pl-11 pr-12 transition-all duration-300 focus:outline-none backdrop-blur-sm"
                   />
                   <button
@@ -244,7 +246,7 @@ const SignupPage = () => {
               
               <div className="space-y-2">
                 <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-300">
-                  Confirm Password
+                  {t('auth.confirmPassword')}
                 </label>
                 <div className="relative group">
                   <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5 group-focus-within:text-blue-400 transition-colors duration-300" />
@@ -253,7 +255,7 @@ const SignupPage = () => {
                     id="confirmPassword"
                     value={confirmPassword}
                     onChange={(e) => setConfirmPassword(e.target.value)}
-                    placeholder="Confirm your password"
+                    placeholder={t('auth.placeholders.confirmPassword')}
                     className="w-full bg-gray-800/40 border border-gray-700/50 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/30 text-white placeholder-gray-400 rounded-xl py-3 pl-11 pr-12 transition-all duration-300 focus:outline-none backdrop-blur-sm"
                   />
                   <button
@@ -275,22 +277,22 @@ const SignupPage = () => {
                 {isLoading ? (
                   <div className="flex items-center justify-center gap-2">
                     <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                    Creating Account...
+                    {t('auth.signup.loading')}
                   </div>
                 ) : (
-                  'Create Account'
+                  t('auth.signup.submit')
                 )}
               </button>
             </form>
 
             
             <p className="text-center text-gray-400 text-sm mt-6">
-              Already have an account?{' '}
+              {t('auth.signup.subtext')}{' '}
               <button 
                 onClick={() => navigate('/signin')}
                 className="text-blue-400 hover:text-blue-300 font-medium transition-colors duration-300 hover:underline focus:outline-none"
               >
-                Sign in
+                {t('auth.signup.signin')}
               </button>
             </p>
           </div>

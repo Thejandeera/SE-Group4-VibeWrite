@@ -1,0 +1,288 @@
+{
+  "brand": {
+    "name": "VibeWrite",
+    "poweredBy": "Angetrieben von Fortgeschrittener KI"
+  },
+  "actions": {
+    "signIn": "Anmelden",
+    "tryNow": "Jetzt Ausprobieren",
+    "analyzeWithAI": "Mit KI Analysieren",
+    "analyzing": "Analysiere...",
+    "logout": "Abmelden",
+    "pastSeoReports": "Vergangene SEO-Berichte"
+  },
+  "hero": {
+    "headlineLine1": "Ihr KI-Schreibassistent für",
+    "headlineLine2": "Klarheit, Ton und SEO",
+    "subhead": "Erstellen Sie überzeugende Inhalte mit KI-gestützten Vorschlägen, Echtzeit-SEO-Optimierung und fortgeschrittener Grammatikprüfung. Schreiben Sie besser, schneller und mit Vertrauen.",
+    "aiSuggestion": "KI-Vorschlag"
+  },
+  "features": {
+    "title": "Leistungsstarke Funktionen für Besseres Schreiben",
+    "subtitle": "Alles was Sie brauchen, um hochwertige Inhalte zu erstellen, die Leser ansprechen und sich gut in Suchmaschinen ranken.",
+    "aiWriting": {
+      "title": "KI-Gestütztes Schreiben",
+      "description": "Generieren, verbessern und verfeinern Sie Ihre Inhalte mit fortgeschrittener KI-Unterstützung"
+    },
+    "seoOptimization": {
+      "title": "SEO-Optimierung",
+      "description": "Echtzeit-SEO-Bewertung und Keyword-Vorschläge zur Steigerung Ihrer Rankings"
+    },
+    "grammarPlagiarism": {
+      "title": "Grammatik und Plagiat",
+      "description": "Fortgeschrittene Grammatikprüfung und Plagiatserkennung für perfekte Inhalte"
+    },
+    "multiLanguage": {
+      "title": "Mehrsprachige Unterstützung",
+      "description": "Schreiben Sie selbstbewusst in mehreren Sprachen mit KI-gestützter Unterstützung"
+    }
+  },
+  "seo": {
+    "title": "KI-Gestützter SEO-Analysator",
+    "poweredByGemini": "Angetrieben von Google Gemini KI",
+    "contentAnalyzer": "Inhaltsanalysator",
+    "placeholder": "Fügen Sie Ihren Inhalt hier für fortgeschrittene KI-gestützte SEO-Analyse ein...",
+    "errors": {
+      "enterContent": "Bitte geben Sie etwas Inhalt zur Analyse ein",
+      "failed": "Inhaltsanalyse fehlgeschlagen. Bitte versuchen Sie es erneut."
+    },
+    "scores": {
+      "seoScore": "SEO-Bewertung",
+      "readability": "Lesbarkeit",
+      "wordCount": "Wortanzahl",
+      "characters": "{{count}} Zeichen",
+      "sentiment": "Stimmung",
+      "tone": "{{tone}}"
+    },
+    "keywords": {
+      "analysis": "Keyword-Analyse",
+      "topByFrequency": "Top-Keywords nach Häufigkeit",
+      "keyword": "Keyword",
+      "count": "Anzahl",
+      "density": "Dichte",
+      "distributionChart": "Keyword-Verteilungsdiagramm"
+    },
+    "performance": {
+      "metrics": "SEO-Leistungsmetriken",
+      "titleQuality": "Titelqualität",
+      "keywords": "Keywords",
+      "structure": "Struktur",
+      "readability": "Lesbarkeit",
+      "linkPotential": "Link-Potenzial"
+    },
+    "suggestions": "KI-Vorschläge",
+    "improvements": "Verbesserungsempfehlungen"
+  },
+  "navigation": {
+    "main": "Hauptnavigation",
+    "quickActions": "Schnellaktionen",
+    "account": "Konto",
+    "dashboard": "Dashboard",
+    "contentEditor": "Inhaltseditor",
+    "seoTools": "SEO-Tools",
+    "grammarCheck": "Grammatikprüfung",
+    "readabilityScore": "Lesbarkeitsbewertung",
+    "notifications": "Benachrichtigungen",
+    "new": "Neu",
+    "newDocument": "Neues Dokument",
+    "viewDrafts": "Entwürfe Anzeigen",
+    "profileSettings": "Profil und Einstellungen",
+    "helpSupport": "Hilfe und Support"
+  },
+  "editor": {
+    "draftLoaded": "✓ Entwurfsinhalt erfolgreich geladen",
+    "loadingDraft": "⏳ Entwurfsinhalt wird geladen...",
+    "spellcheckNote": "Rechtschreibfehler werden von Ihrem Browser unterstrichen.",
+    "characterCount": "Zeichenanzahl:",
+    "title": "Inhaltseditor",
+    "subtitle": "Schreiben, formatieren und verfeinern mit einem professionellen Rich-Text-Editor, angetrieben von Lexical.",
+    "editingDraft": "Entwurf Bearbeiten",
+    "status": {
+      "editor": "Editor",
+      "editing": "Bearbeitung: {{title}}"
+    },
+    "buttons": {
+      "cancel": "Abbrechen",
+      "save": "Entwurf Speichern",
+      "update": "Entwurf Aktualisieren",
+      "saving": "Speichere..."
+    },
+    "confirmations": {
+      "cancelEditing": "Sind Sie sicher, dass Sie die Bearbeitung abbrechen möchten? Alle ungespeicherten Änderungen gehen verloren.",
+      "editingCancelled": "Bearbeitung abgebrochen"
+    },
+    "toasts": {
+      "draftLoaded": "Entwurf zur Bearbeitung geladen",
+      "loadFailed": "Entwurf konnte nicht geladen werden",
+      "loginToSave": "Bitte melden Sie sich an, um Entwürfe zu speichern",
+      "userIdMissing": "Benutzer-ID nicht gefunden. Bitte melden Sie sich erneut an.",
+      "emptyContent": "Leerer Inhalt kann nicht gespeichert werden",
+      "saveSuccess": "Entwurf erfolgreich gespeichert!",
+      "updateSuccess": "Entwurf erfolgreich aktualisiert!",
+      "saveFailed": "Entwurf konnte nicht gespeichert werden. Bitte versuchen Sie es erneut."
+    }
+  },
+  "plans": {
+    "pro": "Pro",
+    "proPlan": "Pro-Plan",
+    "plan": "Plan"
+  },
+  "common": {
+    "loading": "Lade...",
+    "user": "Benutzer"
+  },
+  "document": {
+    "titlePlaceholder": "Dokumenttitel eingeben...",
+    "generate": "Inhalt Generieren",
+    "generating": "Generiere...",
+    "exportAs": "Exportieren als:",
+    "formats": {
+      "pdf": "PDF",
+      "png": "PNG",
+      "html": "HTML",
+      "md": "Markdown",
+      "txt": "TXT"
+    },
+    "saving": "Speichere...",
+    "saveDraft": "Entwurf Speichern",
+    "editorHint": "Beginnen Sie zu schreiben oder generieren Sie Inhalt mit KI über den Titel oben.",
+    "characterCount": "Zeichenanzahl:",
+    "alerts": {
+      "titleRequired": "Bitte geben Sie zuerst einen Dokumenttitel ein",
+      "generatedSuccess": "Inhalt erfolgreich generiert! Er wurde in den Editor geladen.",
+      "generateFailed": "Inhaltsgenerierung fehlgeschlagen. Bitte versuchen Sie es erneut.",
+      "noContentToExport": "Kein Inhalt zum Exportieren",
+      "exportFailedPdf": "PDF-Export fehlgeschlagen. Bitte versuchen Sie es erneut.",
+      "exportFailedPng": "PNG-Export fehlgeschlagen. Bitte versuchen Sie es erneut.",
+      "exportFailedHtml": "HTML-Export fehlgeschlagen. Bitte versuchen Sie es erneut.",
+      "exportFailedTxt": "TXT-Export fehlgeschlagen. Bitte versuchen Sie es erneut.",
+      "loginToSave": "Bitte melden Sie sich an, um Entwürfe zu speichern",
+      "userIdMissing": "Benutzer-ID nicht gefunden. Bitte melden Sie sich erneut an.",
+      "emptyContent": "Leerer Inhalt kann nicht gespeichert werden",
+      "saveSuccess": "Entwurf erfolgreich gespeichert!",
+      "saveFailed": "Entwurf konnte nicht gespeichert werden. Bitte versuchen Sie es erneut."
+    }
+  },
+  "settings": {
+    "title": "Profil und Einstellungen",
+    "subtitle": "Verwalten Sie Ihr Konto und Ihre Präferenzen",
+    "welcomeBack": "Willkommen zurück, {{name}}!",
+    "plan": "{{tier}} Plan",
+    "tier": {
+      "ADMIN": "Admin",
+      "CREATOR": "Ersteller",
+      "PRO": "Pro"
+    }
+  },
+  "dashboard": {
+    "loading": "Ihr Dashboard wird geladen...",
+    "greetings": {
+      "morning": "Guten Morgen",
+      "afternoon": "Guten Tag",
+      "evening": "Guten Abend"
+    },
+    "buttons": {
+      "newDraft": "Neuer Entwurf",
+      "viewAll": "Alle Anzeigen →",
+      "view": "Anzeigen →"
+    },
+    "searchPlaceholder": "Entwürfe, Grammatikprüfungen oder Inhalte suchen...",
+    "quickActions": "Schnellaktionen",
+    "achievements": "Ihre Erfolge",
+    "recentDrafts": "Aktuelle Entwürfe",
+    "noDrafts": "Noch keine Entwürfe",
+    "createFirstDraft": "Erstellen Sie Ihren Ersten Entwurf",
+    "progress": "Fortschritt",
+    "recentActivity": "Aktuelle Aktivität",
+    "activityEmpty": "Keine aktuelle Aktivität",
+    "you": "Sie",
+    "stats": {
+      "totalDrafts": "Gesamte Entwürfe",
+      "grammarChecks": "Grammatikprüfungen",
+      "avgGrammarScore": "Durchschnittliche Grammatikbewertung",
+      "totalWords": "Gesamte Wörter"
+    },
+    "quick": {
+      "newDraft": "Neuer Entwurf",
+      "viewDrafts": "Entwürfe Anzeigen",
+      "seoAnalysis": "SEO-Analyse",
+      "grammarCheck": "Grammatikprüfung",
+      "readability": "Lesbarkeit",
+      "settings": "Einstellungen"
+    },
+    "badges": {
+      "proWriter": "Pro-Schreiber",
+      "grammarMaster": "Grammatik-Meister",
+      "speedDemon": "Geschwindigkeits-Dämon",
+      "wordSmith": "Wort-Schmied",
+      "draftsCreated": "{{count}} Entwürfe erstellt",
+      "avgScore": "{{score}}% Durchschnittsbewertung",
+      "grammarChecks": "{{count}} Grammatikprüfungen",
+      "wordsWritten": "{{count}} Wörter geschrieben"
+    }
+  },
+  "auth": {
+    "brand": "WriteAI",
+    "backToHome": "Zurück zur Startseite",
+    "orEmail": "ODER MIT EMAIL FORTFAHREN",
+    "email": "Email",
+    "password": "Passwort",
+    "confirmPassword": "Passwort Bestätigen",
+    "placeholders": {
+      "email": "Geben Sie Ihre Email ein",
+      "password": "Geben Sie Ihr Passwort ein",
+      "confirmPassword": "Bestätigen Sie Ihr Passwort"
+    },
+    "rememberMe": "Angemeldet bleiben",
+    "forgotPassword": "Passwort vergessen?",
+    "google": {
+      "continue": "Mit Google fortfahren",
+      "comingSoon": "Google-Anmeldung kommt bald!"
+    },
+    "github": {
+      "continue": "Mit GitHub fortfahren",
+      "comingSoon": "GitHub-Anmeldung kommt bald!"
+    },
+    "login": {
+      "title": "Willkommen Zurück",
+      "subtitle": "Melden Sie sich in Ihrem Konto an, um fortzufahren",
+      "submit": "Anmelden",
+      "subtext": "Haben Sie kein Konto?",
+      "signup": "Registrieren",
+      "loading": "Anmeldung läuft...",
+      "toasts": {
+        "fillAll": "Bitte füllen Sie alle Felder aus",
+        "invalidEmail": "Bitte geben Sie eine gültige Email-Adresse ein",
+        "success": "Anmeldung erfolgreich! Willkommen zurück.",
+        "failed": "Anmeldung fehlgeschlagen. Bitte überprüfen Sie Ihre Anmeldedaten.",
+        "network": "Netzwerkfehler. Bitte überprüfen Sie Ihre Verbindung und versuchen Sie es erneut."
+      }
+    },
+    "signup": {
+      "title": "Konto Erstellen",
+      "subtitle": "Registrieren Sie sich, um mit KI-Unterstützung zu schreiben",
+      "submit": "Konto Erstellen",
+      "subtext": "Haben Sie bereits ein Konto?",
+      "signin": "Anmelden",
+      "loading": "Konto wird erstellt...",
+      "toasts": {
+        "fillAll": "Bitte füllen Sie alle Felder aus",
+        "invalidEmail": "Bitte geben Sie eine gültige Email-Adresse ein",
+        "passwordLength": "Passwort muss mindestens 6 Zeichen lang sein",
+        "passwordMismatch": "Passwörter stimmen nicht überein",
+        "success": "Konto erfolgreich erstellt! Willkommen bei WriteAI.",
+        "failed": "Registrierung fehlgeschlagen. Bitte versuchen Sie es erneut.",
+        "network": "Netzwerkfehler. Bitte überprüfen Sie Ihre Verbindung und versuchen Sie es erneut."
+      }
+    }
+  },
+  "languages": {
+    "english": "English",
+    "spanish": "Español",
+    "french": "Français",
+    "german": "Deutsch",
+    "chinese": "中文",
+    "japanese": "日本語",
+    "switcherAria": "Sprache auswählen"
+  }
+}

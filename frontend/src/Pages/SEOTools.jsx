@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useTranslation } from 'react-i18next';
 import { BarChart2, FileText, TrendingUp, Sparkles, Loader2, AlertCircle, CheckCircle, XCircle } from "lucide-react";
 import {
   BarChart,
@@ -21,12 +22,13 @@ export default function SEOTools() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [analysis, setAnalysis] = useState(null);
+  const { t } = useTranslation();
 
   const GEMINI_API_KEY = "AIzaSyDMzcmuIQispYp8176WIPUCA_UjE-UPBPo";
 
   const analyzeWithGemini = async () => {
     if (!content.trim()) {
-      setError("Please enter some content to analyze");
+      setError(t('seo.errors.enterContent'));
       return;
     }
 
@@ -121,7 +123,7 @@ Provide your analysis in the following JSON structure (respond ONLY with valid J
       setAnalysis(analysisData);
     } catch (err) {
       console.error("Error:", err);
-      setError("Failed to analyze content. Please try again.");
+      setError(t('seo.errors.failed'));
     } finally {
       setLoading(false);
     }
@@ -159,25 +161,25 @@ Provide your analysis in the following JSON structure (respond ONLY with valid J
         <div className="flex justify-between items-center mb-8">
           <div>
             <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 bg-clip-text text-transparent">
-              AI-Powered SEO Analyzer
+              {t('seo.title')}
             </h1>
-            <p className="text-gray-600 mt-2">Powered by Google Gemini AI</p>
+            <p className="text-gray-600 mt-2">{t('seo.poweredByGemini')}</p>
           </div>
           <button className="px-6 py-3 rounded-lg bg-gradient-to-r from-pink-500 to-purple-600 text-white font-medium hover:opacity-90 transition shadow-lg">
-            Past SEO Reports
+            {t('actions.pastSeoReports')}
           </button>
         </div>
 
         {/* Content Analyzer */}
         <div className="bg-gray-50 p-6 rounded-2xl shadow-lg border border-gray-200 mb-6">
           <h2 className="text-xl font-semibold text-gray-800 mb-4 flex items-center gap-2">
-            <FileText size={20} className="text-blue-600" /> Content Analyzer
+            <FileText size={20} className="text-blue-600" /> {t('seo.contentAnalyzer')}
           </h2>
           <textarea
             value={content}
             onChange={(e) => setContent(e.target.value)}
             className="w-full h-56 p-4 rounded-xl bg-white text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500 border border-gray-300 resize-none"
-            placeholder="Paste your content here for advanced AI-powered SEO analysis..."
+            placeholder={t('seo.placeholder')}
           ></textarea>
           
           {error && (
@@ -196,12 +198,12 @@ Provide your analysis in the following JSON structure (respond ONLY with valid J
               {loading ? (
                 <>
                   <Loader2 size={18} className="animate-spin" />
-                  Analyzing...
+                  {t('actions.analyzing')}
                 </>
               ) : (
                 <>
                   <Sparkles size={18} />
-                  Analyze with AI
+                  {t('actions.analyzeWithAI')}
                 </>
               )}
             </button>
@@ -215,7 +217,7 @@ Provide your analysis in the following JSON structure (respond ONLY with valid J
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
               <div className="bg-gradient-to-br from-blue-50 to-blue-100 p-6 rounded-2xl border border-blue-200 shadow-lg">
                 <div className="flex justify-between items-start mb-2">
-                  <h3 className="text-gray-600 text-sm">SEO Score</h3>
+                  <h3 className="text-gray-600 text-sm">{t('seo.scores.seoScore')}</h3>
                   <BarChart2 size={20} className="text-blue-600" />
                 </div>
                 <div className={`text-4xl font-bold ${getScoreColor(analysis.seoScore)}`}>
@@ -231,7 +233,7 @@ Provide your analysis in the following JSON structure (respond ONLY with valid J
 
               <div className="bg-gradient-to-br from-purple-50 to-purple-100 p-6 rounded-2xl border border-purple-200 shadow-lg">
                 <div className="flex justify-between items-start mb-2">
-                  <h3 className="text-gray-600 text-sm">Readability</h3>
+                  <h3 className="text-gray-600 text-sm">{t('seo.scores.readability')}</h3>
                   <FileText size={20} className="text-purple-600" />
                 </div>
                 <div className={`text-4xl font-bold ${getScoreColor(analysis.readabilityScore)}`}>
@@ -247,24 +249,24 @@ Provide your analysis in the following JSON structure (respond ONLY with valid J
 
               <div className="bg-gradient-to-br from-green-50 to-green-100 p-6 rounded-2xl border border-green-200 shadow-lg">
                 <div className="flex justify-between items-start mb-2">
-                  <h3 className="text-gray-600 text-sm">Word Count</h3>
+                  <h3 className="text-gray-600 text-sm">{t('seo.scores.wordCount')}</h3>
                   <FileText size={20} className="text-green-600" />
                 </div>
                 <div className="text-4xl font-bold text-green-600">
                   {analysis.wordCount}
                 </div>
-                <p className="text-gray-600 text-sm mt-2">{analysis.characterCount} characters</p>
+                <p className="text-gray-600 text-sm mt-2">{t('seo.scores.characters', { count: analysis.characterCount })}</p>
               </div>
 
               <div className="bg-gradient-to-br from-pink-50 to-pink-100 p-6 rounded-2xl border border-pink-200 shadow-lg">
                 <div className="flex justify-between items-start mb-2">
-                  <h3 className="text-gray-600 text-sm">Sentiment</h3>
+                  <h3 className="text-gray-600 text-sm">{t('seo.scores.sentiment')}</h3>
                   <TrendingUp size={20} className="text-pink-600" />
                 </div>
                 <div className="text-2xl font-bold text-pink-600 capitalize">
                   {analysis.sentimentAnalysis.sentiment}
                 </div>
-                <p className="text-gray-600 text-sm mt-2 capitalize">{analysis.sentimentAnalysis.tone}</p>
+                <p className="text-gray-600 text-sm mt-2 capitalize">{t('seo.scores.tone', { tone: analysis.sentimentAnalysis.tone })}</p>
               </div>
             </div>
 
@@ -273,21 +275,21 @@ Provide your analysis in the following JSON structure (respond ONLY with valid J
               {/* Keyword Analysis */}
               <div className="bg-gray-50 p-6 rounded-2xl shadow-lg border border-gray-200">
                 <h2 className="text-xl font-semibold text-gray-800 mb-4 flex items-center gap-2">
-                  <BarChart2 size={20} className="text-blue-600" /> Keyword Analysis
+                  <BarChart2 size={20} className="text-blue-600" /> {t('seo.keywords.analysis')}
                 </h2>
                 
                 {analysis.keywords.length > 0 && (
                   <>
                     <div className="mb-6">
                       <h3 className="text-sm font-semibold text-gray-700 mb-3">
-                        Top Keywords by Frequency
+                        {t('seo.keywords.topByFrequency')}
                       </h3>
                       <table className="w-full text-sm border border-gray-300 rounded-lg overflow-hidden">
                         <thead className="bg-gray-100 text-gray-700">
                           <tr>
-                            <th className="p-3 text-left">Keyword</th>
-                            <th className="p-3 text-right">Count</th>
-                            <th className="p-3 text-right">Density</th>
+                            <th className="p-3 text-left">{t('seo.keywords.keyword')}</th>
+                            <th className="p-3 text-right">{t('seo.keywords.count')}</th>
+                            <th className="p-3 text-right">{t('seo.keywords.density')}</th>
                           </tr>
                         </thead>
                         <tbody>
@@ -306,7 +308,7 @@ Provide your analysis in the following JSON structure (respond ONLY with valid J
                     </div>
 
                     <h3 className="text-sm font-semibold text-gray-700 mb-3">
-                      Keyword Distribution Chart
+                      {t('seo.keywords.distributionChart')}
                     </h3>
                     <div className="h-64">
                       <ResponsiveContainer width="100%" height="100%">
@@ -333,17 +335,17 @@ Provide your analysis in the following JSON structure (respond ONLY with valid J
               {/* Meta Analysis Radar */}
               <div className="bg-gray-50 p-6 rounded-2xl shadow-lg border border-gray-200">
                 <h2 className="text-xl font-semibold text-gray-800 mb-4 flex items-center gap-2">
-                  <TrendingUp size={20} className="text-purple-600" /> SEO Performance Metrics
+                  <TrendingUp size={20} className="text-purple-600" /> {t('seo.performance.metrics')}
                 </h2>
                 
                 <div className="h-80">
                   <ResponsiveContainer width="100%" height="100%">
                     <RadarChart data={[
-                      { metric: "Title Quality", value: analysis.metaAnalysis.titleQuality },
-                      { metric: "Keywords", value: analysis.metaAnalysis.keywordOptimization },
-                      { metric: "Structure", value: analysis.metaAnalysis.contentStructure },
-                      { metric: "Readability", value: analysis.metaAnalysis.readability },
-                      { metric: "Link Potential", value: analysis.metaAnalysis.linkPotential }
+                      { metric: t('seo.performance.titleQuality'), value: analysis.metaAnalysis.titleQuality },
+                      { metric: t('seo.performance.keywords'), value: analysis.metaAnalysis.keywordOptimization },
+                      { metric: t('seo.performance.structure'), value: analysis.metaAnalysis.contentStructure },
+                      { metric: t('seo.performance.readability'), value: analysis.metaAnalysis.readability },
+                      { metric: t('seo.performance.linkPotential'), value: analysis.metaAnalysis.linkPotential }
                     ]}>
                       <PolarGrid stroke="#D1D5DB" />
                       <PolarAngleAxis dataKey="metric" stroke="#4B5563" />
@@ -370,7 +372,7 @@ Provide your analysis in the following JSON structure (respond ONLY with valid J
               {/* AI Suggestions */}
               <div className="bg-gray-50 p-6 rounded-2xl shadow-lg border border-gray-200">
                 <h2 className="text-xl font-semibold text-gray-800 mb-4 flex items-center gap-2">
-                  <Sparkles size={20} className="text-yellow-600" /> AI Suggestions
+                  <Sparkles size={20} className="text-yellow-600" /> {t('seo.suggestions')}
                 </h2>
                 <div className="space-y-3">
                   {analysis.suggestions.map((suggestion, idx) => (
@@ -388,7 +390,7 @@ Provide your analysis in the following JSON structure (respond ONLY with valid J
               {/* Improvement Recommendations */}
               <div className="bg-gray-50 p-6 rounded-2xl shadow-lg border border-gray-200">
                 <h2 className="text-xl font-semibold text-gray-800 mb-4 flex items-center gap-2">
-                  <TrendingUp size={20} className="text-green-600" /> Improvement Recommendations
+                  <TrendingUp size={20} className="text-green-600" /> {t('seo.improvements')}
                 </h2>
                 <ul className="space-y-3">
                   {analysis.improvements.map((improvement, idx) => (

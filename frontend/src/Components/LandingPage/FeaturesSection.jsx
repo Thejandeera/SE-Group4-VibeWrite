@@ -1,27 +1,30 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { Edit3, TrendingUp, Shield, Globe } from 'lucide-react';
 
 export default function FeaturesSection() {
+  const { t } = useTranslation();
+  
   const features = [
     {
       icon: Edit3,
-      title: "AI-Powered Writing",
-      description: "Generate, improve, and refine your content with advanced AI assistance"
+      title: t('features.aiWriting.title'),
+      description: t('features.aiWriting.description')
     },
     {
       icon: TrendingUp,
-      title: "SEO Optimization",
-      description: "Real-time SEO scoring and keyword suggestions to boost your rankings"
+      title: t('features.seoOptimization.title'),
+      description: t('features.seoOptimization.description')
     },
     {
       icon: Shield,
-      title: "Grammar & Plagiarism",
-      description: "Advanced grammar checking and plagiarism detection for perfect content"
+      title: t('features.grammarPlagiarism.title'),
+      description: t('features.grammarPlagiarism.description')
     },
     {
       icon: Globe,
-      title: "Multi-Language Support",
-      description: "Write confidently in multiple languages with AI-powered assistance"
+      title: t('features.multiLanguage.title'),
+      description: t('features.multiLanguage.description')
     }
   ];
 
@@ -31,11 +34,10 @@ export default function FeaturesSection() {
  
         <div className="text-center mb-12 sm:mb-16 lg:mb-20">
           <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-4 sm:mb-6">
-            Powerful Features for Better Writing
+            {t('features.title')}
           </h2>
           <p className="text-lg sm:text-xl text-gray-400 max-w-3xl mx-auto leading-relaxed">
-            Everything you need to create high-quality content that engages readers 
-            and ranks well in search engines.
+            {t('features.subtitle')}
           </p>
         </div>
 

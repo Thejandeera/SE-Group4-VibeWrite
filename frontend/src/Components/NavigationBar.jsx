@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   LayoutDashboard,
   Edit3,
@@ -13,6 +14,7 @@ import {
   X,
   Crown
 } from 'lucide-react';
+import LanguageSwitcher from './LanguageSwitcher';
 
 const backendUrl = import.meta.env.VITE_BACKEND_URL;
 
@@ -23,6 +25,7 @@ const NavigationBar = () => {
   const [activeItem, setActiveItem] = useState('Dashboard');
   const [currentPath, setCurrentPath] = useState(window.location.pathname);
   const [unreadCount, setUnreadCount] = useState(0);
+  const { t } = useTranslation();
 
   // backendUrl is already defined at the top
   const fetchUserProfile = async () => {
@@ -121,13 +124,13 @@ const NavigationBar = () => {
 
   useEffect(() => {
     const navigationItems = [
-      { name: 'Dashboard', icon: LayoutDashboard, path: '/dashboard' },
-      { name: 'Content Editor', icon: Edit3, path: '/content-editor' },
-      { name: 'SEO Tools', icon: TrendingUp, path: '/seo-tools', badge: 'New', badgeColor: 'bg-green-500' },
-      { name: 'Grammar Check', icon: CheckCircle2, path: '/grammar-check' },
-      { name: 'Readability Score', icon: FileText, path: '/readability-score' },
+      { name: t('navigation.dashboard'), icon: LayoutDashboard, path: '/dashboard' },
+      { name: t('navigation.contentEditor'), icon: Edit3, path: '/content-editor' },
+      { name: t('navigation.seoTools'), icon: TrendingUp, path: '/seo-tools', badge: t('navigation.new'), badgeColor: 'bg-green-500' },
+      { name: t('navigation.grammarCheck'), icon: CheckCircle2, path: '/grammar-check' },
+      { name: t('navigation.readabilityScore'), icon: FileText, path: '/readability-score' },
       {
-        name: "Notifications",
+        name: t('navigation.notifications'),
         icon: Bell,
         path: "/notifications",
         badge: unreadCount > 0 ? unreadCount.toString() : null,
@@ -136,14 +139,14 @@ const NavigationBar = () => {
     ];
 
     const quickActions = [
-      { name: 'New Document', icon: FileText, path: '/new-document', badge: 'New', badgeColor: 'bg-green-500' },
-      { name: 'View Drafts', icon: FileText, path: '/view-drafts' }
+      { name: t('navigation.newDocument'), icon: FileText, path: '/new-document', badge: t('navigation.new'), badgeColor: 'bg-green-500' },
+      { name: t('navigation.viewDrafts'), icon: FileText, path: '/view-drafts' }
     ];
 
     const bottomItems = [
-      { name: 'Profile & Settings', icon: User, path: '/profile' },
-      { name: 'Help & Support', icon: HelpCircle, path: '/help' },
-      { name: 'Logout', icon: LogOut, path: '/logout' }
+      { name: t('navigation.profileSettings'), icon: User, path: '/profile' },
+      { name: t('navigation.helpSupport'), icon: HelpCircle, path: '/help' },
+      { name: t('actions.logout'), icon: LogOut, path: '/logout' }
     ];
 
     const allItems = [...navigationItems, ...quickActions, ...bottomItems];
@@ -163,13 +166,13 @@ const NavigationBar = () => {
   }, [userData]);
 
   const navigationItems = [
-    { name: 'Dashboard', icon: LayoutDashboard, path: '/dashboard' },
-    { name: 'Content Editor', icon: Edit3, path: '/content-editor' },
-    { name: 'SEO Tools', icon: TrendingUp, path: '/seo-tools', badge: 'New', badgeColor: 'bg-green-500' },
-    { name: 'Grammar Check', icon: CheckCircle2, path: '/grammar-check' },
-    { name: 'Readability Score', icon: FileText, path: '/readability-score' },
+    { name: t('navigation.dashboard'), icon: LayoutDashboard, path: '/dashboard' },
+    { name: t('navigation.contentEditor'), icon: Edit3, path: '/content-editor' },
+    { name: t('navigation.seoTools'), icon: TrendingUp, path: '/seo-tools', badge: t('navigation.new'), badgeColor: 'bg-green-500' },
+    { name: t('navigation.grammarCheck'), icon: CheckCircle2, path: '/grammar-check' },
+    { name: t('navigation.readabilityScore'), icon: FileText, path: '/readability-score' },
     {
-      name: "Notifications",
+      name: t('navigation.notifications'),
       icon: Bell,
       path: "/notifications",
       badge: unreadCount > 0 ? unreadCount.toString() : null,
@@ -178,14 +181,14 @@ const NavigationBar = () => {
   ];
 
   const quickActions = [
-    { name: 'New Document', icon: FileText, path: '/new-document', badge: 'New', badgeColor: 'bg-green-500' },
-    { name: 'View Drafts', icon: FileText, path: '/view-drafts' }
+    { name: t('navigation.newDocument'), icon: FileText, path: '/new-document', badge: t('navigation.new'), badgeColor: 'bg-green-500' },
+    { name: t('navigation.viewDrafts'), icon: FileText, path: '/view-drafts' }
   ];
 
   const bottomItems = [
-    { name: 'Profile & Settings', icon: User, path: '/profile' },
-    { name: 'Help & Support', icon: HelpCircle, path: '/help' },
-    { name: 'Logout', icon: LogOut, path: '/logout' }
+    { name: t('navigation.profileSettings'), icon: User, path: '/profile' },
+    { name: t('navigation.helpSupport'), icon: HelpCircle, path: '/help' },
+    { name: t('actions.logout'), icon: LogOut, path: '/logout' }
   ];
 
   const handleNavClick = (item) => {
@@ -217,8 +220,8 @@ const NavigationBar = () => {
   };
 
   const getDisplayName = () => {
-    if (!userData) return 'Loading...';
-    return userData.username || userData.email?.split('@')[0] || 'User';
+    if (!userData) return t('common.loading');
+    return userData.username || userData.email?.split('@')[0] || t('common.user');
   };
 
   const ProfileAvatar = ({ size = "w-8 h-8", textSize = "text-xs" }) => {
@@ -285,8 +288,9 @@ const NavigationBar = () => {
               <div className="w-8 h-8 bg-blue-600 rounded-xl flex items-center justify-center shadow-lg">
                 <Edit3 size={16} className="text-white" />
               </div>
-              <span className="text-white font-semibold text-sm">WriteAI</span>
+              <span className="text-white font-semibold text-sm">{t('brand.name')}</span>
             </div>
+            <LanguageSwitcher className="ml-2" />
           </div>
           <div className="flex items-center gap-3">
             <ProfileAvatar />
@@ -344,7 +348,7 @@ const NavigationBar = () => {
           <div className="p-3 space-y-1">
             <div className="mb-3">
               <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2 px-3">
-                Main Navigation
+                {t('navigation.main')}
               </h3>
               {navigationItems.map((item) => (
                 <button
@@ -376,7 +380,7 @@ const NavigationBar = () => {
             {/* Quick Actions */}
             <div className="mb-3">
               <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2 px-3">
-                Quick Actions
+                {t('navigation.quickActions')}
               </h3>
               {quickActions.map((item) => (
                 <button
@@ -407,7 +411,7 @@ const NavigationBar = () => {
             {/* Bottom Items */}
             <div className="border-t border-gray-800 pt-3">
               <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2 px-3">
-                Account
+                {t('navigation.account')}
               </h3>
               {bottomItems.filter(item => item.name !== 'Logout').map((item) => (
                 <button
@@ -441,7 +445,7 @@ const NavigationBar = () => {
                 `}
               >
                 <LogOut size={18} className={`${activeItem === 'Logout' ? 'text-red-100' : ''} flex-shrink-0`} />
-                <span className="font-medium text-sm">Logout</span>
+                <span className="font-medium text-sm">{t('actions.logout')}</span>
                 {activeItem === 'Logout' && (
                   <div className="absolute left-0 top-0 bottom-0 w-1 bg-red-200 rounded-r-full shadow-lg" />
                 )}
@@ -458,7 +462,7 @@ const NavigationBar = () => {
             <Edit3 size={16} className="text-white" />
           </div>
           <div className="flex items-center gap-2">
-            <span className="text-white font-semibold text-sm">WriteAI</span>
+            <span className="text-white font-semibold text-sm">{t('brand.name')}</span>
             <div className="flex items-center gap-1 bg-yellow-500 text-black px-2 py-0.5 rounded text-xs font-medium">
               <Crown size={12} />
               Pro Plan
@@ -498,7 +502,7 @@ const NavigationBar = () => {
 
           <div className="pt-6">
             <h3 className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-3 px-3">
-              Quick Actions
+              {t('navigation.quickActions')}
             </h3>
             {quickActions.map((item) => (
               <button
@@ -559,7 +563,7 @@ const NavigationBar = () => {
             `}
           >
             <LogOut size={16} className={activeItem === 'Logout' ? 'text-red-100' : ''} />
-            <span className="font-medium text-sm">Logout</span>
+            <span className="font-medium text-sm">{t('actions.logout')}</span>
             {activeItem === 'Logout' && (
               <div className="absolute left-0 top-0 bottom-0 w-1 bg-red-200 rounded-r-full shadow-lg" />
             )}

@@ -1,4 +1,5 @@
 import React, { useState, useCallback, useMemo, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import axios from 'axios';
 import { 
   Camera, Upload, X, User, Mail, 
@@ -8,6 +9,7 @@ import {
 const backendUrl = import.meta.env.VITE_BACKEND_URL;
 
 export default function SettingsPage() {
+  const { t } = useTranslation();
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState({ type: '', text: '' });
   const [userData, setUserData] = useState(null);
@@ -414,17 +416,17 @@ export default function SettingsPage() {
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
           <div className="animate-fade-in">
             <h1 className="text-3xl sm:text-4xl font-bold bg-gradient-to-r from-gray-800 via-gray-700 to-gray-600 bg-clip-text text-transparent">
-              Profile & Settings
+              {t('settings.title')}
             </h1>
-            <p className="text-gray-600 mt-2">Manage your account and preferences</p>
+            <p className="text-gray-600 mt-2">{t('settings.subtitle')}</p>
             {userData && (
               <p className="text-sm text-gray-500 mt-1">
-                Welcome back, {userData.username || userData.email}!
+                {t('settings.welcomeBack', { name: userData.username || userData.email })}
               </p>
             )}
           </div>
           <div className="bg-gradient-to-r from-yellow-400 to-orange-400 text-gray-800 px-4 py-2 rounded-full text-sm font-semibold animate-pulse self-start sm:self-auto">
-            ⭐ {userData?.role === 'ADMIN' ? 'Admin' : userData?.role === 'CREATOR' ? 'Creator' : 'Pro'} Plan
+            ⭐ {t('settings.plan', { tier: (userData?.role === 'ADMIN' ? t('settings.tier.ADMIN') : userData?.role === 'CREATOR' ? t('settings.tier.CREATOR') : t('settings.tier.PRO')) })}
           </div>
         </div>
 

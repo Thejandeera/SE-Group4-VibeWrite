@@ -1,5 +1,6 @@
 // GrammarChecker.jsx
 import React, { useState, useRef, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 const backendUrl = import.meta.env.VITE_BACKEND_URL;
 const GrammarChecker = () => {
@@ -9,6 +10,7 @@ const GrammarChecker = () => {
   const [characterCount, setCharacterCount] = useState(0);
   const textareaRef = useRef(null);
   const navigate = useNavigate();
+  const { t } = useTranslation();
   
   useEffect(() => {
     setCharacterCount(text.length);
@@ -81,7 +83,7 @@ const GrammarChecker = () => {
   
   const checkGrammar = async () => {
     if (!text.trim()) {
-      alert('Please enter some text to check');
+      alert(t('grammar.errors.enterText'));
       return;
     }
     setIsLoading(true);
@@ -90,7 +92,7 @@ const GrammarChecker = () => {
       const token = sessionStorage.getItem('token');
       
       if (!userData || !token) {
-        alert('Please login first');
+        alert(t('grammar.errors.loginFirst'));
         return;
       }
       const response = await fetch(`${backendUrl}/api/v1/grammar/check`, {
@@ -106,13 +108,13 @@ const GrammarChecker = () => {
         })
       });
       if (!response.ok) {
-        throw new Error('Failed to check grammar');
+        throw new Error(t('grammar.errors.checkFailed'));
       }
       const data = await response.json();
       setResult(data);
     } catch (error) {
       console.error('Error checking grammar:', error);
-      alert('Failed to check grammar. Please try again.');
+      alert(t('grammar.errors.checkFailed'));
     } finally {
       setIsLoading(false);
     }
@@ -167,13 +169,13 @@ const GrammarChecker = () => {
       <div className="max-w-6xl mx-auto">
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 md:mb-8 gap-4">
           <h1 className="text-2xl md:text-3xl font-bold gradient-text">
-            Grammar Checker
+            {t('grammar.title')}
           </h1>
           <button
             onClick={navigateToPastGrammar}
             className="px-4 py-2 md:px-6 md:py-2 bg-gradient-to-r from-purple-500 to-pink-500 rounded-lg hover:from-purple-600 hover:to-pink-600 transform hover:scale-105 transition-all duration-300 font-medium text-sm md:text-base w-full sm:w-auto text-white"
           >
-            Past Grammar Checks
+            {t('grammar.pastChecks')}
           </button>
         </div>
         
@@ -209,13 +211,13 @@ const GrammarChecker = () => {
               onClick={() => insertList('bullet')}
               className="px-2 py-1 md:px-3 md:py-2 bg-white hover:bg-gray-200 rounded border border-gray-300 transition-colors text-xs md:text-sm"
             >
-              • List
+              {t('grammar.toolbar.bulletList')}
             </button>
             <button
               onClick={() => insertList('numbered')}
               className="px-2 py-1 md:px-3 md:py-2 bg-white hover:bg-gray-200 rounded border border-gray-300 transition-colors text-xs md:text-sm"
             >
-              1. List
+              {t('grammar.toolbar.numberedList')}
             </button>
             <div className="w-px bg-gray-300 mx-1 md:mx-2"></div>
             <button
@@ -240,17 +242,17 @@ const GrammarChecker = () => {
             ref={textareaRef}
             value={text}
             onChange={(e) => setText(e.target.value)}
-            placeholder="Start writing here..."
+            placeholder={t('grammar.placeholder')}
             className="w-full h-60 md:h-80 p-3 md:p-4 bg-white text-gray-800 rounded-lg border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 resize-none transition-all duration-300"
             style={{ outline: 'none' }}
           />
           
           <div className="flex flex-col md:flex-row justify-between items-start md:items-center mt-4 gap-2 md:gap-0">
             <div className="text-xs md:text-sm text-gray-600">
-              <span>Spelling mistakes are underlined by your browser.</span>
+              <span>{t('editor.spellcheckNote')}</span>
             </div>
             <div className="text-xs md:text-sm text-gray-600">
-              Character count: {characterCount}
+              {t('editor.characterCount')} {characterCount}
             </div>
           </div>
           
@@ -263,10 +265,10 @@ const GrammarChecker = () => {
               {isLoading ? (
                 <div className="flex items-center justify-center">
                   <div className="animate-spin rounded-full h-4 w-4 md:h-5 md:w-5 border-b-2 border-white mr-2"></div>
-                  Checking Grammar...
+                  {t('grammar.checking')}
                 </div>
               ) : (
-                'Check Grammar'
+                t('grammar.checkButton')
               )}
             </button>
           </div>
@@ -278,19 +280,19 @@ const GrammarChecker = () => {
             {/* Stats Cards */}
             <div className="grid grid-cols-2 gap-2 md:gap-4 md:grid-cols-4">
               <div className="bg-gradient-to-br from-blue-500 to-blue-600 p-4 md:p-6 rounded-xl shadow-lg text-white">
-                <h3 className="text-sm md:text-lg font-semibold mb-1 md:mb-2">Grammar Score</h3>
+                <h3 className="text-sm md:text-lg font-semibold mb-1 md:mb-2">{t('grammar.results.grammarScore')}</h3>
                 <p className="text-xl md:text-3xl font-bold">{result.grammarScore}%</p>
               </div>
               <div className="bg-gradient-to-br from-red-500 to-red-600 p-4 md:p-6 rounded-xl shadow-lg text-white">
-                <h3 className="text-sm md:text-lg font-semibold mb-1 md:mb-2">Total Errors</h3>
+                <h3 className="text-sm md:text-lg font-semibold mb-1 md:mb-2">{t('grammar.results.totalErrors')}</h3>
                 <p className="text-xl md:text-3xl font-bold">{result.totalErrors}</p>
               </div>
               <div className="bg-gradient-to-br from-green-500 to-green-600 p-4 md:p-6 rounded-xl shadow-lg text-white">
-                <h3 className="text-sm md:text-lg font-semibold mb-1 md:mb-2">Word Count</h3>
+                <h3 className="text-sm md:text-lg font-semibold mb-1 md:mb-2">{t('grammar.results.wordCount')}</h3>
                 <p className="text-xl md:text-3xl font-bold">{result.metrics.wordCount}</p>
               </div>
               <div className="bg-gradient-to-br from-purple-500 to-purple-600 p-4 md:p-6 rounded-xl shadow-lg text-white">
-                <h3 className="text-sm md:text-lg font-semibold mb-1 md:mb-2">Readability</h3>
+                <h3 className="text-sm md:text-lg font-semibold mb-1 md:mb-2">{t('grammar.results.readability')}</h3>
                 <p className="text-xl md:text-3xl font-bold">{result.metrics.readabilityScore.toFixed(1)}</p>
               </div>
             </div>
@@ -298,13 +300,13 @@ const GrammarChecker = () => {
             {/* Original vs Corrected Text */}
             <div className="grid grid-cols-1 gap-4 md:gap-6 lg:grid-cols-2">
               <div className="bg-gray-50 p-4 md:p-6 rounded-xl border border-gray-200">
-                <h3 className="text-lg md:text-xl font-semibold mb-3 md:mb-4 text-red-600">Original Text</h3>
+                <h3 className="text-lg md:text-xl font-semibold mb-3 md:mb-4 text-red-600">{t('grammar.results.originalText')}</h3>
                 <div className="bg-white p-3 md:p-4 rounded-lg border border-gray-300">
                   <p className="text-gray-700 whitespace-pre-wrap text-sm md:text-base">{result.originalText}</p>
                 </div>
               </div>
               <div className="bg-gray-50 p-4 md:p-6 rounded-xl border border-gray-200">
-                <h3 className="text-lg md:text-xl font-semibold mb-3 md:mb-4 text-green-600">Corrected Text</h3>
+                <h3 className="text-lg md:text-xl font-semibold mb-3 md:mb-4 text-green-600">{t('grammar.results.correctedText')}</h3>
                 <div className="bg-white p-3 md:p-4 rounded-lg border border-gray-300">
                   <p className="text-gray-700 whitespace-pre-wrap text-sm md:text-base">{result.correctedText}</p>
                 </div>
@@ -314,17 +316,17 @@ const GrammarChecker = () => {
             {/* Errors Table */}
             {result.errors.length > 0 && (
               <div className="bg-gray-50 rounded-xl p-4 md:p-6 border border-gray-200">
-                <h3 className="text-lg md:text-xl font-semibold mb-3 md:mb-4 text-orange-600">Detected Errors</h3>
+                <h3 className="text-lg md:text-xl font-semibold mb-3 md:mb-4 text-orange-600">{t('grammar.results.detectedErrors')}</h3>
                 <div className="overflow-x-auto">
                   <table className="w-full text-xs md:text-sm">
                     <thead>
                       <tr className="border-b border-gray-300">
-                        <th className="text-left p-2 md:p-3 font-semibold">Position</th>
-                        <th className="text-left p-2 md:p-3 font-semibold">Error Type</th>
-                        <th className="text-left p-2 md:p-3 font-semibold">Original</th>
-                        <th className="text-left p-2 md:p-3 font-semibold">Suggested</th>
-                        <th className="text-left p-2 md:p-3 font-semibold hidden sm:table-cell">Description</th>
-                        <th className="text-left p-2 md:p-3 font-semibold">Severity</th>
+                        <th className="text-left p-2 md:p-3 font-semibold">{t('grammar.table.position')}</th>
+                        <th className="text-left p-2 md:p-3 font-semibold">{t('grammar.table.errorType')}</th>
+                        <th className="text-left p-2 md:p-3 font-semibold">{t('grammar.table.original')}</th>
+                        <th className="text-left p-2 md:p-3 font-semibold">{t('grammar.table.suggested')}</th>
+                        <th className="text-left p-2 md:p-3 font-semibold hidden sm:table-cell">{t('grammar.table.description')}</th>
+                        <th className="text-left p-2 md:p-3 font-semibold">{t('grammar.table.severity')}</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -358,23 +360,23 @@ const GrammarChecker = () => {
             
             {/* Detailed Metrics */}
             <div className="bg-gray-50 rounded-xl p-4 md:p-6 border border-gray-200">
-              <h3 className="text-lg md:text-xl font-semibold mb-3 md:mb-4 text-blue-600">Detailed Metrics</h3>
+              <h3 className="text-lg md:text-xl font-semibold mb-3 md:mb-4 text-blue-600">{t('grammar.results.detailedMetrics')}</h3>
               <div className="grid grid-cols-2 gap-2 md:gap-4 md:grid-cols-4">
                 <div className="bg-white p-3 md:p-4 rounded-lg text-center border border-gray-200">
                   <p className="text-xl md:text-2xl font-bold text-blue-600">{result.metrics.sentenceCount}</p>
-                  <p className="text-gray-600 text-xs md:text-sm">Sentences</p>
+                  <p className="text-gray-600 text-xs md:text-sm">{t('grammar.metrics.sentences')}</p>
                 </div>
                 <div className="bg-white p-3 md:p-4 rounded-lg text-center border border-gray-200">
                   <p className="text-xl md:text-2xl font-bold text-red-600">{result.metrics.spellingErrors}</p>
-                  <p className="text-gray-600 text-xs md:text-sm">Spelling Errors</p>
+                  <p className="text-gray-600 text-xs md:text-sm">{t('grammar.metrics.spellingErrors')}</p>
                 </div>
                 <div className="bg-white p-3 md:p-4 rounded-lg text-center border border-gray-200">
                   <p className="text-xl md:text-2xl font-bold text-orange-600">{result.metrics.grammarErrors}</p>
-                  <p className="text-gray-600 text-xs md:text-sm">Grammar Errors</p>
+                  <p className="text-gray-600 text-xs md:text-sm">{t('grammar.metrics.grammarErrors')}</p>
                 </div>
                 <div className="bg-white p-3 md:p-4 rounded-lg text-center border border-gray-200">
                   <p className="text-xl md:text-2xl font-bold text-purple-600">{result.metrics.punctuationErrors}</p>
-                  <p className="text-gray-600 text-xs md:text-sm">Punctuation Errors</p>
+                  <p className="text-gray-600 text-xs md:text-sm">{t('grammar.metrics.punctuationErrors')}</p>
                 </div>
               </div>
             </div>

@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { Menu, X } from 'lucide-react';
 
@@ -6,6 +7,7 @@ import { Menu, X } from 'lucide-react';
 export default function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const navigate = useNavigate();
+  const { t } = useTranslation();
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
@@ -27,18 +29,18 @@ export default function Navbar() {
                 <path d="M14.5 2c1.38 0 2.5 1.12 2.5 2.5v15c0 1.38-1.12 2.5-2.5 2.5h-5C8.12 22 7 20.88 7 19.5v-15C7 3.12 8.12 2 9.5 2h5zm-5 2C8.67 4 8 4.67 8 5.5v13c0 .83.67 1.5 1.5 1.5h5c.83 0 1.5-.67 1.5-1.5v-13c0-.83-.67-1.5-1.5-1.5h-5zm1.5 2h3c.28 0 .5.22.5.5s-.22.5-.5.5h-3c-.28 0-.5-.22-.5-.5s.22-.5.5-.5zm0 2h3c.28 0 .5.22.5.5s-.22.5-.5.5h-3c-.28 0-.5-.22-.5-.5s.22-.5.5-.5z" />
               </svg>
             </div>
-            <span className="font-bold text-xl bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent">WriteAI</span>
+            <span className="font-bold text-xl bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent">{t('auth.brand')}</span>
           </div>
 
 
 
           <div className="hidden md:flex items-center space-x-4">
             <button className="text-gray-300 hover:text-white transition-all duration-300 font-medium relative group" onClick={() => handleNav('/signin')}>
-              Sign In
+              {t('actions.signIn')}
               <span className="absolute inset-0 rounded-lg bg-white/5 opacity-0 group-hover:opacity-100 transition-all duration-300 -z-10"></span>
             </button>
             <button className="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-500 hover:to-blue-500 text-white px-6 py-2.5 rounded-xl font-semibold shadow-lg shadow-purple-500/25 hover:shadow-purple-500/40 transition-all duration-300 hover:scale-105 transform" onClick={() => handleNav('/get-started')}>
-              Get Started
+              {t('actions.tryNow')}
             </button>
           </div>
 
@@ -62,30 +64,12 @@ export default function Navbar() {
         <div className={`md:hidden transition-all duration-300 ease-in-out ${isMenuOpen ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'
           } overflow-hidden`}>
           <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3 border-t border-gray-800/50 bg-black/60 backdrop-blur-sm">
-            {/* <button
-              className="block px-4 py-3 text-gray-300 hover:text-white hover:bg-white/5 rounded-lg transition-all duration-300 font-medium"
-              onClick={() => handleNav('/features')}
-            >
-              Features
-            </button>
-            <button
-              className="block px-4 py-3 text-gray-300 hover:text-white hover:bg-white/5 rounded-lg transition-all duration-300 font-medium"
-              onClick={() => handleNav('/pricing')}
-            >
-              Pricing
-            </button> */}
-            {/* <button
-              className="block px-4 py-3 text-gray-300 hover:text-white hover:bg-white/5 rounded-lg transition-all duration-300 font-medium"
-              onClick={() => handleNav('/reviews')}
-            >
-              Reviews
-            </button> */}
             <div className="px-3 py-2 space-y-3 border-t border-gray-800/50 mt-3 pt-4">
               <button className="block w-full text-left px-4 py-3 text-gray-300 hover:text-white hover:bg-white/5 rounded-lg transition-all duration-300 font-medium" onClick={() => handleNav('/signin')}>
-                Sign In
+                {t('actions.signIn')}
               </button>
               <button className="block w-full bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-500 hover:to-blue-500 text-white px-4 py-3 rounded-xl font-semibold shadow-lg shadow-purple-500/25 hover:shadow-purple-500/40 transition-all duration-300 text-center transform hover:scale-[1.02]" onClick={() => handleNav('/get-started')}>
-                Get Started
+                {t('actions.tryNow')}
               </button>
             </div>
           </div>

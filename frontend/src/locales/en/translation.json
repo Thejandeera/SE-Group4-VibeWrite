@@ -1,0 +1,368 @@
+{
+  "brand": {
+    "name": "VibeWrite",
+    "poweredBy": "Powered by Advanced AI"
+  },
+  "actions": {
+    "signIn": "Sign In",
+    "tryNow": "Try Now",
+    "analyzeWithAI": "Analyze with AI",
+    "analyzing": "Analyzing...",
+    "logout": "Logout",
+    "pastSeoReports": "Past SEO Reports"
+  },
+  "hero": {
+    "headlineLine1": "Your AI Writing Assistant for",
+    "headlineLine2": "Clarity, Tone & SEO",
+    "subhead": "Create compelling content with AI-powered suggestions, real-time SEO optimization, and advanced grammar checking. Write better, faster, and with confidence.",
+    "aiSuggestion": "AI Suggestion"
+  },
+  "features": {
+    "title": "Powerful Features for Better Writing",
+    "subtitle": "Everything you need to create high-quality content that engages readers and ranks well in search engines.",
+    "aiWriting": {
+      "title": "AI-Powered Writing",
+      "description": "Generate, improve, and refine your content with advanced AI assistance"
+    },
+    "seoOptimization": {
+      "title": "SEO Optimization",
+      "description": "Real-time SEO scoring and keyword suggestions to boost your rankings"
+    },
+    "grammarPlagiarism": {
+      "title": "Grammar & Plagiarism",
+      "description": "Advanced grammar checking and plagiarism detection for perfect content"
+    },
+    "multiLanguage": {
+      "title": "Multi-Language Support",
+      "description": "Write confidently in multiple languages with AI-powered assistance"
+    }
+  },
+  "seo": {
+    "title": "AI-Powered SEO Analyzer",
+    "poweredByGemini": "Powered by Google Gemini AI",
+    "contentAnalyzer": "Content Analyzer",
+    "placeholder": "Paste your content here for advanced AI-powered SEO analysis...",
+    "errors": {
+      "enterContent": "Please enter some content to analyze",
+      "failed": "Failed to analyze content. Please try again."
+    },
+    "scores": {
+      "seoScore": "SEO Score",
+      "readability": "Readability",
+      "wordCount": "Word Count",
+      "characters": "{{count}} characters",
+      "sentiment": "Sentiment",
+      "tone": "{{tone}}"
+    },
+    "keywords": {
+      "analysis": "Keyword Analysis",
+      "topByFrequency": "Top Keywords by Frequency",
+      "keyword": "Keyword",
+      "count": "Count",
+      "density": "Density",
+      "distributionChart": "Keyword Distribution Chart"
+    },
+    "performance": {
+      "metrics": "SEO Performance Metrics",
+      "titleQuality": "Title Quality",
+      "keywords": "Keywords",
+      "structure": "Structure",
+      "readability": "Readability",
+      "linkPotential": "Link Potential"
+    },
+    "suggestions": "AI Suggestions",
+    "improvements": "Improvement Recommendations"
+  },
+  "navigation": {
+    "main": "Main Navigation",
+    "quickActions": "Quick Actions",
+    "account": "Account",
+    "dashboard": "Dashboard",
+    "contentEditor": "Content Editor",
+    "seoTools": "SEO Tools",
+    "grammarCheck": "Grammar Check",
+    "readabilityScore": "Readability Score",
+    "notifications": "Notifications",
+    "new": "New",
+    "newDocument": "New Document",
+    "viewDrafts": "View Drafts",
+    "profileSettings": "Profile & Settings",
+    "helpSupport": "Help & Support"
+  },
+  "editor": {
+    "draftLoaded": "✓ Draft content loaded successfully",
+    "loadingDraft": "⏳ Loading draft content...",
+    "spellcheckNote": "Spelling mistakes are underlined by your browser.",
+    "characterCount": "Character count:",
+    "title": "Content Editor",
+    "subtitle": "Write, format, and refine with a professional rich text editor powered by Lexical.",
+    "editingDraft": "Editing Draft",
+    "status": {
+      "editor": "Editor",
+      "editing": "Editing: {{title}}"
+    },
+    "buttons": {
+      "cancel": "Cancel",
+      "save": "Save Draft",
+      "update": "Update Draft",
+      "saving": "Saving..."
+    },
+    "confirmations": {
+      "cancelEditing": "Are you sure you want to cancel editing? Any unsaved changes will be lost.",
+      "editingCancelled": "Editing cancelled"
+    },
+    "toasts": {
+      "draftLoaded": "Draft loaded for editing",
+      "loadFailed": "Failed to load draft",
+      "loginToSave": "Please login to save drafts",
+      "userIdMissing": "User ID not found. Please login again.",
+      "emptyContent": "Cannot save empty content",
+      "saveSuccess": "Draft saved successfully!",
+      "updateSuccess": "Draft updated successfully!",
+      "saveFailed": "Failed to save draft. Please try again."
+    }
+  },
+  "plans": {
+    "pro": "Pro",
+    "proPlan": "Pro Plan",
+    "plan": "Plan"
+  },
+  "common": {
+    "loading": "Loading...",
+    "user": "User"
+  },
+  "document": {
+    "titlePlaceholder": "Enter document title...",
+    "generate": "Generate Content",
+    "generating": "Generating...",
+    "exportAs": "Export as:",
+    "formats": {
+      "pdf": "PDF",
+      "png": "PNG",
+      "html": "HTML",
+      "md": "Markdown",
+      "txt": "TXT"
+    },
+    "saving": "Saving...",
+    "saveDraft": "Save Draft",
+    "editorHint": "Start writing or generate content with AI using the title above.",
+    "characterCount": "Character count:",
+    "alerts": {
+      "titleRequired": "Please enter a document title first",
+      "generatedSuccess": "Content generated successfully! It has been loaded into the editor.",
+      "generateFailed": "Failed to generate content. Please try again.",
+      "noContentToExport": "No content to export",
+      "exportFailedPdf": "Failed to export as PDF. Please try again.",
+      "exportFailedPng": "Failed to export as PNG. Please try again.",
+      "exportFailedHtml": "Failed to export as HTML. Please try again.",
+      "exportFailedTxt": "Failed to export as TXT. Please try again.",
+      "loginToSave": "Please login to save drafts",
+      "userIdMissing": "User ID not found. Please login again.",
+      "emptyContent": "Cannot save empty content",
+      "saveSuccess": "Draft saved successfully!",
+      "saveFailed": "Failed to save draft. Please try again."
+    }
+  },
+  "settings": {
+    "title": "Profile & Settings",
+    "subtitle": "Manage your account and preferences",
+    "welcomeBack": "Welcome back, {{name}}!",
+    "plan": "{{tier}} Plan",
+    "tier": {
+      "ADMIN": "Admin",
+      "CREATOR": "Creator",
+      "PRO": "Pro"
+    }
+  },
+  "dashboard": {
+    "loading": "Loading your dashboard...",
+    "greetings": {
+      "morning": "Good Morning",
+      "afternoon": "Good Afternoon",
+      "evening": "Good Evening"
+    },
+    "buttons": {
+      "newDraft": "New Draft",
+      "viewAll": "View All →",
+      "view": "View →"
+    },
+    "searchPlaceholder": "Search drafts, grammar checks, or content...",
+    "quickActions": "Quick Actions",
+    "achievements": "Your Achievements",
+    "recentDrafts": "Recent Drafts",
+    "noDrafts": "No drafts yet",
+    "createFirstDraft": "Create Your First Draft",
+    "progress": "Progress",
+    "recentActivity": "Recent Activity",
+    "activityEmpty": "No recent activity",
+    "you": "You",
+    "stats": {
+      "totalDrafts": "Total Drafts",
+      "grammarChecks": "Grammar Checks",
+      "avgGrammarScore": "Avg Grammar Score",
+      "totalWords": "Total Words"
+    },
+    "quick": {
+      "newDraft": "New Draft",
+      "viewDrafts": "View Drafts",
+      "seoAnalysis": "SEO Analysis",
+      "grammarCheck": "Grammar Check",
+      "readability": "Readability",
+      "settings": "Settings"
+    },
+    "badges": {
+      "proWriter": "Pro Writer",
+      "grammarMaster": "Grammar Master",
+      "speedDemon": "Speed Demon",
+      "wordSmith": "Word Smith",
+      "draftsCreated": "{{count}} drafts created",
+      "avgScore": "{{score}}% average score",
+      "grammarChecks": "{{count}} grammar checks",
+      "wordsWritten": "{{count}} words written"
+    }
+  },
+  "auth": {
+    "brand": "WriteAI",
+    "backToHome": "Back to Home",
+    "orEmail": "OR CONTINUE WITH EMAIL",
+    "email": "Email",
+    "password": "Password",
+    "confirmPassword": "Confirm Password",
+    "placeholders": {
+      "email": "Enter your email",
+      "password": "Enter your password",
+      "confirmPassword": "Confirm your password"
+    },
+    "rememberMe": "Remember me",
+    "forgotPassword": "Forgot password?",
+    "google": {
+      "continue": "Continue with Google",
+      "comingSoon": "Google sign-in coming soon!"
+    },
+    "github": {
+      "continue": "Continue with GitHub",
+      "comingSoon": "GitHub sign-in coming soon!"
+    },
+    "login": {
+      "title": "Welcome Back",
+      "subtitle": "Sign in to your account to continue",
+      "submit": "Sign In",
+      "subtext": "Don't have an account?",
+      "signup": "Sign up",
+      "loading": "Signing In...",
+      "toasts": {
+        "fillAll": "Please fill in all fields",
+        "invalidEmail": "Please enter a valid email address",
+        "success": "Login successful! Welcome back.",
+        "failed": "Login failed. Please check your credentials.",
+        "network": "Network error. Please check your connection and try again."
+      }
+    },
+    "signup": {
+      "title": "Create Account",
+      "subtitle": "Sign up to start writing with AI assistance",
+      "submit": "Create Account",
+      "subtext": "Already have an account?",
+      "signin": "Sign in",
+      "loading": "Creating Account...",
+      "toasts": {
+        "fillAll": "Please fill in all fields",
+        "invalidEmail": "Please enter a valid email address",
+        "passwordLength": "Password must be at least 6 characters long",
+        "passwordMismatch": "Passwords do not match",
+        "success": "Account created successfully! Welcome to WriteAI.",
+        "failed": "Registration failed. Please try again.",
+        "network": "Network error. Please check your connection and try again."
+      }
+    }
+  },
+  "languages": {
+    "english": "English",
+    "spanish": "Español",
+    "french": "Français",
+    "german": "Deutsch",
+    "chinese": "中文",
+    "japanese": "日本語",
+    "switcherAria": "Select language"
+  },
+  "testimonials": {
+    "title": "Loved by Writers Everywhere",
+    "subtitle": "See what our users have to say about their experience with WriteAI.",
+    "sarah": {
+      "text": "This AI writing assistant has transformed how our team creates content. The SEO suggestions are incredibly accurate.",
+      "name": "Sarah Chen",
+      "title": "Content Manager at TechCorp"
+    },
+    "marcus": {
+      "text": "The grammar checker caught issues I completely missed. It's like having a professional editor available 24/7.",
+      "name": "Marcus Johnson",
+      "title": "Freelance Writer at Independent"
+    },
+    "emily": {
+      "text": "Our content quality has improved dramatically. The AI suggestions help us maintain consistency across all our writing.",
+      "name": "Emily Rodriguez",
+      "title": "Marketing Director at StartupXYZ"
+    }
+  },
+  "footer": {
+    "description": "Empowering writers with AI-powered tools for better content creation.",
+    "copyright": "© 2025 WriteAI. All rights reserved.",
+    "product": {
+      "features": "Features",
+      "pricing": "Pricing",
+      "api": "API"
+    },
+    "company": {
+      "about": "About",
+      "blog": "Blog",
+      "careers": "Careers"
+    },
+    "legal": {
+      "privacy": "Privacy",
+      "terms": "Terms",
+      "contact": "Contact"
+    }
+  },
+  "grammar": {
+    "title": "Grammar Checker",
+    "pastChecks": "Past Grammar Checks",
+    "placeholder": "Start writing here...",
+    "checking": "Checking Grammar...",
+    "checkButton": "Check Grammar",
+    "errors": {
+      "enterText": "Please enter some text to check",
+      "loginFirst": "Please login first",
+      "checkFailed": "Failed to check grammar. Please try again."
+    },
+    "toolbar": {
+      "bulletList": "• List",
+      "numberedList": "1. List"
+    },
+    "results": {
+      "grammarScore": "Grammar Score",
+      "totalErrors": "Total Errors",
+      "wordCount": "Word Count",
+      "readability": "Readability",
+      "originalText": "Original Text",
+      "correctedText": "Corrected Text",
+      "detectedErrors": "Detected Errors",
+      "detailedMetrics": "Detailed Metrics"
+    },
+    "table": {
+      "position": "Position",
+      "errorType": "Error Type",
+      "original": "Original",
+      "suggested": "Suggested",
+      "description": "Description",
+      "severity": "Severity"
+    },
+    "metrics": {
+      "sentences": "Sentences",
+      "spellingErrors": "Spelling Errors",
+      "grammarErrors": "Grammar Errors",
+      "punctuationErrors": "Punctuation Errors"
+    }
+  }
+}
+
+

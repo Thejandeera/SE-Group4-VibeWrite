@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useTranslation } from 'react-i18next';
 import LexicalTheme from "./themes/LexicalTheme.jsx";
 import { LexicalComposer } from "@lexical/react/LexicalComposer";
 import { RichTextPlugin } from "@lexical/react/LexicalRichTextPlugin";
@@ -156,6 +157,7 @@ export default function LexicalEditor({ initialContent, onContentChange }) {
   const [editorState, setEditorState] = useState(null);
   const [htmlContent, setHtmlContent] = useState('');
   const [contentLoaded, setContentLoaded] = useState(false);
+  const { t } = useTranslation();
 
   const handleContentChange = (textContent) => {
     setPlainText(textContent);
@@ -206,13 +208,13 @@ export default function LexicalEditor({ initialContent, onContentChange }) {
     <div className="w-full">
       {contentLoaded && initialContent && (
         <div className="mb-2 text-sm text-green-600 bg-green-50 p-2 rounded border border-green-200">
-          ✓ Draft content loaded successfully
+          {t('editor.draftLoaded')}
         </div>
       )}
       
       {initialContent && !contentLoaded && (
         <div className="mb-2 text-sm text-blue-600 bg-blue-50 p-2 rounded border border-blue-200">
-          ⏳ Loading draft content...
+          {t('editor.loadingDraft')}
         </div>
       )}
       
@@ -246,10 +248,10 @@ export default function LexicalEditor({ initialContent, onContentChange }) {
         </div>
       </LexicalComposer>
       
-      <div className="mt-2 text-xs text-gray-500">Spelling mistakes are underlined by your browser.</div>
+      <div className="mt-2 text-xs text-gray-500">{t('editor.spellcheckNote')}</div>
       
       <div className="mt-4 text-sm text-gray-600">
-        <span className="font-medium">Character count:</span> {plainText.length}
+        <span className="font-medium">{t('editor.characterCount')}</span> {plainText.length}
       </div>
       
       {/* Debug info */}
