@@ -5,12 +5,12 @@ import lombok.Setter;
 import java.util.List;
 import java.util.Map;
 
-
 @Getter
 @Setter
 public class SEOAnalyticsDTO {
     private String documentId;
     private String content;
+    private String userId;  // Added userId field
 
     //values computed on the frontend (using AI)
     private Double seoScore;

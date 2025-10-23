@@ -1,4 +1,3 @@
-
 package com.group4.vibeWrite.SeoAnalyst.model;
 
 import lombok.Getter;
@@ -16,6 +15,7 @@ public class SeoAnalysis {
 
     @Id
     private String documentId;
+    private String userId;  // Added userId field
     private String content; // Raw content analyzed
     private double score;
     private List<Keyword> keywords; // Top keywords
@@ -31,5 +31,4 @@ public class SeoAnalysis {
     private Map<String, Double> performanceMetrics; // arbitrary metrics used by charts
     private List<String> aiSuggestions; // AI suggestions shown on UI
     private String source;              // "server" or "client_ai"
-
 }

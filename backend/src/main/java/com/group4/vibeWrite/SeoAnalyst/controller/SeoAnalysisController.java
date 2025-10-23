@@ -32,6 +32,10 @@ public class SeoAnalysisController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
 
+        if (request.getUserId() == null || request.getUserId().isBlank()) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        }
+
         if (!force) {
             Optional<SeoAnalysis> cachedResult = seoAnalysisRepository.findById(request.getDocumentId());
             if (cachedResult.isPresent()) {
@@ -50,8 +54,13 @@ public class SeoAnalysisController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
 
+        if (dto.getUserId() == null || dto.getUserId().isBlank()) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        }
+
         SeoAnalysis analysis = seoAnalysisRepository.findById(dto.getDocumentId()).orElse(new SeoAnalysis());
         analysis.setDocumentId(dto.getDocumentId());
+        analysis.setUserId(dto.getUserId());  // Set userId from DTO
         analysis.setContent(dto.getContent());
         analysis.setScore(dto.getSeoScore() != null ? dto.getSeoScore() : 0.0);
         analysis.setMetaDescription(dto.getMetaDescription());
@@ -86,8 +95,25 @@ public class SeoAnalysisController {
         if (documentId == null || documentId.isBlank()) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
+
         return seoAnalysisRepository.findById(documentId)
                 .map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).build());
+    }
+
+    // NEW: Get all analyses for a specific user
+    @GetMapping("/seo/user/{userId}")
+    public ResponseEntity<List<SeoAnalysis>> getSeoAnalysesByUserId(@PathVariable String userId) {
+        if (userId == null || userId.isBlank()) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        }
+
+        List<SeoAnalysis> analyses = seoAnalysisRepository.findByUserId(userId);
+
+        if (analyses.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+
+        return ResponseEntity.ok(analyses);
     }
 }
