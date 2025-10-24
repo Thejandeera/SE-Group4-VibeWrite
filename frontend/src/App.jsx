@@ -15,6 +15,7 @@ import ViewDraft from './Pages/viewdraft';
 import SEOTools from './Pages/SEOTools';   
 import HelpAndSupport from './Pages/HelpAndSupport';
 import Document from './Pages/Document';
+import TextEnhancer from './Pages/TextEnhancer';
 
 
 const App = () => {
@@ -46,6 +47,7 @@ const App = () => {
           <Route path="/seo-tools" element={<SEOTools />} />   
           <Route path="/help" element={<HelpAndSupport />} />
           <Route path="/new-document" element={<Document />} />
+          <Route path="/text-enhancer" element={<TextEnhancer />} />
         </Routes>
       </div>
     </div>
