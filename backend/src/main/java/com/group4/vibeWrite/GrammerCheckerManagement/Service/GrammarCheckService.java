@@ -1,6 +1,6 @@
 package com.group4.vibeWrite.GrammerCheckerManagement.Service;
 
-
+/*
 import com.group4.vibeWrite.GrammerCheckerManagement.Dto.GrammarCheckRequest;
 import com.group4.vibeWrite.GrammerCheckerManagement.Dto.GrammarCheckResponse;
 import com.group4.vibeWrite.GrammerCheckerManagement.Dto.GrammarError;
@@ -438,3 +438,4 @@ public class GrammarCheckService {
                 .orElse(0.0);
     }
 }
+*/

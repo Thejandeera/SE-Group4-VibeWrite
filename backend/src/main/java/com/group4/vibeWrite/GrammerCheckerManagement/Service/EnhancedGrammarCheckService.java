@@ -6,13 +6,13 @@ import com.group4.vibeWrite.GrammerCheckerManagement.Dto.GrammarCheckRequest;
 import com.group4.vibeWrite.GrammerCheckerManagement.Dto.GrammarError;
 import com.group4.vibeWrite.GrammerCheckerManagement.Entity.GrammarCheckHistory;
 import com.group4.vibeWrite.GrammerCheckerManagement.Repository.GrammarCheckRepository;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.text.similarity.LevenshteinDistance;
 import org.languagetool.JLanguageTool;
 import org.languagetool.language.AmericanEnglish;
 import org.languagetool.rules.CategoryId;
 import org.languagetool.rules.RuleMatch;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -27,19 +27,45 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 @Service
-@RequiredArgsConstructor
 @Slf4j
 public class EnhancedGrammarCheckService {
+
+    // Singleton instance
+    private static EnhancedGrammarCheckService instance;
 
     private final GrammarCheckRepository grammarCheckRepository;
 
     private JLanguageTool languageTool;
-    private final LevenshteinDistance levenshteinDistance = new LevenshteinDistance();
+    //private final LevenshteinDistance levenshteinDistance = new LevenshteinDistance();
 
     // Advanced grammar patterns
-    private final Map<String, String> advancedPatterns = new HashMap<>();
-    private final Set<String> commonWords = new HashSet<>();
+    //private final Map<String, String> advancedPatterns = new HashMap<>();
+    //private final Set<String> commonWords = new HashSet<>();
     private final Map<String, String> styleGuideRules = new HashMap<>();
+
+
+    // Public constructor for Spring dependency injection
+    @Autowired
+    public EnhancedGrammarCheckService(GrammarCheckRepository grammarCheckRepository) {
+        this.grammarCheckRepository = grammarCheckRepository;
+        // Ensure only one instance is created
+        if (instance == null) {
+            instance = this;
+        } else {
+            // This block should ideally not be reached in a Spring context
+            throw new IllegalStateException("Singleton instance already exists.");
+        }
+    }
+
+    // Public method to get the singleton instance
+    public static EnhancedGrammarCheckService getInstance() {
+        if (instance == null) {
+            // This can happen if accessed outside of Spring's context before initialization
+            throw new IllegalStateException("Service not initialized yet.");
+        }
+        return instance;
+    }
+
 
     @PostConstruct
     public void init() {
@@ -53,8 +79,8 @@ public class EnhancedGrammarCheckService {
             languageTool.enableRuleCategory(new CategoryId("TYPOGRAPHY"));
             languageTool.enableRuleCategory(new CategoryId("STYLE"));
 
-            initializeAdvancedPatterns();
-            initializeCommonWords();
+            //initializeAdvancedPatterns();
+            //initializeCommonWords();
             initializeStyleGuideRules();
 
             log.info("Enhanced Grammar Check Service initialized successfully");
@@ -73,7 +99,7 @@ public class EnhancedGrammarCheckService {
         }
     }
 
-    private void initializeAdvancedPatterns() {
+    /*private void initializeAdvancedPatterns() {
         // Subject-verb agreement patterns
         advancedPatterns.put("\\b(he|she|it)\\s+(are|were)\\b", "Subject-verb disagreement");
         advancedPatterns.put("\\b(they|we|you)\\s+(is|was)\\b", "Subject-verb disagreement");
@@ -87,9 +113,9 @@ public class EnhancedGrammarCheckService {
         advancedPatterns.put("\\b(very|really|extremely)\\s+(very|really|extremely)\\b", "Avoid double intensifiers");
         advancedPatterns.put("\\b(more|most)\\s+\\w+er\\b", "Avoid double comparatives");
         advancedPatterns.put("\\b(more|most)\\s+\\w+est\\b", "Avoid double superlatives");
-    }
+    }*/
 
-    private void initializeCommonWords() {
+    /*private void initializeCommonWords() {
         String[] words = {
                 "the", "be", "to", "of", "and", "a", "in", "that", "have", "i", "it", "for",
                 "not", "on", "with", "he", "as", "you", "do", "at", "this", "but", "his",
@@ -103,7 +129,7 @@ public class EnhancedGrammarCheckService {
                 "even", "new", "want", "because", "any", "these", "give", "day", "most", "us"
         };
         commonWords.addAll(Arrays.asList(words));
-    }
+    }*/
 
     private void initializeStyleGuideRules() {
         // AP Style and common writing guidelines
@@ -128,13 +154,13 @@ public class EnhancedGrammarCheckService {
             errors.addAll(checkWithLanguageTool(originalText));
 
             // Add custom pattern checks
-            errors.addAll(checkCustomPatterns(originalText));
+            //errors.addAll(checkCustomPatterns(originalText));
 
             // Check style guide compliance
             errors.addAll(checkStyleGuide(originalText));
 
             // Check readability issues
-            errors.addAll(checkReadability(originalText));
+            //errors.addAll(checkReadability(originalText));
 
             // Remove duplicate errors and sort by position
             errors = deduplicateAndSortErrors(errors);
@@ -244,7 +270,7 @@ public class EnhancedGrammarCheckService {
         return "LOW";
     }
 
-    private List<GrammarError> checkCustomPatterns(String text) {
+    /*private List<GrammarError> checkCustomPatterns(String text) {
         List<GrammarError> errors = new ArrayList<>();
 
         for (Map.Entry<String, String> pattern : advancedPatterns.entrySet()) {
@@ -265,7 +291,7 @@ public class EnhancedGrammarCheckService {
         }
 
         return errors;
-    }
+    }*/
 
     private List<GrammarError> checkStyleGuide(String text) {
         List<GrammarError> errors = new ArrayList<>();
@@ -290,7 +316,7 @@ public class EnhancedGrammarCheckService {
         return errors;
     }
 
-    private List<GrammarError> checkReadability(String text) {
+    /*private List<GrammarError> checkReadability(String text) {
         List<GrammarError> errors = new ArrayList<>();
 
         // Check for overly long sentences
@@ -337,7 +363,7 @@ public class EnhancedGrammarCheckService {
         }
 
         return errors;
-    }
+    }*/
 
     private List<GrammarError> deduplicateAndSortErrors(List<GrammarError> errors) {
         // Remove duplicates based on position and type
@@ -657,7 +683,7 @@ public class EnhancedGrammarCheckService {
         else return "stable";
     }
 
-    public List<GrammarError> getQuickSuggestions(String text) {
+    /*public List<GrammarError> getQuickSuggestions(String text) {
         try {
             // Quick check for immediate feedback (lighter version)
             List<GrammarError> quickErrors = new ArrayList<>();
@@ -679,7 +705,7 @@ public class EnhancedGrammarCheckService {
             log.error("Error in quick grammar suggestions: ", e);
             return Collections.emptyList();
         }
-    }
+    }*/
 
     private List<GrammarError> checkBasicSpelling(String text) {
         List<GrammarError> errors = new ArrayList<>();

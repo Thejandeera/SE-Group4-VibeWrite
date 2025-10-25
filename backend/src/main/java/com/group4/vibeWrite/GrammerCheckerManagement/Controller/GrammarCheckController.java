@@ -4,7 +4,7 @@ import com.group4.vibeWrite.GrammerCheckerManagement.Dto.GrammarCheckRequest;
 import com.group4.vibeWrite.GrammerCheckerManagement.Dto.GrammarCheckResponse;
 import com.group4.vibeWrite.GrammerCheckerManagement.Entity.GrammarCheckHistory;
 import com.group4.vibeWrite.GrammerCheckerManagement.Service.EnhancedGrammarCheckService;
-import com.group4.vibeWrite.GrammerCheckerManagement.Service.GrammarCheckService;
+//import com.group4.vibeWrite.GrammerCheckerManagement.Service.GrammarCheckService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
