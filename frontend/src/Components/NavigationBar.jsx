@@ -11,7 +11,8 @@ import {
   LogOut,
   Menu,
   X,
-  Crown
+  Crown,
+  Wand2
 } from 'lucide-react';
 
 const backendUrl = import.meta.env.VITE_BACKEND_URL;
@@ -77,7 +78,7 @@ const NavigationBar = () => {
   const fetchUnreadCount = async () => {
     try {
       if (!backendUrl) return 0;
-      const userId = getUserIdFromSession();   // ✅ assign userId here
+      const userId = getUserIdFromSession();   // assign userId here
       if (!userId) {
         console.warn("No userId found in session storage");
         return 0;
@@ -123,6 +124,7 @@ const NavigationBar = () => {
     const navigationItems = [
       { name: 'Dashboard', icon: LayoutDashboard, path: '/dashboard' },
       { name: 'Content Editor', icon: Edit3, path: '/content-editor' },
+      { name: 'Text Enhancer', icon: Wand2, path: '/text-enhancer' },
       { name: 'SEO Tools', icon: TrendingUp, path: '/seo-tools', badge: 'New', badgeColor: 'bg-green-500' },
       { name: 'Grammar Checker', icon: CheckCircle2, path: '/grammar-check' },
       { name: 'Readability Score', icon: FileText, path: '/readability-score' },
@@ -165,6 +167,7 @@ const NavigationBar = () => {
   const navigationItems = [
     { name: 'Dashboard', icon: LayoutDashboard, path: '/dashboard' },
     { name: 'Content Editor', icon: Edit3, path: '/content-editor' },
+    { name: 'Text Enhancer', icon: Wand2, path: '/text-enhancer' },
     { name: 'SEO Tools', icon: TrendingUp, path: '/seo-tools', badge: 'New', badgeColor: 'bg-green-500' },
     { name: 'Grammar Check', icon: CheckCircle2, path: '/grammar-check' },
     { name: 'Readability Score', icon: FileText, path: '/readability-score' },
