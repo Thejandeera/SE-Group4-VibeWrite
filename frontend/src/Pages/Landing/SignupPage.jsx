@@ -65,7 +65,7 @@ const SignupPage = () => {
         
         sessionStorage.setItem('token', data.access_token);
         
-        showToast('Account created successfully! Welcome to WriteAI.', 'success');
+        showToast('Account created successfully! Welcome to VibeWrite.', 'success');
         
         
         setTimeout(() => {
@@ -149,7 +149,7 @@ const SignupPage = () => {
                   </div>
                   <div className="absolute -inset-1.5 bg-gradient-to-r from-blue-500 to-purple-600 rounded-xl opacity-75 -z-10 blur-md"></div>
                 </div>
-                <h1 className="text-2xl font-bold bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">WriteAI</h1>
+                <h1 className="text-2xl font-bold bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">VibeWrite</h1>
               </div>
               
               <h2 className="text-2xl font-bold text-white mb-2">

@@ -288,7 +288,7 @@ const NavigationBar = () => {
               <div className="w-8 h-8 bg-blue-600 rounded-xl flex items-center justify-center shadow-lg">
                 <Edit3 size={16} className="text-white" />
               </div>
-              <span className="text-white font-semibold text-sm">WriteAI</span>
+              <span className="text-white font-semibold text-sm">VibeWrite</span>
             </div>
           </div>
           <div className="flex items-center gap-3">
@@ -461,7 +461,7 @@ const NavigationBar = () => {
             <Edit3 size={16} className="text-white" />
           </div>
           <div className="flex items-center gap-2">
-            <span className="text-white font-semibold text-sm">WriteAI</span>
+            <span className="text-white font-semibold text-sm">VibeWrite</span>
             <div className="flex items-center gap-1 bg-yellow-500 text-black px-2 py-0.5 rounded text-xs font-medium">
               <Crown size={12} />
               Pro Plan

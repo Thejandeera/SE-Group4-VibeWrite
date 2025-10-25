@@ -66,7 +66,7 @@ export default function TestimonialsAndFooter() {
               Loved by Writers Everywhere
             </h2>
             <p className="text-lg sm:text-xl text-gray-400 max-w-3xl mx-auto">
-              See what our users have to say about their experience with WriteAI.
+              See what our users have to say about their experience with VibeWrite.
             </p>
           </div>
 
@@ -119,7 +119,7 @@ export default function TestimonialsAndFooter() {
                     <path d="M14.5 2c1.38 0 2.5 1.12 2.5 2.5v15c0 1.38-1.12 2.5-2.5 2.5h-5C8.12 22 7 20.88 7 19.5v-15C7 3.12 8.12 2 9.5 2h5zm-5 2C8.67 4 8 4.67 8 5.5v13c0 .83.67 1.5 1.5 1.5h5c.83 0 1.5-.67 1.5-1.5v-13c0-.83-.67-1.5-1.5-1.5h-5zm1.5 2h3c.28 0 .5.22.5.5s-.22.5-.5.5h-3c-.28 0-.5-.22-.5-.5s.22-.5.5-.5zm0 2h3c.28 0 .5.22.5.5s-.22.5-.5.5h-3c-.28 0-.5-.22-.5-.5s.22-.5.5-.5z"/>
                   </svg>
                 </div>
-                <span className="font-semibold text-lg">WriteAI</span>
+                <span className="font-semibold text-lg">VibeWrite</span>
               </div>
               <p className="text-gray-400 leading-relaxed">
                 Empowering writers with AI-powered tools for better content creation.
@@ -148,7 +148,7 @@ export default function TestimonialsAndFooter() {
          
           <div className="mt-12 pt-8 border-t border-gray-800/50 text-center">
             <p className="text-gray-400">
-              © 2025 WriteAI. All rights reserved.
+              © 2025 VibeWrite. All rights reserved.
             </p>
           </div>
         </div>
