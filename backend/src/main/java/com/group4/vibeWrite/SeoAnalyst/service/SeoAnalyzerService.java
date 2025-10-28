@@ -43,7 +43,6 @@ public class SeoAnalyzerService {
         // 3. Build final analysis object
         SeoAnalysis analysis = new SeoAnalysis();
         analysis.setDocumentId(request.getDocumentId());
-        analysis.setUserId(request.getUserId());  // Set userId from request
         analysis.setContent(content);
         analysis.setKeywords(keywords);
         analysis.setMetaDescription(metaDescription);
