@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="5985e315-6b62-41c6-9e87-4cbbbfa66da2" name="Changes" comment="" />
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="KubernetesApiPersistence"><![CDATA[{}]]></component>
+  <component name="KubernetesApiProvider"><![CDATA[{
+  "isMigrated": true
+}]]></component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 8
+}</component>
+  <component name="ProjectId" id="33MKnHlLaf9MCp10LD2up4THP8Y" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "Application.VibeWrite.executor": "Run",
+    "ModuleVcsDetector.initialDetectionPerformed": "true",
+    "RequestMappingsPanelOrder0": "0",
+    "RequestMappingsPanelOrder1": "1",
+    "RequestMappingsPanelWidth0": "75",
+    "RequestMappingsPanelWidth1": "75",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "Spring Boot.VibeWriteApplication.executor": "Run",
+    "git-widget-placeholder": "scrum-9",
+    "kotlin-language-version-configured": "true",
+    "last_opened_file_path": "/Users/realdulain/Documents/SLIIT/Y2S2/SE2072 - SE - Software Engineering/SE Assignment/SE-Group4-VibeWrite",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "project.structure.last.edited": "Project",
+    "project.structure.proportion": "0.15",
+    "project.structure.side.proportion": "0.0",
+    "vue.rearranger.settings.migration": "true"
+  }
+}]]></component>
+  <component name="RunManager" selected="Application.VibeWrite">
+    <configuration name="VibeWrite" type="Application" factoryName="Application">
+      <option name="envFilePaths">
+        <option value="$PROJECT_DIR$/backend/.ENV" />
+      </option>
+      <option name="MAIN_CLASS_NAME" value="com.group4.vibeWrite.VibeWriteApplication" />
+      <module name="vibeWrite" />
+      <extension name="net.ashald.envfile">
+        <option name="IS_ENABLED" value="true" />
+        <option name="IS_SUBST" value="true" />
+        <option name="IS_PATH_MACRO_SUPPORTED" value="true" />
+        <option name="IS_IGNORE_MISSING_FILES" value="true" />
+        <option name="IS_ENABLE_EXPERIMENTAL_INTEGRATIONS" value="true" />
+        <ENTRIES>
+          <ENTRY IS_ENABLED="true" PARSER="runconfig" IS_EXECUTABLE="false" />
+        </ENTRIES>
+      </extension>
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="VibeWriteApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" nameIsGenerated="true">
+      <module name="vibeWrite" />
+      <option name="SPRING_BOOT_MAIN_CLASS" value="com.group4.vibeWrite.VibeWriteApplication" />
+      <extension name="net.ashald.envfile">
+        <option name="IS_ENABLED" value="false" />
+        <option name="IS_SUBST" value="false" />
+        <option name="IS_PATH_MACRO_SUPPORTED" value="false" />
+        <option name="IS_IGNORE_MISSING_FILES" value="false" />
+        <option name="IS_ENABLE_EXPERIMENTAL_INTEGRATIONS" value="false" />
+        <ENTRIES>
+          <ENTRY IS_ENABLED="true" PARSER="runconfig" IS_EXECUTABLE="false" />
+        </ENTRIES>
+      </extension>
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <list>
+      <item itemvalue="Application.VibeWrite" />
+      <item itemvalue="Spring Boot.VibeWriteApplication" />
+    </list>
+  </component>
+  <component name="SharedIndexes">
+    <attachedChunks>
+      <set>
+        <option value="bundled-jdk-9823dce3aa75-bf35d07a577b-intellij.indexing.shared.core-IU-252.26199.169" />
+        <option value="bundled-js-predefined-d6986cc7102b-9c94529fcfe0-JavaScript-IU-252.26199.169" />
+      </set>
+    </attachedChunks>
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="5985e315-6b62-41c6-9e87-4cbbbfa66da2" name="Changes" comment="" />
+      <created>1759121666652</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1759121666652</updated>
+      <workItem from="1759121667705" duration="12000" />
+      <workItem from="1759121829037" duration="5384000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+</project>
